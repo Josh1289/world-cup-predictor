@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>World Cup Predictor</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+  <style>
+    body {
+      font-family: Arial;
+      background: #0f172a;
+      color: white;
+      margin: 0;
+    }
+
+    .center {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    input {
+      padding: 10px;
+      margin: 5px;
+      border-radius: 6px;
+      border: none;
+    }
+
+    button {
+      padding: 10px;
+      margin: 5px;
+      border-radius: 6px;
+      border: none;
+      background: #3b82f6;
+      color: white;
+      cursor: pointer;
+    }
+
+    .card {
+      background: #1e293b;
+      padding: 15px;
+      margin: 10px;
+      border-radius: 10px;
+    }
+
+    #app {
+      display: none;
+      padding: 20px;
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- LOGIN SCREEN -->
+<div id="auth" class="center">
+  <h1>? World Cup Predictor</h1>
+
+  <input id="email" placeholder="Email">
+  <input id="password" type="password" placeholder="Password">
+
+  <button onclick="signUp()">Sign Up</button>
+  <button onclick="signIn()">Login</button>
+</div>
+
+<!-- MAIN APP -->
+<div id="app">
+  <h1>Dashboard</h1>
+
+  <h2>Matches</h2>
+  <div id="matches"></div>
+
+  <h2>Leaderboard</h2>
+  <div id="leaderboard"></div>
+
+  <button onclick="logout()">Logout</button>
+</div>
+
+<script>
+const supabase = window.supabase.createClient(
+  "https://igatvhqatxrhgnshmdld.supabase.co",
+  "sb_publishable_kZYMgSK-0VcalUaTuo7gfQ_7cMMse21"
+);
+
+// AUTH
+async function signUp() {
+  const email = emailEl().value;
+  const password = passEl().value;
+
+  await supabase.auth.signUp({ email, password });
+  alert("Check your email!");
+}
+
+async function signIn() {
+  const email = emailEl().value;
+  const password = passEl().value;
+
+  const { error } = await supabase.auth.signInWithPassword({ email, password });
+
+  if (error) alert(error.message);
+  else showApp();
+}
+
+function logout() {
+  supabase.auth.signOut();
+  location.reload();
+}
+
+function emailEl(){ return document.getElementById("email"); }
+function passEl(){ return document.getElementById("password"); }
+
+// UI SWITCH
+function showApp() {
+  document.getElementById("auth").style.display = "none";
+  document.getElementById("app").style.display = "block";
+  loadData();
+}
+
+// MATCHES
+async function loadMatches() {
+  const { data } = await supabase.from("matches").select("*");
+
+  const container = document.getElementById("matches");
+  container.innerHTML = "";
+
+  data.forEach(match => {
+    container.innerHTML += `
+      <div class="card">
+        <p>${match.team_a} vs ${match.team_b}</p>
+        <input id="a-${match.id}" placeholder="A">
+        <input id="b-${match.id}" placeholder="B">
+        <button onclick="submitPrediction('${match.id}')">Submit</button>
+      </div>
+    `;
+  });
+}
+
+// SUBMIT
+async function submitPrediction(matchId) {
+  const { data: user } = await supabase.auth.getUser();
+
+  const a = document.getElementById(`a-${matchId}`).value;
+  const b = document.getElementById(`b-${matchId}`).value;
+
+  await supabase.from("predictions").upsert({
+    user_id: user.user.id,
+    match_id: matchId,
+    pred_score_a: a,
+    pred_score_b: b
+  });
+
+  alert("Saved!");
+}
+
+// LEADERBOARD
+async function loadLeaderboard() {
+  const { data } = await supabase.from("leaderboard").select("*");
+
+  const container = document.getElementById("leaderboard");
+  container.innerHTML = "";
+
+  data.forEach((u, i) => {
+    container.innerHTML += `<p>${i+1}. ${u.username} — ${u.total_points}</p>`;
+  });
+}
+
+function loadData() {
+  loadMatches();
+  loadLeaderboard();
+}
+</script>
+
+</body>
+</html>
