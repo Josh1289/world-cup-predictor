@@ -96,10 +96,18 @@ async function signIn() {
   const email = emailEl().value;
   const password = passEl().value;
 
-  const { error } = await supabase.auth.signInWithPassword({ email, password });
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password
+  });
 
-  if (error) alert(error.message);
-  else showApp();
+  console.log("LOGIN RESULT:", data, error);
+
+  if (error) {
+    alert(error.message);
+  } else {
+    showApp();
+  }
 }
 
 function logout() {
