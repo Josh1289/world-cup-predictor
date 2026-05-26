@@ -235,14 +235,6 @@
       text-align: center;
     }
 
-    .success {
-      background: rgba(72,187,120,0.2);
-      padding: 10px;
-      border-radius: 8px;
-      margin: 10px 0;
-      text-align: center;
-    }
-
     .admin-section {
       margin-top: 20px;
       padding: 15px;
@@ -270,6 +262,50 @@
     .admin-btn:hover {
       background: #dd6b20;
     }
+
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 15px 20px;
+      border-radius: 10px;
+      background: white;
+      color: #333;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      z-index: 1000;
+      animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    .switch-mode {
+      text-align: center;
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid #e0e0e0;
+    }
+
+    .switch-mode button {
+      background: none;
+      color: #667eea;
+      text-decoration: underline;
+      font-size: 14px;
+    }
+
+    .switch-mode button:hover {
+      background: none;
+      transform: none;
+      color: #5a67d8;
+    }
   </style>
 </head>
 
@@ -279,13 +315,28 @@
   <div id="authScreen" class="auth-screen">
     <div class="auth-card">
       <h1>? World Cup Predictor</h1>
-      <input type="email" id="email" placeholder="Email" autocomplete="email">
-      <input type="password" id="password" placeholder="Password" autocomplete="current-password">
-      <button onclick="handleSignUp()">Create Account</button>
-      <button onclick="handleSignIn()" style="background: #48bb78;">Login</button>
-      <p style="text-align: center; margin-top: 20px; font-size: 12px; color: #666;">
-        Demo: test@example.com / test123456
-      </p>
+      
+      <!-- Login Form -->
+      <div id="loginForm">
+        <input type="email" id="email" placeholder="Email" autocomplete="email">
+        <input type="password" id="password" placeholder="Password" autocomplete="current-password">
+        <button onclick="handleSignIn()">Login</button>
+        <div class="switch-mode">
+          <p>Don't have an account?</p>
+          <button onclick="showSignup()">Create Account</button>
+        </div>
+      </div>
+
+      <!-- Signup Form (hidden by default) -->
+      <div id="signupForm" style="display: none;">
+        <input type="email" id="signupEmail" placeholder="Email" autocomplete="email">
+        <input type="password" id="signupPassword" placeholder="Password (min 6 characters)" autocomplete="new-password">
+        <button onclick="handleSignUp()">Sign Up</button>
+        <div class="switch-mode">
+          <p>Already have an account?</p>
+          <button onclick="showLogin()">Back to Login</button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -309,7 +360,7 @@
       <div id="leaderboardContainer"></div>
     </div>
 
-    <!-- Admin Section (only shown for admin email) -->
+    <!-- Admin Section -->
     <div id="adminSection" class="section admin-section" style="display: none;">
       <h3>?? Admin Panel - Set Match Results</h3>
       <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
@@ -337,16 +388,44 @@ const supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
 
 let currentUser = null;
 
+// Helper function to show notifications
+function showNotification(message, isError = false) {
+  const notification = document.createElement('div');
+  notification.className = 'notification';
+  notification.style.background = isError ? '#fee' : '#e8f5e9';
+  notification.style.color = isError ? '#c62828' : '#2e7d32';
+  notification.style.borderLeft = `4px solid ${isError ? '#c62828' : '#2e7d32'}`;
+  notification.textContent = message;
+  document.body.appendChild(notification);
+  setTimeout(() => notification.remove(), 3000);
+}
+
+// Toggle between login and signup forms
+function showSignup() {
+  document.getElementById('loginForm').style.display = 'none';
+  document.getElementById('signupForm').style.display = 'block';
+}
+
+function showLogin() {
+  document.getElementById('signupForm').style.display = 'none';
+  document.getElementById('loginForm').style.display = 'block';
+}
+
 // ============================================
 // AUTHENTICATION FUNCTIONS
 // ============================================
 
 async function handleSignUp() {
-  const email = document.getElementById('email').value;
-  const password = document.getElementById('password').value;
+  const email = document.getElementById('signupEmail').value;
+  const password = document.getElementById('signupPassword').value;
   
   if (!email || !password) {
-    alert('Please enter email and password');
+    showNotification('Please enter email and password', true);
+    return;
+  }
+  
+  if (password.length < 6) {
+    showNotification('Password must be at least 6 characters', true);
     return;
   }
   
@@ -363,11 +442,14 @@ async function handleSignUp() {
     
     if (error) throw error;
     
-    alert('Account created! Please login with your credentials.');
-    document.getElementById('email').value = '';
-    document.getElementById('password').value = '';
+    if (data.user) {
+      showNotification('Account created successfully! Please login.');
+      showLogin();
+      document.getElementById('signupEmail').value = '';
+      document.getElementById('signupPassword').value = '';
+    }
   } catch (error) {
-    alert('Sign up error: ' + error.message);
+    showNotification('Sign up error: ' + error.message, true);
   }
 }
 
@@ -376,7 +458,7 @@ async function handleSignIn() {
   const password = document.getElementById('password').value;
   
   if (!email || !password) {
-    alert('Please enter email and password');
+    showNotification('Please enter email and password', true);
     return;
   }
   
@@ -389,9 +471,10 @@ async function handleSignIn() {
     if (error) throw error;
     
     currentUser = data.user;
+    showNotification('Welcome back, ' + currentUser.email + '!');
     showApp();
   } catch (error) {
-    alert('Login failed: ' + error.message);
+    showNotification('Login failed: ' + error.message, true);
   }
 }
 
@@ -400,6 +483,10 @@ async function handleLogout() {
   currentUser = null;
   document.getElementById('authScreen').style.display = 'flex';
   document.getElementById('appScreen').style.display = 'none';
+  // Clear input fields
+  document.getElementById('email').value = '';
+  document.getElementById('password').value = '';
+  showNotification('Logged out successfully');
 }
 
 // ============================================
@@ -415,6 +502,7 @@ async function checkAuth() {
   } else {
     document.getElementById('authScreen').style.display = 'flex';
     document.getElementById('appScreen').style.display = 'none';
+    showLogin(); // Show login form by default
   }
 }
 
@@ -427,8 +515,9 @@ async function showApp() {
   document.getElementById('appScreen').style.display = 'block';
   document.getElementById('userEmail').textContent = currentUser.email;
   
-  // Show admin panel for specific admin email
-  if (currentUser.email === 'admin@example.com') {
+  // Show admin panel for specific admin emails (you can add admin emails here)
+  const adminEmails = ['admin@example.com']; // Add admin emails here
+  if (adminEmails.includes(currentUser.email)) {
     document.getElementById('adminSection').style.display = 'block';
     await loadAdminMatches();
   }
@@ -450,7 +539,7 @@ async function loadMatches() {
     if (error) throw error;
     
     if (!matches || matches.length === 0) {
-      container.innerHTML = '<div class="loading">No matches available</div>';
+      container.innerHTML = '<div class="loading">No matches available. Please add matches in Supabase.</div>';
       return;
     }
     
@@ -491,7 +580,7 @@ async function loadMatches() {
       }
       
       let predictionDisplay = '';
-      if (userPrediction && userPrediction.points !== null) {
+      if (userPrediction) {
         predictionDisplay = `
           <div style="margin-top: 10px; padding: 8px; background: rgba(255,255,255,0.1); border-radius: 6px; font-size: 12px;">
             Your prediction: ${userPrediction.pred_score_a} - ${userPrediction.pred_score_b}
@@ -542,7 +631,7 @@ async function submitPrediction(matchId, isKnockout) {
   const scoreB = document.getElementById(`score-b-${matchId}`).value;
   
   if (!scoreA || !scoreB) {
-    alert('Please enter both scores');
+    showNotification('Please enter both scores', true);
     return;
   }
   
@@ -552,7 +641,7 @@ async function submitPrediction(matchId, isKnockout) {
     if (select) {
       advancingTeam = select.value;
       if (!advancingTeam) {
-        alert('Please select which team advances for knockout matches');
+        showNotification('Please select which team advances for knockout matches', true);
         return;
       }
     }
@@ -565,7 +654,7 @@ async function submitPrediction(matchId, isKnockout) {
       .select('id')
       .eq('user_id', currentUser.id)
       .eq('match_id', matchId)
-      .single();
+      .maybeSingle();
     
     let error;
     
@@ -597,13 +686,13 @@ async function submitPrediction(matchId, isKnockout) {
     
     if (error) throw error;
     
-    alert('Prediction saved successfully!');
+    showNotification('Prediction saved successfully!');
     await loadMatches(); // Reload to show updated prediction
   } catch (error) {
     if (error.message.includes('deadline passed')) {
-      alert('Deadline passed! Cannot submit prediction after match starts.');
+      showNotification('Deadline passed! Cannot submit prediction after match starts.', true);
     } else {
-      alert('Error saving prediction: ' + error.message);
+      showNotification('Error saving prediction: ' + error.message, true);
     }
   }
 }
@@ -621,7 +710,7 @@ async function loadLeaderboard() {
     if (error) throw error;
     
     if (!leaderboard || leaderboard.length === 0) {
-      container.innerHTML = '<div class="loading">No users yet</div>';
+      container.innerHTML = '<div class="loading">No users yet. Make some predictions to appear on the leaderboard!</div>';
       return;
     }
     
@@ -660,13 +749,18 @@ async function loadAdminMatches() {
   const select = document.getElementById('adminMatchSelect');
   select.innerHTML = '<option value="">Select a match</option>';
   
-  if (matches) {
+  if (matches && matches.length > 0) {
     matches.forEach(match => {
       const option = document.createElement('option');
       option.value = match.id;
       option.textContent = `${match.team_a} vs ${match.team_b}`;
       select.appendChild(option);
     });
+  } else {
+    const option = document.createElement('option');
+    option.value = "";
+    option.textContent = "No pending matches";
+    select.appendChild(option);
   }
 }
 
@@ -677,12 +771,12 @@ async function adminSetResult() {
   const advancingTeam = document.getElementById('adminAdvancingTeam').value;
   
   if (!matchId) {
-    alert('Please select a match');
+    showNotification('Please select a match', true);
     return;
   }
   
   if (isNaN(scoreA) || isNaN(scoreB)) {
-    alert('Please enter valid scores');
+    showNotification('Please enter valid scores', true);
     return;
   }
   
@@ -711,7 +805,7 @@ async function adminSetResult() {
     
     if (error) throw error;
     
-    alert('Match result set! Points have been calculated automatically.');
+    showNotification('Match result set! Points have been calculated automatically.');
     
     // Reset form
     document.getElementById('adminScoreA').value = '';
@@ -723,33 +817,9 @@ async function adminSetResult() {
     await loadMatches();
     await loadLeaderboard();
   } catch (error) {
-    alert('Error setting result: ' + error.message);
+    showNotification('Error setting result: ' + error.message, true);
   }
 }
-
-// ============================================
-// DEBUG FUNCTIONS (available in console)
-// ============================================
-
-window.debug = {
-  listMatches: async () => {
-    const { data } = await supabase.from('matches').select('*');
-    console.table(data);
-    return data;
-  },
-  listPredictions: async () => {
-    const { data } = await supabase.from('predictions').select('*, profiles(username)');
-    console.table(data);
-    return data;
-  },
-  clearPredictions: async () => {
-    if (confirm('Delete all predictions?')) {
-      await supabase.from('predictions').delete().neq('id', '00000000-0000-0000-0000-000000000000');
-      alert('Predictions cleared');
-      location.reload();
-    }
-  }
-};
 
 // Initialize
 checkAuth();
