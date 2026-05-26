@@ -55,6 +55,11 @@
       font-size: 16px;
     }
 
+    .auth-card input:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
     .auth-card button {
       width: 100%;
       padding: 12px;
@@ -65,14 +70,20 @@
       border-radius: 8px;
       font-size: 16px;
       cursor: pointer;
+      transition: transform 0.2s, background 0.2s;
     }
 
     .auth-card button:hover {
       background: #5a67d8;
+      transform: translateY(-2px);
     }
 
     .signup-btn {
       background: #48bb78 !important;
+    }
+
+    .signup-btn:hover {
+      background: #38a169 !important;
     }
 
     .app-screen {
@@ -87,6 +98,7 @@
       padding: 20px;
       background: rgba(255,255,255,0.1);
       border-radius: 15px;
+      backdrop-filter: blur(10px);
     }
 
     .logout-btn {
@@ -96,6 +108,12 @@
       padding: 8px 20px;
       border-radius: 8px;
       cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .logout-btn:hover {
+      background: rgba(255,255,255,0.3);
+      transform: translateY(-2px);
     }
 
     .section {
@@ -103,6 +121,12 @@
       border-radius: 15px;
       padding: 20px;
       margin-bottom: 30px;
+      backdrop-filter: blur(10px);
+    }
+
+    .section h2 {
+      margin-bottom: 20px;
+      font-size: 24px;
     }
 
     .matches-grid {
@@ -115,6 +139,11 @@
       background: rgba(255,255,255,0.15);
       border-radius: 12px;
       padding: 20px;
+      transition: transform 0.3s;
+    }
+
+    .match-card:hover {
+      transform: translateY(-5px);
     }
 
     .match-title {
@@ -151,6 +180,23 @@
       border: none;
       border-radius: 8px;
       cursor: pointer;
+      font-size: 16px;
+      transition: background 0.3s;
+    }
+
+    .submit-btn:hover {
+      background: #38a169;
+    }
+
+    .deadline {
+      font-size: 12px;
+      text-align: center;
+      margin-top: 10px;
+      color: rgba(255,255,255,0.7);
+    }
+
+    .leaderboard-list {
+      list-style: none;
     }
 
     .leaderboard-item {
@@ -160,6 +206,26 @@
       border-radius: 8px;
       display: flex;
       justify-content: space-between;
+      font-size: 18px;
+    }
+
+    .leaderboard-rank {
+      font-weight: bold;
+      color: #fbbf24;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+      font-size: 18px;
+    }
+
+    .error {
+      background: rgba(255,0,0,0.2);
+      padding: 10px;
+      border-radius: 8px;
+      margin: 10px 0;
+      text-align: center;
     }
 
     .notification {
@@ -170,48 +236,80 @@
       border-radius: 10px;
       background: white;
       color: #333;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
       z-index: 1000;
+      animation: slideIn 0.3s ease;
     }
 
-    .debug-panel {
-      position: fixed;
-      bottom: 10px;
-      left: 10px;
-      background: rgba(0,0,0,0.8);
-      color: #0f0;
-      font-family: monospace;
-      font-size: 12px;
-      padding: 10px;
-      border-radius: 5px;
-      max-width: 300px;
-      z-index: 9999;
+    @keyframes slideIn {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    .switch-mode {
+      text-align: center;
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid #e0e0e0;
+    }
+
+    .switch-mode a {
+      color: #667eea;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .switch-mode a:hover {
+      text-decoration: underline;
     }
   </style>
 </head>
 
 <body>
 <div class="container">
+  <!-- LOGIN SCREEN -->
   <div id="authScreen" class="auth-screen">
     <div class="auth-card">
       <h1>? World Cup Predictor</h1>
-      <input type="email" id="email" placeholder="Email">
-      <input type="password" id="password" placeholder="Password">
-      <button onclick="handleSignUp()" class="signup-btn" style="background: #48bb78;">Create Account</button>
-      <button onclick="handleSignIn()">Login</button>
+      
+      <div id="loginPanel">
+        <input type="email" id="loginEmail" placeholder="Email">
+        <input type="password" id="loginPassword" placeholder="Password">
+        <button onclick="doLogin()">Login</button>
+        <div class="switch-mode">
+          Don't have an account? <a onclick="showSignupPanel()">Create Account</a>
+        </div>
+      </div>
+
+      <div id="signupPanel" style="display: none;">
+        <input type="email" id="signupEmail" placeholder="Email">
+        <input type="password" id="signupPassword" placeholder="Password (min 6 characters)">
+        <button onclick="doSignup()" class="signup-btn">Create Account</button>
+        <div class="switch-mode">
+          Already have an account? <a onclick="showLoginPanel()">Back to Login</a>
+        </div>
+      </div>
     </div>
   </div>
 
+  <!-- MAIN APP SCREEN -->
   <div id="appScreen" class="app-screen">
     <div class="header">
       <h1>? World Cup Predictor</h1>
       <div>
-        <span id="userEmail"></span>
-        <button class="logout-btn" onclick="handleLogout()">Logout</button>
+        <span id="userEmailDisplay" style="margin-right: 15px;"></span>
+        <button class="logout-btn" onclick="doLogout()">Logout</button>
       </div>
     </div>
 
     <div class="section">
-      <h2>?? Matches</h2>
+      <h2>?? Upcoming Matches</h2>
       <div id="matchesContainer" class="matches-grid"></div>
     </div>
 
@@ -222,31 +320,15 @@
   </div>
 </div>
 
-<div class="debug-panel" id="debugPanel">
-  Console: Ready<br>
-  <span id="debugStatus"></span>
-</div>
-
 <script>
+// Supabase configuration
 const supabaseUrl = "https://igatvhqatxrhgnshmdld.supabase.co";
 const supabaseAnonKey = "sb_publishable_kZYMgSK-0VcalUaTuo7gfQ_7cMMse21";
 const supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
 
 let currentUser = null;
 
-function debugLog(message) {
-  console.log(message);
-  const debugSpan = document.getElementById('debugStatus');
-  if (debugSpan) {
-    debugSpan.innerHTML = message + '<br>' + debugSpan.innerHTML;
-    setTimeout(() => {
-      if (debugSpan.innerHTML === message + '<br>') {
-        debugSpan.innerHTML = '';
-      }
-    }, 5000);
-  }
-}
-
+// Helper function to show notifications
 function showNotification(message, isError = false) {
   const notification = document.createElement('div');
   notification.className = 'notification';
@@ -256,14 +338,24 @@ function showNotification(message, isError = false) {
   notification.textContent = message;
   document.body.appendChild(notification);
   setTimeout(() => notification.remove(), 3000);
-  debugLog(message);
+  console.log(message);
 }
 
-async function handleSignUp() {
-  const email = document.getElementById('email').value;
-  const password = document.getElementById('password').value;
-  
-  debugLog(`Attempting signup with: ${email}`);
+// Toggle between login and signup
+function showSignupPanel() {
+  document.getElementById('loginPanel').style.display = 'none';
+  document.getElementById('signupPanel').style.display = 'block';
+}
+
+function showLoginPanel() {
+  document.getElementById('signupPanel').style.display = 'none';
+  document.getElementById('loginPanel').style.display = 'block';
+}
+
+// Signup function
+async function doSignup() {
+  const email = document.getElementById('signupEmail').value;
+  const password = document.getElementById('signupPassword').value;
   
   if (!email || !password) {
     showNotification('Please enter email and password', true);
@@ -279,33 +371,32 @@ async function handleSignUp() {
     const { data, error } = await supabase.auth.signUp({
       email: email,
       password: password,
+      options: {
+        data: {
+          username: email.split('@')[0]
+        }
+      }
     });
     
-    if (error) {
-      debugLog(`Signup error: ${error.message}`);
-      throw error;
-    }
-    
-    debugLog(`Signup response: ${JSON.stringify(data)}`);
+    if (error) throw error;
     
     if (data.user) {
       showNotification('Account created successfully! You can now login.');
-      document.getElementById('email').value = '';
-      document.getElementById('password').value = '';
-    } else {
-      showNotification('Account created but please check email for confirmation', true);
+      // Clear form
+      document.getElementById('signupEmail').value = '';
+      document.getElementById('signupPassword').value = '';
+      // Switch to login panel
+      showLoginPanel();
     }
   } catch (error) {
-    debugLog(`Error: ${error.message}`);
     showNotification('Sign up error: ' + error.message, true);
   }
 }
 
-async function handleSignIn() {
-  const email = document.getElementById('email').value;
-  const password = document.getElementById('password').value;
-  
-  debugLog(`Attempting login with: ${email}`);
+// Login function
+async function doLogin() {
+  const email = document.getElementById('loginEmail').value;
+  const password = document.getElementById('loginPassword').value;
   
   if (!email || !password) {
     showNotification('Please enter email and password', true);
@@ -318,32 +409,31 @@ async function handleSignIn() {
       password: password
     });
     
-    if (error) {
-      debugLog(`Login error: ${error.message}`);
-      throw error;
-    }
+    if (error) throw error;
     
-    debugLog(`Login success: ${data.user.email}`);
     currentUser = data.user;
-    showNotification('Welcome!');
+    showNotification('Welcome back, ' + currentUser.email + '!');
     showApp();
   } catch (error) {
-    debugLog(`Error: ${error.message}`);
     showNotification('Login failed: ' + error.message, true);
   }
 }
 
-async function handleLogout() {
+// Logout function
+async function doLogout() {
   await supabase.auth.signOut();
   currentUser = null;
   document.getElementById('authScreen').style.display = 'flex';
   document.getElementById('appScreen').style.display = 'none';
-  showNotification('Logged out');
+  // Clear login form
+  document.getElementById('loginEmail').value = '';
+  document.getElementById('loginPassword').value = '';
+  showNotification('Logged out successfully');
 }
 
+// Check auth state on page load
 async function checkAuth() {
   const { data: { session } } = await supabase.auth.getSession();
-  debugLog(`Session check: ${session ? 'Logged in' : 'Not logged in'}`);
   
   if (session) {
     currentUser = session.user;
@@ -351,58 +441,107 @@ async function checkAuth() {
   } else {
     document.getElementById('authScreen').style.display = 'flex';
     document.getElementById('appScreen').style.display = 'none';
+    showLoginPanel();
   }
 }
 
+// Show main app
 async function showApp() {
   document.getElementById('authScreen').style.display = 'none';
   document.getElementById('appScreen').style.display = 'block';
-  document.getElementById('userEmail').textContent = currentUser.email;
+  document.getElementById('userEmailDisplay').textContent = currentUser.email;
   
   await loadMatches();
   await loadLeaderboard();
 }
 
+// Load matches
 async function loadMatches() {
   const container = document.getElementById('matchesContainer');
-  container.innerHTML = '<div>Loading matches...</div>';
+  container.innerHTML = '<div class="loading">Loading matches...</div>';
   
   try {
     const { data: matches, error } = await supabase
       .from('matches')
       .select('*')
-      .order('kickoff_time');
+      .order('kickoff_time', { ascending: true });
     
     if (error) throw error;
     
     if (!matches || matches.length === 0) {
-      container.innerHTML = '<div>No matches available</div>';
+      container.innerHTML = '<div class="loading">No matches available. Please add matches in Supabase.</div>';
       return;
+    }
+    
+    // Get user's predictions
+    const { data: predictions } = await supabase
+      .from('predictions')
+      .select('*')
+      .eq('user_id', currentUser.id);
+    
+    const predictionMap = {};
+    if (predictions) {
+      predictions.forEach(p => {
+        predictionMap[p.match_id] = p;
+      });
     }
     
     container.innerHTML = '';
     
     for (const match of matches) {
-      const matchDiv = document.createElement('div');
-      matchDiv.className = 'match-card';
-      matchDiv.innerHTML = `
-        <div class="match-title">${match.team_a} vs ${match.team_b}</div>
-        <div class="prediction-inputs">
-          <input type="number" id="score-a-${match.id}" placeholder="${match.team_a}">
-          <span>vs</span>
-          <input type="number" id="score-b-${match.id}" placeholder="${match.team_b}">
+      const isDeadlinePassed = new Date(match.kickoff_time) < new Date();
+      const userPrediction = predictionMap[match.id];
+      const isFinished = match.finished;
+      
+      const matchCard = document.createElement('div');
+      matchCard.className = 'match-card';
+      
+      let predictionDisplay = '';
+      if (userPrediction) {
+        predictionDisplay = `
+          <div style="margin-top: 10px; padding: 8px; background: rgba(255,255,255,0.1); border-radius: 6px; font-size: 12px;">
+            Your prediction: ${userPrediction.pred_score_a} - ${userPrediction.pred_score_b}
+            ${userPrediction.points > 0 ? ` | Points: ${userPrediction.points}` : ''}
+          </div>
+        `;
+      }
+      
+      matchCard.innerHTML = `
+        <div class="match-title">
+          ${match.team_a} vs ${match.team_b}
+          ${match.is_knockout ? ' ?? Knockout' : ' ?? Group'}
         </div>
-        <button class="submit-btn" onclick="submitPrediction('${match.id}')">Submit Prediction</button>
-        <div class="deadline">Kickoff: ${new Date(match.kickoff_time).toLocaleString()}</div>
+        ${isFinished ? `<div style="text-align: center; color: #fbbf24; margin-bottom: 10px;">Final: ${match.score_a} - ${match.score_b}</div>` : ''}
+        ${!isDeadlinePassed && !isFinished ? `
+          <div class="prediction-inputs">
+            <input type="number" id="score-a-${match.id}" placeholder="${match.team_a}" value="${userPrediction ? userPrediction.pred_score_a : ''}">
+            <span>vs</span>
+            <input type="number" id="score-b-${match.id}" placeholder="${match.team_b}" value="${userPrediction ? userPrediction.pred_score_b : ''}">
+          </div>
+          <button class="submit-btn" onclick="submitPrediction('${match.id}')">
+            ${userPrediction ? 'Update' : 'Submit'} Prediction
+          </button>
+        ` : isFinished ? `
+          <div style="text-align: center; color: #aaa;">Match Finished</div>
+          ${predictionDisplay}
+        ` : `
+          <div style="text-align: center; color: #fbbf24;">? Deadline Passed</div>
+          ${predictionDisplay}
+        `}
+        <div class="deadline">
+          ?? Kickoff: ${new Date(match.kickoff_time).toLocaleString()}
+        </div>
       `;
-      container.appendChild(matchDiv);
+      
+      container.appendChild(matchCard);
     }
   } catch (error) {
-    debugLog(`Error loading matches: ${error.message}`);
+    console.error('Error:', error);
     container.innerHTML = '<div class="error">Error loading matches</div>';
   }
 }
 
+// Submit prediction
 async function submitPrediction(matchId) {
   const scoreA = document.getElementById(`score-a-${matchId}`).value;
   const scoreB = document.getElementById(`score-b-${matchId}`).value;
@@ -413,73 +552,93 @@ async function submitPrediction(matchId) {
   }
   
   try {
-    const { error } = await supabase
+    // Check if prediction exists
+    const { data: existing } = await supabase
       .from('predictions')
-      .insert({
-        user_id: currentUser.id,
-        match_id: matchId,
-        pred_score_a: parseInt(scoreA),
-        pred_score_b: parseInt(scoreB)
-      });
+      .select('id')
+      .eq('user_id', currentUser.id)
+      .eq('match_id', matchId)
+      .maybeSingle();
+    
+    let error;
+    
+    if (existing) {
+      // Update
+      const { error: updateError } = await supabase
+        .from('predictions')
+        .update({
+          pred_score_a: parseInt(scoreA),
+          pred_score_b: parseInt(scoreB)
+        })
+        .eq('id', existing.id);
+      error = updateError;
+    } else {
+      // Insert
+      const { error: insertError } = await supabase
+        .from('predictions')
+        .insert({
+          user_id: currentUser.id,
+          match_id: matchId,
+          pred_score_a: parseInt(scoreA),
+          pred_score_b: parseInt(scoreB)
+        });
+      error = insertError;
+    }
     
     if (error) throw error;
     
     showNotification('Prediction saved!');
+    await loadMatches();
   } catch (error) {
-    showNotification('Error: ' + error.message, true);
+    if (error.message.includes('deadline')) {
+      showNotification('Deadline passed!', true);
+    } else {
+      showNotification('Error: ' + error.message, true);
+    }
   }
 }
 
+// Load leaderboard
 async function loadLeaderboard() {
   const container = document.getElementById('leaderboardContainer');
-  container.innerHTML = '<div>Loading leaderboard...</div>';
+  container.innerHTML = '<div class="loading">Loading leaderboard...</div>';
   
   try {
-    const { data: profiles, error } = await supabase
-      .from('profiles')
-      .select('username, total_points')
-      .order('total_points', { ascending: false })
-      .limit(10);
+    const { data: leaderboard, error } = await supabase
+      .from('leaderboard')
+      .select('*')
+      .limit(20);
     
     if (error) throw error;
     
-    if (!profiles || profiles.length === 0) {
-      container.innerHTML = '<div>No users yet</div>';
+    if (!leaderboard || leaderboard.length === 0) {
+      container.innerHTML = '<div class="loading">No users yet</div>';
       return;
     }
     
-    container.innerHTML = '';
-    profiles.forEach((user, index) => {
+    container.innerHTML = '<div class="leaderboard-list"></div>';
+    const list = container.querySelector('.leaderboard-list');
+    
+    leaderboard.forEach((user, index) => {
       const item = document.createElement('div');
       item.className = 'leaderboard-item';
       item.innerHTML = `
-        <span>${index + 1}. ${user.username || 'User'}</span>
-        <span>${user.total_points || 0} pts</span>
+        <span>
+          <span class="leaderboard-rank">${index + 1}.</span> 
+          ${user.username || 'User'}
+        </span>
+        <span style="font-weight: bold; color: #fbbf24;">${user.total_points || 0} pts</span>
       `;
-      container.appendChild(item);
+      list.appendChild(item);
     });
   } catch (error) {
-    debugLog(`Error loading leaderboard: ${error.message}`);
-    container.innerHTML = '<div>Error loading leaderboard</div>';
+    console.error('Error:', error);
+    container.innerHTML = '<div class="error">Error loading leaderboard</div>';
   }
 }
 
-// Check auth on load
+// Initialize
 checkAuth();
-
-// Add manual refresh button to console
-window.debug = {
-  checkSession: async () => {
-    const { data } = await supabase.auth.getSession();
-    console.log('Session:', data);
-    return data;
-  },
-  listUsers: async () => {
-    const { data } = await supabase.from('profiles').select('*');
-    console.log('Users:', data);
-    return data;
-  }
-};
 </script>
 </body>
 </html>
