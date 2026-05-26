@@ -80,6 +80,14 @@
       transform: translateY(-2px);
     }
 
+    .signup-btn {
+      background: #48bb78 !important;
+    }
+
+    .signup-btn:hover {
+      background: #38a169 !important;
+    }
+
     /* Main App */
     .app-screen {
       display: none;
@@ -242,11 +250,6 @@
       border-radius: 10px;
     }
 
-    .admin-section h3 {
-      margin-bottom: 10px;
-      font-size: 18px;
-    }
-
     .admin-section select, .admin-section input {
       padding: 8px;
       margin: 5px;
@@ -299,12 +302,28 @@
       color: #667eea;
       text-decoration: underline;
       font-size: 14px;
+      margin: 0;
+      padding: 5px;
     }
 
     .switch-mode button:hover {
       background: none;
       transform: none;
       color: #5a67d8;
+    }
+
+    .loading-spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
     }
   </style>
 </head>
@@ -320,18 +339,18 @@
       <div id="loginForm">
         <input type="email" id="email" placeholder="Email" autocomplete="email">
         <input type="password" id="password" placeholder="Password" autocomplete="current-password">
-        <button onclick="handleSignIn()">Login</button>
+        <button onclick="handleSignIn()" id="loginBtn">Login</button>
         <div class="switch-mode">
           <p>Don't have an account?</p>
           <button onclick="showSignup()">Create Account</button>
         </div>
       </div>
 
-      <!-- Signup Form (hidden by default) -->
+      <!-- Signup Form -->
       <div id="signupForm" style="display: none;">
         <input type="email" id="signupEmail" placeholder="Email" autocomplete="email">
         <input type="password" id="signupPassword" placeholder="Password (min 6 characters)" autocomplete="new-password">
-        <button onclick="handleSignUp()">Sign Up</button>
+        <button onclick="handleSignUp()" id="signupBtn" class="signup-btn">Create Account</button>
         <div class="switch-mode">
           <p>Already have an account?</p>
           <button onclick="showLogin()">Back to Login</button>
@@ -418,6 +437,7 @@ function showLogin() {
 async function handleSignUp() {
   const email = document.getElementById('signupEmail').value;
   const password = document.getElementById('signupPassword').value;
+  const signupBtn = document.getElementById('signupBtn');
   
   if (!email || !password) {
     showNotification('Please enter email and password', true);
@@ -428,6 +448,11 @@ async function handleSignUp() {
     showNotification('Password must be at least 6 characters', true);
     return;
   }
+  
+  // Show loading state
+  const originalText = signupBtn.textContent;
+  signupBtn.textContent = 'Creating account...';
+  signupBtn.disabled = true;
   
   try {
     const { data, error } = await supabase.auth.signUp({
@@ -443,24 +468,35 @@ async function handleSignUp() {
     if (error) throw error;
     
     if (data.user) {
-      showNotification('Account created successfully! Please login.');
-      showLogin();
+      showNotification('Account created successfully! You can now login.');
+      // Clear form
       document.getElementById('signupEmail').value = '';
       document.getElementById('signupPassword').value = '';
+      // Switch to login form
+      showLogin();
     }
   } catch (error) {
     showNotification('Sign up error: ' + error.message, true);
+  } finally {
+    signupBtn.textContent = originalText;
+    signupBtn.disabled = false;
   }
 }
 
 async function handleSignIn() {
   const email = document.getElementById('email').value;
   const password = document.getElementById('password').value;
+  const loginBtn = document.getElementById('loginBtn');
   
   if (!email || !password) {
     showNotification('Please enter email and password', true);
     return;
   }
+  
+  // Show loading state
+  const originalText = loginBtn.textContent;
+  loginBtn.textContent = 'Logging in...';
+  loginBtn.disabled = true;
   
   try {
     const { data, error } = await supabase.auth.signInWithPassword({
@@ -475,6 +511,9 @@ async function handleSignIn() {
     showApp();
   } catch (error) {
     showNotification('Login failed: ' + error.message, true);
+  } finally {
+    loginBtn.textContent = originalText;
+    loginBtn.disabled = false;
   }
 }
 
@@ -502,7 +541,7 @@ async function checkAuth() {
   } else {
     document.getElementById('authScreen').style.display = 'flex';
     document.getElementById('appScreen').style.display = 'none';
-    showLogin(); // Show login form by default
+    showLogin();
   }
 }
 
@@ -515,8 +554,8 @@ async function showApp() {
   document.getElementById('appScreen').style.display = 'block';
   document.getElementById('userEmail').textContent = currentUser.email;
   
-  // Show admin panel for specific admin emails (you can add admin emails here)
-  const adminEmails = ['admin@example.com']; // Add admin emails here
+  // Check if user is admin (you can add admin emails here)
+  const adminEmails = ['admin@example.com'];
   if (adminEmails.includes(currentUser.email)) {
     document.getElementById('adminSection').style.display = 'block';
     await loadAdminMatches();
@@ -528,7 +567,7 @@ async function showApp() {
 
 async function loadMatches() {
   const container = document.getElementById('matchesContainer');
-  container.innerHTML = '<div class="loading">Loading matches...</div>';
+  container.innerHTML = '<div class="loading"><div class="loading-spinner"></div> Loading matches...</div>';
   
   try {
     const { data: matches, error } = await supabase
@@ -687,7 +726,7 @@ async function submitPrediction(matchId, isKnockout) {
     if (error) throw error;
     
     showNotification('Prediction saved successfully!');
-    await loadMatches(); // Reload to show updated prediction
+    await loadMatches();
   } catch (error) {
     if (error.message.includes('deadline passed')) {
       showNotification('Deadline passed! Cannot submit prediction after match starts.', true);
@@ -699,7 +738,7 @@ async function submitPrediction(matchId, isKnockout) {
 
 async function loadLeaderboard() {
   const container = document.getElementById('leaderboardContainer');
-  container.innerHTML = '<div class="loading">Loading leaderboard...</div>';
+  container.innerHTML = '<div class="loading"><div class="loading-spinner"></div> Loading leaderboard...</div>';
   
   try {
     const { data: leaderboard, error } = await supabase
@@ -781,7 +820,6 @@ async function adminSetResult() {
   }
   
   try {
-    // Get match details first
     const { data: match } = await supabase
       .from('matches')
       .select('is_knockout')
@@ -807,12 +845,10 @@ async function adminSetResult() {
     
     showNotification('Match result set! Points have been calculated automatically.');
     
-    // Reset form
     document.getElementById('adminScoreA').value = '';
     document.getElementById('adminScoreB').value = '';
     document.getElementById('adminAdvancingTeam').value = '';
     
-    // Refresh everything
     await loadAdminMatches();
     await loadMatches();
     await loadLeaderboard();
