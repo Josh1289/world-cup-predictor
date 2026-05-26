@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
   <title>World Cup Predictor</title>
@@ -170,6 +170,29 @@
       border: 2px solid rgba(255,255,255,0.3);
       background: rgba(255,255,255,0.9);
       border-radius: 8px;
+      color: #333;
+    }
+
+    .knockout-select-container {
+      margin: 15px 0;
+      text-align: center;
+    }
+
+    .knockout-select-container label {
+      display: block;
+      font-size: 13px;
+      margin-bottom: 6px;
+      color: #e2e8f0;
+    }
+
+    .knockout-select-container select {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      background: white;
+      color: #333;
+      font-size: 15px;
     }
 
     .submit-btn {
@@ -242,14 +265,8 @@
     }
 
     @keyframes slideIn {
-      from {
-        transform: translateX(100%);
-        opacity: 0;
-      }
-      to {
-        transform: translateX(0);
-        opacity: 1;
-      }
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
     }
 
     .switch-mode {
@@ -273,7 +290,6 @@
 
 <body>
 <div class="container">
-  <!-- LOGIN SCREEN -->
   <div id="authScreen" class="auth-screen">
     <div class="auth-card">
       <h1>? World Cup Predictor</h1>
@@ -298,7 +314,6 @@
     </div>
   </div>
 
-  <!-- MAIN APP SCREEN -->
   <div id="appScreen" class="app-screen">
     <div class="header">
       <h1>? World Cup Predictor</h1>
@@ -321,14 +336,14 @@
 </div>
 
 <script>
-// Supabase configuration
+// Fixed Supabase Configuration URL
 const supabaseUrl = "https://igatvhqatxrhgnshmdld.supabase.co";
-const supabaseAnonKey = "sb_publishable_kZYMgSK-0VcalUaTuo7gfQ_7cMMse21";
-const supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
+// PASTE YOUR ACTUAL MASSIVE ANON KEY (STARTING WITH eyJ...) HERE:
+const supabaseAnonKey = "sb_publishable_kZYMgSK-0VcalUaTuo7gfQ_7cMMse21"; 
 
+const supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
 let currentUser = null;
 
-// Helper function to show notifications
 function showNotification(message, isError = false) {
   const notification = document.createElement('div');
   notification.className = 'notification';
@@ -338,10 +353,8 @@ function showNotification(message, isError = false) {
   notification.textContent = message;
   document.body.appendChild(notification);
   setTimeout(() => notification.remove(), 3000);
-  console.log(message);
 }
 
-// Toggle between login and signup
 function showSignupPanel() {
   document.getElementById('loginPanel').style.display = 'none';
   document.getElementById('signupPanel').style.display = 'block';
@@ -352,7 +365,6 @@ function showLoginPanel() {
   document.getElementById('loginPanel').style.display = 'block';
 }
 
-// Signup function
 async function doSignup() {
   const email = document.getElementById('signupEmail').value;
   const password = document.getElementById('signupPassword').value;
@@ -362,38 +374,27 @@ async function doSignup() {
     return;
   }
   
-  if (password.length < 6) {
-    showNotification('Password must be at least 6 characters', true);
-    return;
-  }
-  
   try {
     const { data, error } = await supabase.auth.signUp({
       email: email,
       password: password,
       options: {
-        data: {
-          username: email.split('@')[0]
-        }
+        data: { username: email.split('@')[0] }
       }
     });
     
     if (error) throw error;
     
     if (data.user) {
-      showNotification('Account created successfully! You can now login.');
-      // Clear form
-      document.getElementById('signupEmail').value = '';
-      document.getElementById('signupPassword').value = '';
-      // Switch to login panel
-      showLoginPanel();
+      showNotification('Account created! Logging you in...');
+      // Auto logging in right after registration
+      await doLoginDirectly(email, password);
     }
   } catch (error) {
-    showNotification('Sign up error: ' + error.message, true);
+    alert('SIGNUP FAILED: ' + error.message);
   }
 }
 
-// Login function
 async function doLogin() {
   const email = document.getElementById('loginEmail').value;
   const password = document.getElementById('loginPassword').value;
@@ -402,7 +403,10 @@ async function doLogin() {
     showNotification('Please enter email and password', true);
     return;
   }
-  
+  await doLoginDirectly(email, password);
+}
+
+async function doLoginDirectly(email, password) {
   try {
     const { data, error } = await supabase.auth.signInWithPassword({
       email: email,
@@ -412,29 +416,23 @@ async function doLogin() {
     if (error) throw error;
     
     currentUser = data.user;
-    showNotification('Welcome back, ' + currentUser.email + '!');
+    showNotification('Welcome back!');
     showApp();
   } catch (error) {
-    showNotification('Login failed: ' + error.message, true);
+    alert('LOGIN FAILED: ' + error.message);
   }
 }
 
-// Logout function
 async function doLogout() {
   await supabase.auth.signOut();
   currentUser = null;
   document.getElementById('authScreen').style.display = 'flex';
   document.getElementById('appScreen').style.display = 'none';
-  // Clear login form
-  document.getElementById('loginEmail').value = '';
-  document.getElementById('loginPassword').value = '';
-  showNotification('Logged out successfully');
+  showLoginPanel();
 }
 
-// Check auth state on page load
 async function checkAuth() {
   const { data: { session } } = await supabase.auth.getSession();
-  
   if (session) {
     currentUser = session.user;
     showApp();
@@ -445,7 +443,6 @@ async function checkAuth() {
   }
 }
 
-// Show main app
 async function showApp() {
   document.getElementById('authScreen').style.display = 'none';
   document.getElementById('appScreen').style.display = 'block';
@@ -455,7 +452,6 @@ async function showApp() {
   await loadLeaderboard();
 }
 
-// Load matches
 async function loadMatches() {
   const container = document.getElementById('matchesContainer');
   container.innerHTML = '<div class="loading">Loading matches...</div>';
@@ -469,11 +465,10 @@ async function loadMatches() {
     if (error) throw error;
     
     if (!matches || matches.length === 0) {
-      container.innerHTML = '<div class="loading">No matches available. Please add matches in Supabase.</div>';
+      container.innerHTML = '<div class="loading">No matches planned yet.</div>';
       return;
     }
     
-    // Get user's predictions
     const { data: predictions } = await supabase
       .from('predictions')
       .select('*')
@@ -481,9 +476,7 @@ async function loadMatches() {
     
     const predictionMap = {};
     if (predictions) {
-      predictions.forEach(p => {
-        predictionMap[p.match_id] = p;
-      });
+      predictions.forEach(p => { predictionMap[p.match_id] = p; });
     }
     
     container.innerHTML = '';
@@ -499,9 +492,24 @@ async function loadMatches() {
       let predictionDisplay = '';
       if (userPrediction) {
         predictionDisplay = `
-          <div style="margin-top: 10px; padding: 8px; background: rgba(255,255,255,0.1); border-radius: 6px; font-size: 12px;">
-            Your prediction: ${userPrediction.pred_score_a} - ${userPrediction.pred_score_b}
-            ${userPrediction.points > 0 ? ` | Points: ${userPrediction.points}` : ''}
+          <div style="margin-top: 10px; padding: 8px; background: rgba(255,255,255,0.1); border-radius: 6px; font-size: 13px;">
+            Predicted: <b>${userPrediction.pred_score_a} - ${userPrediction.pred_score_b}</b>
+            ${match.is_knockout && userPrediction.pred_advancing_team ? `<br>To Advance: <b>${userPrediction.pred_advancing_team}</b>` : ''}
+            ${isFinished ? `<br><span style="color:#fbbf24;">Earned: ${userPrediction.points} pts</span>` : ''}
+          </div>
+        `;
+      }
+
+      let knockoutUI = '';
+      if (match.is_knockout && !isDeadlinePassed && !isFinished) {
+        knockoutUI = `
+          <div class="knockout-select-container">
+            <label>Tiebreaker/Penalties Option: Who advances?</label>
+            <select id="advance-${match.id}">
+              <option value="" disabled ${!userPrediction ? 'selected' : ''}>-- Choose Advancing Team --</option>
+              <option value="${match.team_a}" ${userPrediction?.pred_advancing_team === match.team_a ? 'selected' : ''}>${match.team_a}</option>
+              <option value="${match.team_b}" ${userPrediction?.pred_advancing_team === match.team_b ? 'selected' : ''}>${match.team_b}</option>
+            </select>
           </div>
         `;
       }
@@ -509,50 +517,57 @@ async function loadMatches() {
       matchCard.innerHTML = `
         <div class="match-title">
           ${match.team_a} vs ${match.team_b}
-          ${match.is_knockout ? ' ?? Knockout' : ' ?? Group'}
+          ${match.is_knockout ? ' ?? Knockout stage' : ' ?? Group stage'}
         </div>
-        ${isFinished ? `<div style="text-align: center; color: #fbbf24; margin-bottom: 10px;">Final: ${match.score_a} - ${match.score_b}</div>` : ''}
+        ${isFinished ? `<div style="text-align: center; color: #fbbf24; font-weight:bold; margin-bottom: 10px;">Final Score: ${match.score_a} - ${match.score_b} ${match.advancing_team ? `(${match.advancing_team} Adv.)` : ''}</div>` : ''}
+        
         ${!isDeadlinePassed && !isFinished ? `
           <div class="prediction-inputs">
-            <input type="number" id="score-a-${match.id}" placeholder="${match.team_a}" value="${userPrediction ? userPrediction.pred_score_a : ''}">
-            <span>vs</span>
-            <input type="number" id="score-b-${match.id}" placeholder="${match.team_b}" value="${userPrediction ? userPrediction.pred_score_b : ''}">
+            <input type="number" id="score-a-${match.id}" placeholder="0" value="${userPrediction ? userPrediction.pred_score_a : ''}" min="0">
+            <span>-</span>
+            <input type="number" id="score-b-${match.id}" placeholder="0" value="${userPrediction ? userPrediction.pred_score_b : ''}" min="0">
           </div>
-          <button class="submit-btn" onclick="submitPrediction('${match.id}')">
-            ${userPrediction ? 'Update' : 'Submit'} Prediction
+          ${knockoutUI}
+          <button class="submit-btn" onclick="submitPrediction('${match.id}', ${match.is_knockout})">
+            ${userPrediction ? 'Update' : 'Lock In'} Prediction
           </button>
-        ` : isFinished ? `
-          <div style="text-align: center; color: #aaa;">Match Finished</div>
           ${predictionDisplay}
         ` : `
-          <div style="text-align: center; color: #fbbf24;">? Deadline Passed</div>
+          <div style="text-align: center; color: ${isFinished ? '#aaa' : '#fbbf24'}; font-size:14px; margin:10px 0;">
+            ${isFinished ? '?? Match Completed' : '? Deadline Passed (Locked)'}
+          </div>
           ${predictionDisplay}
         `}
         <div class="deadline">
           ?? Kickoff: ${new Date(match.kickoff_time).toLocaleString()}
         </div>
       `;
-      
       container.appendChild(matchCard);
     }
   } catch (error) {
-    console.error('Error:', error);
-    container.innerHTML = '<div class="error">Error loading matches</div>';
+    container.innerHTML = '<div class="error">Error loading fixtures.</div>';
   }
 }
 
-// Submit prediction
-async function submitPrediction(matchId) {
+async function submitPrediction(matchId, isKnockout) {
   const scoreA = document.getElementById(`score-a-${matchId}`).value;
   const scoreB = document.getElementById(`score-b-${matchId}`).value;
+  let advancingTeam = null;
   
-  if (!scoreA || !scoreB) {
-    showNotification('Please enter both scores', true);
+  if (scoreA === '' || scoreB === '') {
+    showNotification('Please fill in scores for both squads.', true);
     return;
+  }
+
+  if (isKnockout) {
+    advancingTeam = document.getElementById(`advance-${matchId}`).value;
+    if (!advancingTeam) {
+      showNotification('Selection required: Choose a team to advance.', true);
+      return;
+    }
   }
   
   try {
-    // Check if prediction exists
     const { data: existing } = await supabase
       .from('predictions')
       .select('id')
@@ -561,48 +576,38 @@ async function submitPrediction(matchId) {
       .maybeSingle();
     
     let error;
+    const submissionPayload = {
+      pred_score_a: parseInt(scoreA),
+      pred_score_b: parseInt(scoreB),
+      pred_advancing_team: advancingTeam
+    };
     
     if (existing) {
-      // Update
       const { error: updateError } = await supabase
         .from('predictions')
-        .update({
-          pred_score_a: parseInt(scoreA),
-          pred_score_b: parseInt(scoreB)
-        })
+        .update(submissionPayload)
         .eq('id', existing.id);
       error = updateError;
     } else {
-      // Insert
+      submissionPayload.user_id = currentUser.id;
+      submissionPayload.match_id = matchId;
       const { error: insertError } = await supabase
         .from('predictions')
-        .insert({
-          user_id: currentUser.id,
-          match_id: matchId,
-          pred_score_a: parseInt(scoreA),
-          pred_score_b: parseInt(scoreB)
-        });
+        .insert(submissionPayload);
       error = insertError;
     }
     
     if (error) throw error;
     
-    showNotification('Prediction saved!');
+    showNotification('Prediction saved successfully!');
     await loadMatches();
   } catch (error) {
-    if (error.message.includes('deadline')) {
-      showNotification('Deadline passed!', true);
-    } else {
-      showNotification('Error: ' + error.message, true);
-    }
+    showNotification(error.message, true);
   }
 }
 
-// Load leaderboard
 async function loadLeaderboard() {
   const container = document.getElementById('leaderboardContainer');
-  container.innerHTML = '<div class="loading">Loading leaderboard...</div>';
-  
   try {
     const { data: leaderboard, error } = await supabase
       .from('leaderboard')
@@ -612,7 +617,7 @@ async function loadLeaderboard() {
     if (error) throw error;
     
     if (!leaderboard || leaderboard.length === 0) {
-      container.innerHTML = '<div class="loading">No users yet</div>';
+      container.innerHTML = '<div class="loading">Waiting for active profiles...</div>';
       return;
     }
     
@@ -624,20 +629,19 @@ async function loadLeaderboard() {
       item.className = 'leaderboard-item';
       item.innerHTML = `
         <span>
-          <span class="leaderboard-rank">${index + 1}.</span> 
-          ${user.username || 'User'}
+          <span class="leaderboard-rank">#${index + 1}</span> 
+          ${user.username || 'Anonymous Player'}
         </span>
         <span style="font-weight: bold; color: #fbbf24;">${user.total_points || 0} pts</span>
       `;
       list.appendChild(item);
     });
   } catch (error) {
-    console.error('Error:', error);
-    container.innerHTML = '<div class="error">Error loading leaderboard</div>';
+    container.innerHTML = '<div class="error">Could not retrieve leaderboard standings.</div>';
   }
 }
 
-// Initialize
+// Check initial authentication states
 checkAuth();
 </script>
 </body>
