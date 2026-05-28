@@ -3,258 +3,134 @@
 <head>
   <title>World Cup Predictor</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #1a472a;
-      margin: 0;
-      padding: 20px;
-      color: white;
-    }
-    .container {
-      max-width: 500px;
-      margin: 100px auto;
-      background: rgba(0,0,0,0.8);
-      padding: 30px;
-      border-radius: 10px;
-    }
-    input {
-      width: 100%;
-      padding: 10px;
-      margin: 10px 0;
-      border-radius: 5px;
-      border: none;
-      font-size: 16px;
-    }
-    button {
-      width: 100%;
-      padding: 12px;
-      margin: 10px 0;
-      background: #ffd700;
-      color: #1a472a;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-weight: bold;
-      font-size: 16px;
-    }
-    button:hover {
-      background: #ffed4a;
-    }
-    .main-page {
-      display: none;
-    }
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: rgba(0,0,0,0.8);
-      padding: 15px;
-      border-radius: 10px;
-      margin-bottom: 20px;
-    }
-    .logout-btn {
-      width: auto;
-      padding: 8px 20px;
-      background: #dc3545;
-      color: white;
-    }
-    .card {
-      background: rgba(0,0,0,0.6);
-      padding: 20px;
-      border-radius: 10px;
-    }
-    .link {
-      color: #ffd700;
-      cursor: pointer;
-      text-decoration: underline;
-      text-align: center;
-      display: block;
-      margin-top: 15px;
-    }
-    .error {
-      background: #dc3545;
-      color: white;
-      padding: 10px;
-      border-radius: 5px;
-      margin-top: 10px;
-      text-align: center;
-    }
-    .success {
-      background: #28a745;
-      color: white;
-      padding: 10px;
-      border-radius: 5px;
-      margin-top: 10px;
-      text-align: center;
-    }
-  </style>
 </head>
-<body>
+<body style="font-family: Arial; padding: 20px; background: #1a472a; color: white;">
 
-<!-- LOGIN PAGE -->
-<div id="loginPage" class="container">
+<div id="loginBox" style="max-width: 400px; margin: 100px auto; background: black; padding: 30px; border-radius: 10px;">
   <h2 style="text-align:center;">WORLD CUP 2026</h2>
   
-  <div id="loginForm">
-    <input type="email" id="email" placeholder="Email">
-    <input type="password" id="password" placeholder="Password">
-    <button id="signInBtn">SIGN IN</button>
-    <div class="link" id="showSignupLink">Create New Account</div>
-  </div>
+  <input type="email" id="email" placeholder="Email" style="width:100%; padding:10px; margin:10px 0;">
+  <input type="password" id="password" placeholder="Password" style="width:100%; padding:10px; margin:10px 0;">
   
-  <div id="signupForm" style="display:none;">
-    <input type="email" id="signupEmail" placeholder="Email">
-    <input type="password" id="signupPassword" placeholder="Password (min 6 characters)">
-    <button id="signUpBtn">CREATE ACCOUNT</button>
-    <div class="link" id="showLoginLink">Back to Sign In</div>
-  </div>
+  <button id="loginBtn" style="width:100%; padding:10px; background: #ffd700; color: black; font-weight: bold; border: none; cursor: pointer;">LOGIN</button>
+  <button id="signupBtn" style="width:100%; padding:10px; margin-top:10px; background: #666; color: white; border: none; cursor: pointer;">CREATE ACCOUNT</button>
   
-  <div id="message"></div>
+  <div id="msg" style="margin-top:20px; text-align:center;"></div>
 </div>
 
-<!-- MAIN PAGE -->
-<div id="mainPage" class="main-page">
-  <div class="header">
-    <h2>WORLD CUP 2026</h2>
-    <div>
-      <span id="userEmailDisplay"></span>
-      <button id="logoutBtn" class="logout-btn">LOGOUT</button>
+<div id="mainPage" style="display:none; max-width: 800px; margin: 0 auto;">
+  <div style="background: black; padding: 20px; border-radius: 10px;">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <h2>WORLD CUP 2026</h2>
+      <button id="logoutBtn" style="background: #dc3545; color: white; padding: 10px 20px; border: none; cursor: pointer;">LOGOUT</button>
     </div>
-  </div>
-  <div class="card">
-    <h3>Welcome to World Cup Predictor 2026!</h3>
-    <p>You are successfully logged in.</p>
+    <div style="margin-top: 20px; padding: 20px; background: #2a2a2a; border-radius: 10px;">
+      <h3>Welcome! You are logged in.</h3>
+      <p id="userEmail"></p>
+    </div>
   </div>
 </div>
 
 <script>
-// Use a DIFFERENT variable name to avoid conflict
-const MY_SUPABASE_URL = "https://igatvhqatxrhgnshmdld.supabase.co";
-const MY_SUPABASE_KEY = "sb_publishable_kZYMgSK-0VcalUaTuo7gfQ_7cMMse21";
-const MySupabase = window.supabase.createClient(MY_SUPABASE_URL, MY_SUPABASE_KEY);
+// Supabase
+const _supabase = window.supabase.createClient(
+  "https://igatvhqatxrhgnshmdld.supabase.co",
+  "sb_publishable_kZYMgSK-0VcalUaTuo7gfQ_7cMMse21"
+);
 
-let currentUser = null;
+let user = null;
 
-function showMessage(msg, isError = false) {
-  const msgDiv = document.getElementById('message');
-  msgDiv.innerHTML = `<div class="${isError ? 'error' : 'success'}">${msg}</div>`;
-  setTimeout(() => {
-    msgDiv.innerHTML = '';
-  }, 3000);
+function showMsg(text, isError = false) {
+  const msgDiv = document.getElementById('msg');
+  msgDiv.innerHTML = text;
+  msgDiv.style.color = isError ? '#ff6b6b' : '#ffd700';
+  setTimeout(() => { msgDiv.innerHTML = ''; }, 3000);
 }
 
-// SIGN UP FUNCTION
-async function handleSignUp() {
-  const email = document.getElementById('signupEmail').value;
-  const password = document.getElementById('signupPassword').value;
-  
-  if (!email || !password) {
-    showMessage('Please enter email and password', true);
-    return;
-  }
-  
-  if (password.length < 6) {
-    showMessage('Password must be at least 6 characters', true);
-    return;
-  }
-  
-  showMessage('Creating account...');
-  
-  const { data, error } = await MySupabase.auth.signUp({
-    email: email,
-    password: password,
-  });
-  
-  if (error) {
-    showMessage('Error: ' + error.message, true);
-    console.error('Signup error:', error);
-  } else {
-    showMessage('Account created! Please sign in.');
-    document.getElementById('signupForm').style.display = 'none';
-    document.getElementById('loginForm').style.display = 'block';
-    document.getElementById('signupEmail').value = '';
-    document.getElementById('signupPassword').value = '';
-  }
-}
-
-// SIGN IN FUNCTION
-async function handleSignIn() {
+// LOGIN
+async function login() {
   const email = document.getElementById('email').value;
   const password = document.getElementById('password').value;
   
   if (!email || !password) {
-    showMessage('Please enter email and password', true);
+    showMsg('Enter email and password', true);
     return;
   }
   
-  showMessage('Signing in...');
+  showMsg('Logging in...');
   
-  const { data, error } = await MySupabase.auth.signInWithPassword({
+  const { data, error } = await _supabase.auth.signInWithPassword({
     email: email,
     password: password
   });
   
   if (error) {
-    showMessage('Login failed: ' + error.message, true);
-    console.error('Login error:', error);
+    showMsg(error.message, true);
   } else {
-    currentUser = data.user;
-    showMessage('Welcome ' + currentUser.email + '!');
-    showMainPage();
+    user = data.user;
+    document.getElementById('loginBox').style.display = 'none';
+    document.getElementById('mainPage').style.display = 'block';
+    document.getElementById('userEmail').innerHTML = 'Logged in as: ' + user.email;
   }
 }
 
-// LOGOUT FUNCTION
-async function handleLogout() {
-  await MySupabase.auth.signOut();
-  currentUser = null;
-  document.getElementById('loginPage').style.display = 'block';
+// SIGNUP
+async function signup() {
+  const email = document.getElementById('email').value;
+  const password = document.getElementById('password').value;
+  
+  if (!email || !password) {
+    showMsg('Enter email and password', true);
+    return;
+  }
+  
+  if (password.length < 6) {
+    showMsg('Password must be at least 6 characters', true);
+    return;
+  }
+  
+  showMsg('Creating account...');
+  
+  const { data, error } = await _supabase.auth.signUp({
+    email: email,
+    password: password,
+  });
+  
+  if (error) {
+    showMsg(error.message, true);
+  } else {
+    showMsg('Account created! You can now login.');
+  }
+}
+
+// LOGOUT
+async function logout() {
+  await _supabase.auth.signOut();
+  user = null;
+  document.getElementById('loginBox').style.display = 'block';
   document.getElementById('mainPage').style.display = 'none';
   document.getElementById('email').value = '';
   document.getElementById('password').value = '';
-  showMessage('Logged out');
 }
 
-// SHOW MAIN PAGE
-function showMainPage() {
-  document.getElementById('loginPage').style.display = 'none';
-  document.getElementById('mainPage').style.display = 'block';
-  document.getElementById('userEmailDisplay').textContent = currentUser.email;
-}
-
-// SWITCH FORMS
-function showSignupForm() {
-  document.getElementById('loginForm').style.display = 'none';
-  document.getElementById('signupForm').style.display = 'block';
-}
-
-function showLoginForm() {
-  document.getElementById('signupForm').style.display = 'none';
-  document.getElementById('loginForm').style.display = 'block';
-}
-
-// CHECK IF USER IS ALREADY LOGGED IN
-async function checkAuth() {
-  const { data: { session } } = await MySupabase.auth.getSession();
+// CHECK IF ALREADY LOGGED IN
+async function checkSession() {
+  const { data: { session } } = await _supabase.auth.getSession();
   if (session) {
-    currentUser = session.user;
-    showMainPage();
-  } else {
-    document.getElementById('loginPage').style.display = 'block';
-    document.getElementById('mainPage').style.display = 'none';
+    user = session.user;
+    document.getElementById('loginBox').style.display = 'none';
+    document.getElementById('mainPage').style.display = 'block';
+    document.getElementById('userEmail').innerHTML = 'Logged in as: ' + user.email;
   }
 }
 
-// SET UP BUTTONS
-document.getElementById('signInBtn').onclick = handleSignIn;
-document.getElementById('signUpBtn').onclick = handleSignUp;
-document.getElementById('logoutBtn').onclick = handleLogout;
-document.getElementById('showSignupLink').onclick = showSignupForm;
-document.getElementById('showLoginLink').onclick = showLoginForm;
+// BUTTONS
+document.getElementById('loginBtn').onclick = login;
+document.getElementById('signupBtn').onclick = signup;
+document.getElementById('logoutBtn').onclick = logout;
 
 // START
-checkAuth();
+checkSession();
 </script>
 </body>
 </html>
