@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
   <title>World Cup Predictor 2026</title>
@@ -569,9 +569,10 @@
 </div>
 
 <script>
-const SUPABASE_URL = "https://igatvhqatxrhgnshmdld.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_kZYMgSK-0VcalUaTuo7gfQ_7cMMse21";
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// Use a different variable name to avoid conflicts
+const SB_URL = "https://igatvhqatxrhgnshmdld.supabase.co";
+const SB_KEY = "sb_publishable_kZYMgSK-0VcalUaTuo7gfQ_7cMMse21";
+const supabaseClient = window.supabase.createClient(SB_URL, SB_KEY);
 
 let currentUser = null;
 let allMatches = [];
@@ -619,7 +620,7 @@ async function doSignup() {
   if (!email || !password) return showNotification('Please enter email and password', true);
   if (password.length < 6) return showNotification('Password must be at least 6 characters', true);
   
-  const { error } = await supabase.auth.signUp({ email, password });
+  const { error } = await supabaseClient.auth.signUp({ email, password });
   if (error) return showNotification('Sign up error: ' + error.message, true);
   showNotification('Account created! Please sign in.');
   showLoginPanel();
@@ -630,14 +631,14 @@ async function doLogin() {
   const password = document.getElementById('loginPassword').value;
   if (!email || !password) return showNotification('Please enter email and password', true);
   
-  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
   if (error) return showNotification('Login failed: ' + error.message, true);
   currentUser = data.user;
   showApp();
 }
 
 async function doLogout() {
-  await supabase.auth.signOut();
+  await supabaseClient.auth.signOut();
   currentUser = null;
   document.getElementById('authScreen').style.display = 'flex';
   document.getElementById('appScreen').style.display = 'none';
@@ -654,7 +655,7 @@ function showLoginPanel() {
 }
 
 async function checkAuth() {
-  const { data: { session } } = await supabase.auth.getSession();
+  const { data: { session } } = await supabaseClient.auth.getSession();
   if (session) {
     currentUser = session.user;
     showApp();
@@ -680,7 +681,7 @@ async function showApp() {
 }
 
 async function loadMatches() {
-  const { data: matches, error } = await supabase
+  const { data: matches, error } = await supabaseClient
     .from('matches')
     .select('*')
     .order('kickoff_time', { ascending: true });
@@ -717,7 +718,7 @@ async function renderMatchesGroupedByDay(matches) {
   const container = document.getElementById('matchesContainer');
   container.innerHTML = '';
   
-  const { data: predictions } = await supabase
+  const { data: predictions } = await supabaseClient
     .from('predictions')
     .select('*')
     .eq('user_id', currentUser.id);
@@ -805,7 +806,7 @@ window.submitPrediction = async function(matchId) {
   const scoreB = document.getElementById(`score-b-${matchId}`).value;
   if (!scoreA || !scoreB) return showNotification('Please enter both scores', true);
   
-  const { data: existing } = await supabase
+  const { data: existing } = await supabaseClient
     .from('predictions')
     .select('id')
     .eq('user_id', currentUser.id)
@@ -814,13 +815,13 @@ window.submitPrediction = async function(matchId) {
   
   let error;
   if (existing) {
-    const { error: updateError } = await supabase
+    const { error: updateError } = await supabaseClient
       .from('predictions')
       .update({ pred_score_a: parseInt(scoreA), pred_score_b: parseInt(scoreB) })
       .eq('id', existing.id);
     error = updateError;
   } else {
-    const { error: insertError } = await supabase
+    const { error: insertError } = await supabaseClient
       .from('predictions')
       .insert({ user_id: currentUser.id, match_id: matchId, pred_score_a: parseInt(scoreA), pred_score_b: parseInt(scoreB) });
     error = insertError;
@@ -835,7 +836,7 @@ async function loadLeaderboard() {
   const container = document.getElementById('leaderboardContainer');
   container.innerHTML = '<div class="loading">Loading leaderboard...</div>';
   
-  const { data: leaderboard, error } = await supabase
+  const { data: leaderboard, error } = await supabaseClient
     .from('leaderboard')
     .select('*')
     .limit(50);
@@ -872,7 +873,7 @@ async function loadLeaderboard() {
 }
 
 async function loadAdminMatches() {
-  const { data: matches, error } = await supabase
+  const { data: matches, error } = await supabaseClient
     .from('matches')
     .select('*')
     .order('kickoff_time', { ascending: true });
@@ -1006,7 +1007,7 @@ window.setMatchResult = async function(matchId, isKnockout) {
     updateData.advancing_team = advancingTeam;
   }
   
-  const { error } = await supabase
+  const { error } = await supabaseClient
     .from('matches')
     .update(updateData)
     .eq('id', matchId);
@@ -1022,7 +1023,7 @@ window.setMatchResult = async function(matchId, isKnockout) {
 };
 
 window.resetMatchResult = async function(matchId) {
-  const { error } = await supabase
+  const { error } = await supabaseClient
     .from('matches')
     .update({ score_a: null, score_b: null, finished: false, advancing_team: null })
     .eq('id', matchId);
