@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
   <title>World Cup Predictor</title>
@@ -129,10 +129,10 @@
 </div>
 
 <script>
-// Supabase config
-const supabaseUrl = "https://igatvhqatxrhgnshmdld.supabase.co";
-const supabaseKey = "sb_publishable_kZYMgSK-0VcalUaTuo7gfQ_7cMMse21";
-const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+// Use a DIFFERENT variable name to avoid conflict
+const MY_SUPABASE_URL = "https://igatvhqatxrhgnshmdld.supabase.co";
+const MY_SUPABASE_KEY = "sb_publishable_kZYMgSK-0VcalUaTuo7gfQ_7cMMse21";
+const MySupabase = window.supabase.createClient(MY_SUPABASE_URL, MY_SUPABASE_KEY);
 
 let currentUser = null;
 
@@ -146,8 +146,6 @@ function showMessage(msg, isError = false) {
 
 // SIGN UP FUNCTION
 async function handleSignUp() {
-  alert('Sign up button clicked!'); // TEST ALERT
-  
   const email = document.getElementById('signupEmail').value;
   const password = document.getElementById('signupPassword').value;
   
@@ -163,19 +161,18 @@ async function handleSignUp() {
   
   showMessage('Creating account...');
   
-  const { data, error } = await supabase.auth.signUp({
+  const { data, error } = await MySupabase.auth.signUp({
     email: email,
     password: password,
   });
   
   if (error) {
     showMessage('Error: ' + error.message, true);
+    console.error('Signup error:', error);
   } else {
     showMessage('Account created! Please sign in.');
-    // Switch to login form
     document.getElementById('signupForm').style.display = 'none';
     document.getElementById('loginForm').style.display = 'block';
-    // Clear fields
     document.getElementById('signupEmail').value = '';
     document.getElementById('signupPassword').value = '';
   }
@@ -183,8 +180,6 @@ async function handleSignUp() {
 
 // SIGN IN FUNCTION
 async function handleSignIn() {
-  alert('Sign in button clicked!'); // TEST ALERT
-  
   const email = document.getElementById('email').value;
   const password = document.getElementById('password').value;
   
@@ -195,13 +190,14 @@ async function handleSignIn() {
   
   showMessage('Signing in...');
   
-  const { data, error } = await supabase.auth.signInWithPassword({
+  const { data, error } = await MySupabase.auth.signInWithPassword({
     email: email,
     password: password
   });
   
   if (error) {
     showMessage('Login failed: ' + error.message, true);
+    console.error('Login error:', error);
   } else {
     currentUser = data.user;
     showMessage('Welcome ' + currentUser.email + '!');
@@ -211,7 +207,7 @@ async function handleSignIn() {
 
 // LOGOUT FUNCTION
 async function handleLogout() {
-  await supabase.auth.signOut();
+  await MySupabase.auth.signOut();
   currentUser = null;
   document.getElementById('loginPage').style.display = 'block';
   document.getElementById('mainPage').style.display = 'none';
@@ -240,7 +236,7 @@ function showLoginForm() {
 
 // CHECK IF USER IS ALREADY LOGGED IN
 async function checkAuth() {
-  const { data: { session } } = await supabase.auth.getSession();
+  const { data: { session } } = await MySupabase.auth.getSession();
   if (session) {
     currentUser = session.user;
     showMainPage();
@@ -250,7 +246,7 @@ async function checkAuth() {
   }
 }
 
-// SET UP BUTTONS - USING onclick directly (most reliable)
+// SET UP BUTTONS
 document.getElementById('signInBtn').onclick = handleSignIn;
 document.getElementById('signUpBtn').onclick = handleSignUp;
 document.getElementById('logoutBtn').onclick = handleLogout;
