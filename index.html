@@ -1,8 +1,8 @@
-<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
   <title>World Cup Predictor 2026</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <style>
     * {
       margin: 0;
@@ -495,20 +495,16 @@
     <div class="auth-card">
       <h1>WORLD CUP<br>PREDICTOR 2026</h1>
       <div id="loginPanel">
-        <input type="email" id="loginEmail" placeholder="Email Address">
-        <input type="password" id="loginPassword" placeholder="Password">
-        <button id="loginButton">SIGN IN</button>
-        <div class="auth-link">
-          No account? <a id="showSignupLink">Create Account</a>
-        </div>
+        <input type="email" id="email" placeholder="Email Address">
+        <input type="password" id="password" placeholder="Password">
+        <button id="signInBtn" style="background:#ffd700;">SIGN IN</button>
+        <button id="showSignupBtn" style="background:#1a472a; margin-top:5px;">CREATE ACCOUNT</button>
       </div>
       <div id="signupPanel" style="display: none;">
         <input type="email" id="signupEmail" placeholder="Email Address">
         <input type="password" id="signupPassword" placeholder="Password (min 6 characters)">
-        <button id="signupButton">CREATE ACCOUNT</button>
-        <div class="auth-link">
-          Already have an account? <a id="showLoginLink">Sign In</a>
-        </div>
+        <button id="signupSubmitBtn" style="background:#ffd700;">CREATE ACCOUNT</button>
+        <button id="showLoginBtn" style="background:#1a472a; margin-top:5px;">BACK TO SIGN IN</button>
       </div>
     </div>
   </div>
@@ -520,28 +516,28 @@
       <div class="user-info">
         <span id="userEmailDisplay"></span>
         <span id="adminBadge" class="admin-badge" style="display:none;">ADMIN</span>
-        <button id="logoutButton" class="logout-btn">LOGOUT</button>
+        <button id="logoutBtn" class="logout-btn">LOGOUT</button>
       </div>
     </div>
 
     <div class="tabs">
-      <button class="tab active" onclick="window.switchTab('predict')">MATCH PREDICTIONS</button>
-      <button class="tab" onclick="window.switchTab('leaderboard')">LEADERBOARD</button>
-      <button id="adminTabBtn" class="tab" style="display:none;" onclick="window.switchTab('admin')">ADMIN CONTROL</button>
+      <button class="tab active" id="predictTabBtn">MATCH PREDICTIONS</button>
+      <button class="tab" id="leaderboardTabBtn">LEADERBOARD</button>
+      <button class="tab" id="adminTabBtn" style="display:none;">ADMIN CONTROL</button>
     </div>
 
     <!-- Predictions Tab -->
     <div id="predictTab">
       <div class="filter-group">
-        <select id="stageFilter" onchange="window.filterAndSortMatches()">
+        <select id="stageFilter">
           <option value="all">All Matches</option>
           <option value="group">Group Stage</option>
           <option value="knockout">Knockout Stage</option>
         </select>
-        <input type="text" id="teamFilter" placeholder="Search teams..." onkeyup="window.filterAndSortMatches()">
+        <input type="text" id="teamFilter" placeholder="Search teams...">
         <div class="sort-buttons">
-          <button class="sort-btn active" onclick="window.setSort('date')">Sort by Date</button>
-          <button class="sort-btn" onclick="window.setSort('team')">Sort by Team</button>
+          <button class="sort-btn active" data-sort="date">Sort by Date</button>
+          <button class="sort-btn" data-sort="team">Sort by Team</button>
         </div>
         <span class="stats" id="matchStats"></span>
       </div>
@@ -556,12 +552,12 @@
     <!-- Admin Tab -->
     <div id="adminTabContent" style="display:none;">
       <div class="filter-group">
-        <select id="adminStageFilter" onchange="window.filterAdminMatches()">
+        <select id="adminStageFilter">
           <option value="all">All Matches</option>
           <option value="pending">Pending Results</option>
           <option value="finished">Finished Matches</option>
         </select>
-        <input type="text" id="adminTeamFilter" placeholder="Search teams..." onkeyup="window.filterAdminMatches()">
+        <input type="text" id="adminTeamFilter" placeholder="Search teams...">
       </div>
       <div id="adminMatchesContainer"></div>
     </div>
@@ -569,485 +565,523 @@
 </div>
 
 <script>
-(function() {
-  // Supabase configuration
-  const SUPABASE_URL = "https://igatvhqatxrhgnshmdld.supabase.co";
-  const SUPABASE_ANON_KEY = "sb_publishable_kZYMgSK-0VcalUaTuo7gfQ_7cMMse21";
-  const _supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// Supabase configuration
+const supabaseUrl = "https://igatvhqatxrhgnshmdld.supabase.co";
+const supabaseKey = "sb_publishable_kZYMgSK-0VcalUaTuo7gfQ_7cMMse21";
+const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-  let currentUser = null;
-  let allMatches = [];
-  let adminMatches = [];
-  let currentSort = 'date';
+let currentUser = null;
+let allMatches = [];
+let currentSort = 'date';
 
-  function showNotification(message, isError = false) {
-    const notification = document.createElement('div');
-    notification.className = 'notification';
-    notification.style.borderLeftColor = isError ? '#dc3545' : '#ffd700';
-    notification.textContent = message;
-    document.body.appendChild(notification);
-    setTimeout(() => notification.remove(), 3000);
+function showNotification(message, isError = false) {
+  const notification = document.createElement('div');
+  notification.className = 'notification';
+  notification.style.borderLeftColor = isError ? '#dc3545' : '#ffd700';
+  notification.textContent = message;
+  document.body.appendChild(notification);
+  setTimeout(() => notification.remove(), 3000);
+}
+
+// Auth functions - Using the working pattern from before
+async function signUp() {
+  const email = document.getElementById('signupEmail').value;
+  const password = document.getElementById('signupPassword').value;
+  
+  if (!email || !password) {
+    showNotification('Please enter email and password', true);
+    return;
   }
-
-  window.setSort = function(sortType) {
-    currentSort = sortType;
-    const btns = document.querySelectorAll('.sort-btn');
-    btns.forEach(btn => btn.classList.remove('active'));
-    if (event && event.target) {
-      event.target.classList.add('active');
-    }
-    window.filterAndSortMatches();
-  };
-
-  window.switchTab = function(tabName) {
-    document.getElementById('predictTab').style.display = tabName === 'predict' ? 'block' : 'none';
-    document.getElementById('leaderboardTab').style.display = tabName === 'leaderboard' ? 'block' : 'none';
-    document.getElementById('adminTabContent').style.display = tabName === 'admin' ? 'block' : 'none';
-    
-    const tabs = document.querySelectorAll('.tab');
-    tabs.forEach(tab => tab.classList.remove('active'));
-    if (event && event.target) {
-      event.target.classList.add('active');
-    }
-    
-    if (tabName === 'leaderboard') loadLeaderboard();
-    if (tabName === 'admin') loadAdminMatches();
-  };
-
-  // Auth functions
-  async function doSignup() {
-    const email = document.getElementById('signupEmail').value;
-    const password = document.getElementById('signupPassword').value;
-    if (!email || !password) return showNotification('Please enter email and password', true);
-    if (password.length < 6) return showNotification('Password must be at least 6 characters', true);
-    
-    const { error } = await _supabase.auth.signUp({ email, password });
-    if (error) return showNotification('Sign up error: ' + error.message, true);
+  
+  if (password.length < 6) {
+    showNotification('Password must be at least 6 characters', true);
+    return;
+  }
+  
+  const { data, error } = await supabase.auth.signUp({
+    email: email,
+    password: password,
+  });
+  
+  if (error) {
+    showNotification('Sign up error: ' + error.message, true);
+  } else if (data.user) {
     showNotification('Account created! Please sign in.');
-    showLoginPanel();
+    document.getElementById('signupPanel').style.display = 'none';
+    document.getElementById('loginPanel').style.display = 'block';
+    document.getElementById('signupEmail').value = '';
+    document.getElementById('signupPassword').value = '';
   }
+}
 
-  async function doLogin() {
-    const email = document.getElementById('loginEmail').value;
-    const password = document.getElementById('loginPassword').value;
-    if (!email || !password) return showNotification('Please enter email and password', true);
-    
-    const { data, error } = await _supabase.auth.signInWithPassword({ email, password });
-    if (error) return showNotification('Login failed: ' + error.message, true);
+async function signIn() {
+  const email = document.getElementById('email').value;
+  const password = document.getElementById('password').value;
+  
+  if (!email || !password) {
+    showNotification('Please enter email and password', true);
+    return;
+  }
+  
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email: email,
+    password: password
+  });
+  
+  if (error) {
+    showNotification('Login failed: ' + error.message, true);
+  } else {
     currentUser = data.user;
+    showNotification('Welcome!');
     showApp();
   }
+}
 
-  async function doLogout() {
-    await _supabase.auth.signOut();
-    currentUser = null;
+async function logout() {
+  await supabase.auth.signOut();
+  currentUser = null;
+  document.getElementById('authScreen').style.display = 'flex';
+  document.getElementById('appScreen').style.display = 'none';
+  showNotification('Logged out');
+}
+
+async function checkAuth() {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (session) {
+    currentUser = session.user;
+    showApp();
+  } else {
     document.getElementById('authScreen').style.display = 'flex';
     document.getElementById('appScreen').style.display = 'none';
   }
+}
 
-  function showSignupPanel() {
-    document.getElementById('loginPanel').style.display = 'none';
-    document.getElementById('signupPanel').style.display = 'block';
+// Show signup panel
+function showSignupPanel() {
+  document.getElementById('loginPanel').style.display = 'none';
+  document.getElementById('signupPanel').style.display = 'block';
+}
+
+// Show login panel
+function showLoginPanel() {
+  document.getElementById('signupPanel').style.display = 'none';
+  document.getElementById('loginPanel').style.display = 'block';
+}
+
+// Main app functions
+async function showApp() {
+  document.getElementById('authScreen').style.display = 'none';
+  document.getElementById('appScreen').style.display = 'block';
+  document.getElementById('userEmailDisplay').textContent = currentUser.email;
+  
+  // Check if admin
+  const isAdmin = currentUser.email === 'admin@worldcup.com';
+  if (isAdmin) {
+    document.getElementById('adminBadge').style.display = 'inline-block';
+    document.getElementById('adminTabBtn').style.display = 'inline-block';
   }
+  
+  await loadMatches();
+  await loadLeaderboard();
+}
 
-  function showLoginPanel() {
-    document.getElementById('signupPanel').style.display = 'none';
-    document.getElementById('loginPanel').style.display = 'block';
+async function loadMatches() {
+  const { data: matches, error } = await supabase
+    .from('matches')
+    .select('*')
+    .order('kickoff_time', { ascending: true });
+  
+  if (error) {
+    showNotification('Error loading matches', true);
+    return;
   }
+  
+  allMatches = matches;
+  filterAndRenderMatches();
+  document.getElementById('matchStats').textContent = matches.length + ' total matches';
+}
 
-  async function checkAuth() {
-    const { data: { session } } = await _supabase.auth.getSession();
-    if (session) {
-      currentUser = session.user;
-      showApp();
-    } else {
-      document.getElementById('authScreen').style.display = 'flex';
-      document.getElementById('appScreen').style.display = 'none';
-      showLoginPanel();
-    }
+function filterAndRenderMatches() {
+  const stage = document.getElementById('stageFilter').value;
+  const search = document.getElementById('teamFilter').value.toLowerCase();
+  
+  let filtered = [...allMatches];
+  if (stage === 'group') filtered = filtered.filter(m => !m.is_knockout);
+  if (stage === 'knockout') filtered = filtered.filter(m => m.is_knockout);
+  if (search) filtered = filtered.filter(m => 
+    m.team_a.toLowerCase().includes(search) || 
+    m.team_b.toLowerCase().includes(search)
+  );
+  
+  if (currentSort === 'date') {
+    filtered.sort((a, b) => new Date(a.kickoff_time) - new Date(b.kickoff_time));
+  } else if (currentSort === 'team') {
+    filtered.sort((a, b) => a.team_a.localeCompare(b.team_a));
   }
+  
+  renderMatchesGroupedByDay(filtered);
+}
 
-  async function showApp() {
-    document.getElementById('authScreen').style.display = 'none';
-    document.getElementById('appScreen').style.display = 'block';
-    document.getElementById('userEmailDisplay').textContent = currentUser.email;
-    
-    const isAdmin = currentUser.email === 'admin@worldcup.com';
-    if (isAdmin) {
-      document.getElementById('adminBadge').style.display = 'inline-block';
-      document.getElementById('adminTabBtn').style.display = 'inline-block';
-    }
-    
-    await loadMatches();
-  }
-
-  async function loadMatches() {
-    const { data: matches, error } = await _supabase
-      .from('matches')
-      .select('*')
-      .order('kickoff_time', { ascending: true });
-    
-    if (error) return showNotification('Error loading matches', true);
-    
-    allMatches = matches;
-    window.filterAndSortMatches();
-    document.getElementById('matchStats').textContent = matches.length + ' total matches';
-  }
-
-  window.filterAndSortMatches = function() {
-    const stage = document.getElementById('stageFilter').value;
-    const search = document.getElementById('teamFilter').value.toLowerCase();
-    
-    let filtered = [...allMatches];
-    if (stage === 'group') filtered = filtered.filter(m => !m.is_knockout);
-    if (stage === 'knockout') filtered = filtered.filter(m => m.is_knockout);
-    if (search) filtered = filtered.filter(m => 
-      m.team_a.toLowerCase().includes(search) || 
-      m.team_b.toLowerCase().includes(search)
-    );
-    
-    if (currentSort === 'date') {
-      filtered.sort((a, b) => new Date(a.kickoff_time) - new Date(b.kickoff_time));
-    } else if (currentSort === 'team') {
-      filtered.sort((a, b) => a.team_a.localeCompare(b.team_a));
-    }
-    
-    renderMatchesGroupedByDay(filtered);
-  };
-
-  async function renderMatchesGroupedByDay(matches) {
-    const container = document.getElementById('matchesContainer');
-    container.innerHTML = '';
-    
-    const { data: predictions } = await _supabase
-      .from('predictions')
-      .select('*')
-      .eq('user_id', currentUser.id);
-    
-    const predMap = {};
-    if (predictions) predictions.forEach(p => predMap[p.match_id] = p);
-    
-    const groupedMatches = {};
-    matches.forEach(match => {
-      const dateKey = new Date(match.kickoff_time).toLocaleDateString('en-US', {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-      });
-      if (!groupedMatches[dateKey]) {
-        groupedMatches[dateKey] = [];
-      }
-      groupedMatches[dateKey].push(match);
+async function renderMatchesGroupedByDay(matches) {
+  const container = document.getElementById('matchesContainer');
+  container.innerHTML = '';
+  
+  const { data: predictions } = await supabase
+    .from('predictions')
+    .select('*')
+    .eq('user_id', currentUser.id);
+  
+  const predMap = {};
+  if (predictions) predictions.forEach(p => predMap[p.match_id] = p);
+  
+  const groupedMatches = {};
+  matches.forEach(match => {
+    const dateKey = new Date(match.kickoff_time).toLocaleDateString('en-US', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
     });
+    if (!groupedMatches[dateKey]) groupedMatches[dateKey] = [];
+    groupedMatches[dateKey].push(match);
+  });
+  
+  for (const [dateKey, dayMatches] of Object.entries(groupedMatches)) {
+    const dayGroup = document.createElement('div');
+    dayGroup.className = 'match-day-group';
     
-    for (const [dateKey, dayMatches] of Object.entries(groupedMatches)) {
-      const dayGroup = document.createElement('div');
-      dayGroup.className = 'match-day-group';
-      
-      const header = document.createElement('div');
-      header.className = 'match-day-header';
-      header.innerHTML = `
-        <div class="match-day-date">${dateKey}</div>
-        <div class="match-day-count">${dayMatches.length} match${dayMatches.length !== 1 ? 'es' : ''}</div>
-      `;
-      dayGroup.appendChild(header);
-      
-      const grid = document.createElement('div');
-      grid.className = 'matches-grid';
-      
-      for (const match of dayMatches) {
-        const isDeadlinePassed = new Date(match.kickoff_time) < new Date();
-        const userPred = predMap[match.id];
-        
-        const card = document.createElement('div');
-        card.className = 'match-card';
-        
-        let resultHtml = '';
-        if (match.finished) {
-          resultHtml = `<div class="result-display">FINAL: ${match.score_a} - ${match.score_b}</div>`;
-        }
-        
-        card.innerHTML = `
-          <div class="match-title">
-            ${match.team_a} vs ${match.team_b}
-            <span class="match-stage">${match.is_knockout ? 'KNOCKOUT' : 'GROUP'}</span>
-            ${match.finished ? '<span class="finished-badge">COMPLETED</span>' : ''}
-          </div>
-          ${resultHtml}
-          ${!isDeadlinePassed && !match.finished ? `
-            <div class="prediction-inputs">
-              <input type="number" id="score-a-${match.id}" placeholder="${match.team_a}" value="${userPred ? userPred.pred_score_a : ''}">
-              <span style="font-size:20px;">-</span>
-              <input type="number" id="score-b-${match.id}" placeholder="${match.team_b}" value="${userPred ? userPred.pred_score_b : ''}">
-            </div>
-            <button class="submit-btn" onclick="window.submitPrediction('${match.id}')">
-              ${userPred ? 'UPDATE PREDICTION' : 'SUBMIT PREDICTION'}
-            </button>
-          ` : match.finished && userPred ? `
-            <div style="margin-top:10px; padding:8px; background:rgba(0,0,0,0.5); border-radius:6px; font-size:12px; text-align:center;">
-              YOUR PREDICTION: ${userPred.pred_score_a} - ${userPred.pred_score_b}
-              ${userPred.points ? ` | POINTS: ${userPred.points}` : ''}
-            </div>
-          ` : !isDeadlinePassed && match.finished ? '' : `
-            <div style="text-align:center; color:#ffd700;">DEADLINE PASSED</div>
-          `}
-          <div class="deadline">KICKOFF: ${new Date(match.kickoff_time).toLocaleString()}</div>
-        `;
-        grid.appendChild(card);
-      }
-      
-      dayGroup.appendChild(grid);
-      container.appendChild(dayGroup);
-    }
-  }
-
-  window.submitPrediction = async function(matchId) {
-    const scoreA = document.getElementById(`score-a-${matchId}`).value;
-    const scoreB = document.getElementById(`score-b-${matchId}`).value;
-    if (!scoreA || !scoreB) return showNotification('Please enter both scores', true);
-    
-    const { data: existing } = await _supabase
-      .from('predictions')
-      .select('id')
-      .eq('user_id', currentUser.id)
-      .eq('match_id', matchId)
-      .maybeSingle();
-    
-    let error;
-    if (existing) {
-      const { error: updateError } = await _supabase
-        .from('predictions')
-        .update({ pred_score_a: parseInt(scoreA), pred_score_b: parseInt(scoreB) })
-        .eq('id', existing.id);
-      error = updateError;
-    } else {
-      const { error: insertError } = await _supabase
-        .from('predictions')
-        .insert({ user_id: currentUser.id, match_id: matchId, pred_score_a: parseInt(scoreA), pred_score_b: parseInt(scoreB) });
-      error = insertError;
-    }
-    
-    if (error) return showNotification('Error: ' + error.message, true);
-    showNotification('Prediction saved successfully!');
-    await loadMatches();
-  };
-
-  async function loadLeaderboard() {
-    const container = document.getElementById('leaderboardContainer');
-    container.innerHTML = '<div class="loading">Loading leaderboard...</div>';
-    
-    const { data: leaderboard, error } = await _supabase
-      .from('leaderboard')
-      .select('*')
-      .limit(50);
-    
-    if (error) return container.innerHTML = '<div class="error">Error loading leaderboard</div>';
-    
-    if (!leaderboard || leaderboard.length === 0) {
-      container.innerHTML = '<div class="loading">No users yet</div>';
-      return;
-    }
-    
-    container.innerHTML = `
-      <div class="leaderboard-container">
-        <div class="leaderboard-header">
-          <div>RANK</div>
-          <div>PLAYER</div>
-          <div>POINTS</div>
-        </div>
-        <div class="leaderboard-list"></div>
-      </div>
+    const header = document.createElement('div');
+    header.className = 'match-day-header';
+    header.innerHTML = `
+      <div class="match-day-date">${dateKey}</div>
+      <div class="match-day-count">${dayMatches.length} match${dayMatches.length !== 1 ? 'es' : ''}</div>
     `;
+    dayGroup.appendChild(header);
     
-    const list = container.querySelector('.leaderboard-list');
-    leaderboard.forEach((user, i) => {
-      const item = document.createElement('div');
-      item.className = 'leaderboard-item';
-      item.innerHTML = `
-        <div class="leaderboard-rank">${i + 1}</div>
-        <div class="leaderboard-name">${user.username || 'User'}</div>
-        <div class="leaderboard-points">${user.total_points || 0}</div>
-      `;
-      list.appendChild(item);
-    });
-  }
-
-  async function loadAdminMatches() {
-    const { data: matches, error } = await _supabase
-      .from('matches')
-      .select('*')
-      .order('kickoff_time', { ascending: true });
+    const grid = document.createElement('div');
+    grid.className = 'matches-grid';
     
-    if (error) return;
-    adminMatches = matches;
-    window.filterAdminMatches();
-  }
-
-  window.filterAdminMatches = function() {
-    const filter = document.getElementById('adminStageFilter').value;
-    const search = document.getElementById('adminTeamFilter').value.toLowerCase();
-    
-    let filtered = [...adminMatches];
-    if (filter === 'pending') filtered = filtered.filter(m => !m.finished);
-    if (filter === 'finished') filtered = filtered.filter(m => m.finished);
-    if (search) filtered = filtered.filter(m => 
-      m.team_a.toLowerCase().includes(search) || m.team_b.toLowerCase().includes(search)
-    );
-    
-    renderAdminMatches(filtered);
-  };
-
-  function renderAdminMatches(matches) {
-    const container = document.getElementById('adminMatchesContainer');
-    container.innerHTML = '';
-    
-    const groupedMatches = {};
-    matches.forEach(match => {
-      const dateKey = new Date(match.kickoff_time).toLocaleDateString('en-US', {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-      });
-      if (!groupedMatches[dateKey]) {
-        groupedMatches[dateKey] = [];
-      }
-      groupedMatches[dateKey].push(match);
-    });
-    
-    for (const [dateKey, dayMatches] of Object.entries(groupedMatches)) {
-      const dayGroup = document.createElement('div');
-      dayGroup.className = 'match-day-group';
+    for (const match of dayMatches) {
+      const isDeadlinePassed = new Date(match.kickoff_time) < new Date();
+      const userPred = predMap[match.id];
       
-      const header = document.createElement('div');
-      header.className = 'match-day-header';
-      header.innerHTML = `
-        <div class="match-day-date">${dateKey}</div>
-        <div class="match-day-count">${dayMatches.length} match${dayMatches.length !== 1 ? 'es' : ''}</div>
-      `;
-      dayGroup.appendChild(header);
+      const card = document.createElement('div');
+      card.className = 'match-card';
       
-      const grid = document.createElement('div');
-      grid.className = 'matches-grid';
-      
-      for (const match of dayMatches) {
-        const card = document.createElement('div');
-        card.className = 'match-card';
-        
-        if (match.finished) {
-          card.innerHTML = `
-            <div class="match-title">
-              ${match.team_a} vs ${match.team_b}
-              <span class="match-stage">${match.is_knockout ? 'KNOCKOUT' : 'GROUP'}</span>
-              <span class="finished-badge">COMPLETED</span>
-            </div>
-            <div class="result-display">RESULT: ${match.score_a} - ${match.score_b}</div>
-            <button class="submit-btn reset-btn" onclick="window.resetMatchResult('${match.id}')">RESET RESULT</button>
-            <div class="deadline">${new Date(match.kickoff_time).toLocaleString()}</div>
-          `;
-        } else {
-          card.innerHTML = `
-            <div class="match-title">
-              ${match.team_a} vs ${match.team_b}
-              <span class="match-stage">${match.is_knockout ? 'KNOCKOUT' : 'GROUP'}</span>
-            </div>
-            <div class="admin-result-inputs">
-              <input type="number" id="admin-score-a-${match.id}" placeholder="${match.team_a} score">
-              <span>-</span>
-              <input type="number" id="admin-score-b-${match.id}" placeholder="${match.team_b} score">
-            </div>
-            ${match.is_knockout ? `
-              <div class="admin-result-inputs">
-                <select id="admin-advancing-${match.id}">
-                  <option value="">Who advanced after extra time?</option>
-                  <option value="${match.team_a}">${match.team_a}</option>
-                  <option value="${match.team_b}">${match.team_b}</option>
-                </select>
-              </div>
-            ` : ''}
-            <button class="submit-btn admin-btn" onclick="window.setMatchResult('${match.id}', ${match.is_knockout})">
-              SET RESULT & CALCULATE POINTS
-            </button>
-            <div class="deadline">${new Date(match.kickoff_time).toLocaleString()}</div>
-          `;
-        }
-        grid.appendChild(card);
+      let resultHtml = '';
+      if (match.finished) {
+        resultHtml = `<div class="result-display">FINAL: ${match.score_a} - ${match.score_b}</div>`;
       }
       
-      dayGroup.appendChild(grid);
-      container.appendChild(dayGroup);
+      card.innerHTML = `
+        <div class="match-title">
+          ${match.team_a} vs ${match.team_b}
+          <span class="match-stage">${match.is_knockout ? 'KNOCKOUT' : 'GROUP'}</span>
+          ${match.finished ? '<span class="finished-badge">COMPLETED</span>' : ''}
+        </div>
+        ${resultHtml}
+        ${!isDeadlinePassed && !match.finished ? `
+          <div class="prediction-inputs">
+            <input type="number" id="score-a-${match.id}" placeholder="${match.team_a}" value="${userPred ? userPred.pred_score_a : ''}">
+            <span style="font-size:20px;">-</span>
+            <input type="number" id="score-b-${match.id}" placeholder="${match.team_b}" value="${userPred ? userPred.pred_score_b : ''}">
+          </div>
+          <button class="submit-btn" onclick="submitPrediction('${match.id}')">
+            ${userPred ? 'UPDATE PREDICTION' : 'SUBMIT PREDICTION'}
+          </button>
+        ` : match.finished && userPred ? `
+          <div style="margin-top:10px; padding:8px; background:rgba(0,0,0,0.5); border-radius:6px; font-size:12px; text-align:center;">
+            YOUR PREDICTION: ${userPred.pred_score_a} - ${userPred.pred_score_b}
+            ${userPred.points ? ` | POINTS: ${userPred.points}` : ''}
+          </div>
+        ` : !isDeadlinePassed && match.finished ? '' : `
+          <div style="text-align:center; color:#ffd700;">DEADLINE PASSED</div>
+        `}
+        <div class="deadline">KICKOFF: ${new Date(match.kickoff_time).toLocaleString()}</div>
+      `;
+      grid.appendChild(card);
     }
-  }
-
-  window.setMatchResult = async function(matchId, isKnockout) {
-    const scoreA = parseInt(document.getElementById(`admin-score-a-${matchId}`).value);
-    const scoreB = parseInt(document.getElementById(`admin-score-b-${matchId}`).value);
     
-    if (isNaN(scoreA) || isNaN(scoreB)) {
-      showNotification('Please enter valid scores', true);
+    dayGroup.appendChild(grid);
+    container.appendChild(dayGroup);
+  }
+}
+
+window.submitPrediction = async function(matchId) {
+  const scoreA = document.getElementById(`score-a-${matchId}`).value;
+  const scoreB = document.getElementById(`score-b-${matchId}`).value;
+  if (!scoreA || !scoreB) {
+    showNotification('Please enter both scores', true);
+    return;
+  }
+  
+  const { data: existing } = await supabase
+    .from('predictions')
+    .select('id')
+    .eq('user_id', currentUser.id)
+    .eq('match_id', matchId)
+    .maybeSingle();
+  
+  let error;
+  if (existing) {
+    const { error: updateError } = await supabase
+      .from('predictions')
+      .update({ pred_score_a: parseInt(scoreA), pred_score_b: parseInt(scoreB) })
+      .eq('id', existing.id);
+    error = updateError;
+  } else {
+    const { error: insertError } = await supabase
+      .from('predictions')
+      .insert({ user_id: currentUser.id, match_id: matchId, pred_score_a: parseInt(scoreA), pred_score_b: parseInt(scoreB) });
+    error = insertError;
+  }
+  
+  if (error) {
+    showNotification('Error: ' + error.message, true);
+  } else {
+    showNotification('Prediction saved!');
+    await loadMatches();
+  }
+};
+
+async function loadLeaderboard() {
+  const container = document.getElementById('leaderboardContainer');
+  container.innerHTML = '<div class="loading">Loading leaderboard...</div>';
+  
+  const { data: leaderboard, error } = await supabase
+    .from('leaderboard')
+    .select('*')
+    .limit(50);
+  
+  if (error) {
+    container.innerHTML = '<div class="error">Error loading leaderboard</div>';
+    return;
+  }
+  
+  if (!leaderboard || leaderboard.length === 0) {
+    container.innerHTML = '<div class="loading">No users yet</div>';
+    return;
+  }
+  
+  container.innerHTML = `
+    <div class="leaderboard-container">
+      <div class="leaderboard-header">
+        <div>RANK</div>
+        <div>PLAYER</div>
+        <div>POINTS</div>
+      </div>
+      <div class="leaderboard-list"></div>
+    </div>
+  `;
+  
+  const list = container.querySelector('.leaderboard-list');
+  leaderboard.forEach((user, i) => {
+    const item = document.createElement('div');
+    item.className = 'leaderboard-item';
+    item.innerHTML = `
+      <div class="leaderboard-rank">${i + 1}</div>
+      <div class="leaderboard-name">${user.username || 'User'}</div>
+      <div class="leaderboard-points">${user.total_points || 0}</div>
+    `;
+    list.appendChild(item);
+  });
+}
+
+// Tab switching
+document.getElementById('predictTabBtn').addEventListener('click', () => {
+  document.getElementById('predictTab').style.display = 'block';
+  document.getElementById('leaderboardTab').style.display = 'none';
+  document.getElementById('adminTabContent').style.display = 'none';
+  document.getElementById('predictTabBtn').classList.add('active');
+  document.getElementById('leaderboardTabBtn').classList.remove('active');
+  document.getElementById('adminTabBtn').classList.remove('active');
+});
+
+document.getElementById('leaderboardTabBtn').addEventListener('click', () => {
+  document.getElementById('predictTab').style.display = 'none';
+  document.getElementById('leaderboardTab').style.display = 'block';
+  document.getElementById('adminTabContent').style.display = 'none';
+  document.getElementById('leaderboardTabBtn').classList.add('active');
+  document.getElementById('predictTabBtn').classList.remove('active');
+  document.getElementById('adminTabBtn').classList.remove('active');
+  loadLeaderboard();
+});
+
+document.getElementById('adminTabBtn').addEventListener('click', () => {
+  document.getElementById('predictTab').style.display = 'none';
+  document.getElementById('leaderboardTab').style.display = 'none';
+  document.getElementById('adminTabContent').style.display = 'block';
+  document.getElementById('adminTabBtn').classList.add('active');
+  document.getElementById('predictTabBtn').classList.remove('active');
+  document.getElementById('leaderboardTabBtn').classList.remove('active');
+  loadAdminMatches();
+});
+
+// Sort buttons
+document.querySelectorAll('.sort-btn').forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    currentSort = e.target.dataset.sort;
+    document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
+    e.target.classList.add('active');
+    filterAndRenderMatches();
+  });
+});
+
+// Filter inputs
+document.getElementById('stageFilter').addEventListener('change', filterAndRenderMatches);
+document.getElementById('teamFilter').addEventListener('keyup', filterAndRenderMatches);
+
+// Auth buttons
+document.getElementById('signInBtn').addEventListener('click', signIn);
+document.getElementById('showSignupBtn').addEventListener('click', showSignupPanel);
+document.getElementById('signupSubmitBtn').addEventListener('click', signUp);
+document.getElementById('showLoginBtn').addEventListener('click', showLoginPanel);
+document.getElementById('logoutBtn').addEventListener('click', logout);
+
+// Admin functions
+async function loadAdminMatches() {
+  const { data: matches, error } = await supabase
+    .from('matches')
+    .select('*')
+    .order('kickoff_time', { ascending: true });
+  
+  if (error) return;
+  renderAdminMatches(matches);
+}
+
+function renderAdminMatches(matches) {
+  const container = document.getElementById('adminMatchesContainer');
+  container.innerHTML = '';
+  
+  const search = document.getElementById('adminTeamFilter').value.toLowerCase();
+  const filter = document.getElementById('adminStageFilter').value;
+  
+  let filtered = matches;
+  if (filter === 'pending') filtered = filtered.filter(m => !m.finished);
+  if (filter === 'finished') filtered = filtered.filter(m => m.finished);
+  if (search) filtered = filtered.filter(m => 
+    m.team_a.toLowerCase().includes(search) || m.team_b.toLowerCase().includes(search)
+  );
+  
+  const groupedMatches = {};
+  filtered.forEach(match => {
+    const dateKey = new Date(match.kickoff_time).toLocaleDateString('en-US', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+    if (!groupedMatches[dateKey]) groupedMatches[dateKey] = [];
+    groupedMatches[dateKey].push(match);
+  });
+  
+  for (const [dateKey, dayMatches] of Object.entries(groupedMatches)) {
+    const dayGroup = document.createElement('div');
+    dayGroup.className = 'match-day-group';
+    
+    const header = document.createElement('div');
+    header.className = 'match-day-header';
+    header.innerHTML = `
+      <div class="match-day-date">${dateKey}</div>
+      <div class="match-day-count">${dayMatches.length} match${dayMatches.length !== 1 ? 'es' : ''}</div>
+    `;
+    dayGroup.appendChild(header);
+    
+    const grid = document.createElement('div');
+    grid.className = 'matches-grid';
+    
+    for (const match of dayMatches) {
+      const card = document.createElement('div');
+      card.className = 'match-card';
+      
+      if (match.finished) {
+        card.innerHTML = `
+          <div class="match-title">${match.team_a} vs ${match.team_b}</div>
+          <div class="result-display">RESULT: ${match.score_a} - ${match.score_b}</div>
+          <button class="submit-btn reset-btn" onclick="resetMatchResult('${match.id}')">RESET RESULT</button>
+        `;
+      } else {
+        card.innerHTML = `
+          <div class="match-title">${match.team_a} vs ${match.team_b}</div>
+          <div class="admin-result-inputs">
+            <input type="number" id="admin-score-a-${match.id}" placeholder="${match.team_a} score">
+            <span>-</span>
+            <input type="number" id="admin-score-b-${match.id}" placeholder="${match.team_b} score">
+          </div>
+          ${match.is_knockout ? `
+            <div class="admin-result-inputs">
+              <select id="admin-advancing-${match.id}">
+                <option value="">Who advanced?</option>
+                <option value="${match.team_a}">${match.team_a}</option>
+                <option value="${match.team_b}">${match.team_b}</option>
+              </select>
+            </div>
+          ` : ''}
+          <button class="submit-btn admin-btn" onclick="setMatchResult('${match.id}', ${match.is_knockout})">SET RESULT & CALCULATE POINTS</button>
+        `;
+      }
+      grid.appendChild(card);
+    }
+    
+    dayGroup.appendChild(grid);
+    container.appendChild(dayGroup);
+  }
+}
+
+window.setMatchResult = async function(matchId, isKnockout) {
+  const scoreA = parseInt(document.getElementById(`admin-score-a-${matchId}`).value);
+  const scoreB = parseInt(document.getElementById(`admin-score-b-${matchId}`).value);
+  
+  if (isNaN(scoreA) || isNaN(scoreB)) {
+    showNotification('Please enter valid scores', true);
+    return;
+  }
+  
+  let advancingTeam = null;
+  if (isKnockout) {
+    advancingTeam = document.getElementById(`admin-advancing-${matchId}`).value;
+    if (!advancingTeam) {
+      showNotification('Please select which team advanced', true);
       return;
     }
-    
-    let advancingTeam = null;
-    if (isKnockout) {
-      advancingTeam = document.getElementById(`admin-advancing-${matchId}`).value;
-      if (!advancingTeam) {
-        showNotification('Please select which team advanced', true);
-        return;
-      }
-    }
-    
-    const updateData = {
-      score_a: scoreA,
-      score_b: scoreB,
-      finished: true
-    };
-    
-    if (advancingTeam) {
-      updateData.advancing_team = advancingTeam;
-    }
-    
-    const { error } = await _supabase
-      .from('matches')
-      .update(updateData)
-      .eq('id', matchId);
-    
-    if (error) {
-      showNotification('Error: ' + error.message, true);
-    } else {
-      showNotification('Result set! Points calculated automatically!');
-      await loadAdminMatches();
-      await loadMatches();
-      await loadLeaderboard();
-    }
-  };
+  }
+  
+  const updateData = { score_a: scoreA, score_b: scoreB, finished: true };
+  if (advancingTeam) updateData.advancing_team = advancingTeam;
+  
+  const { error } = await supabase.from('matches').update(updateData).eq('id', matchId);
+  
+  if (error) {
+    showNotification('Error: ' + error.message, true);
+  } else {
+    showNotification('Result set! Points calculated!');
+    await loadMatches();
+    await loadAdminMatches();
+    await loadLeaderboard();
+  }
+};
 
-  window.resetMatchResult = async function(matchId) {
-    const { error } = await _supabase
-      .from('matches')
-      .update({ score_a: null, score_b: null, finished: false, advancing_team: null })
-      .eq('id', matchId);
-    
-    if (error) {
-      showNotification('Error: ' + error.message, true);
-    } else {
-      showNotification('Result reset!');
-      await loadAdminMatches();
-      await loadMatches();
-      await loadLeaderboard();
-    }
-  };
+window.resetMatchResult = async function(matchId) {
+  const { error } = await supabase
+    .from('matches')
+    .update({ score_a: null, score_b: null, finished: false, advancing_team: null })
+    .eq('id', matchId);
+  
+  if (error) {
+    showNotification('Error: ' + error.message, true);
+  } else {
+    showNotification('Result reset!');
+    await loadMatches();
+    await loadAdminMatches();
+    await loadLeaderboard();
+  }
+};
 
-  // Set up event listeners
-  document.getElementById('loginButton').addEventListener('click', doLogin);
-  document.getElementById('signupButton').addEventListener('click', doSignup);
-  document.getElementById('logoutButton').addEventListener('click', doLogout);
-  document.getElementById('showSignupLink').addEventListener('click', showSignupPanel);
-  document.getElementById('showLoginLink').addEventListener('click', showLoginPanel);
+document.getElementById('adminStageFilter').addEventListener('change', loadAdminMatches);
+document.getElementById('adminTeamFilter').addEventListener('keyup', loadAdminMatches);
 
-  checkAuth();
-})();
+// Initialize
+checkAuth();
 </script>
 </body>
 </html>
