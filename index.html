@@ -1,33 +1,400 @@
-<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
   <title>World Cup Predictor</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-</head>
-<body style="font-family: Arial; padding: 20px; background: #1a472a; color: white;">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-<div id="loginBox" style="max-width: 400px; margin: 100px auto; background: black; padding: 30px; border-radius: 10px;">
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(135deg, #1a472a 0%, #0a2a1a 100%);
+      min-height: 100vh;
+      color: white;
+      padding: 20px;
+    }
+
+    /* Login Box */
+    #loginBox {
+      max-width: 400px;
+      margin: 100px auto;
+      background: rgba(0,0,0,0.85);
+      padding: 30px;
+      border-radius: 16px;
+      border: 1px solid #ffd700;
+    }
+
+    #loginBox input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 8px;
+      border: 1px solid #ffd700;
+      background: rgba(255,255,255,0.1);
+      color: white;
+      font-size: 16px;
+    }
+
+    #loginBox button {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      background: #ffd700;
+      color: #1a472a;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 16px;
+    }
+
+    #loginBox button:hover {
+      background: #ffed4a;
+    }
+
+    /* Main Page */
+    #mainPage {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(0,0,0,0.8);
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      border-bottom: 3px solid #ffd700;
+    }
+
+    .admin-badge {
+      background: #ffd700;
+      color: #1a472a;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: bold;
+      margin-left: 10px;
+    }
+
+    .logout-btn {
+      background: #dc3545;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .tab {
+      padding: 10px 25px;
+      background: rgba(0,0,0,0.6);
+      border: none;
+      color: white;
+      cursor: pointer;
+      border-radius: 8px;
+      font-weight: bold;
+    }
+
+    .tab.active {
+      background: #ffd700;
+      color: #1a472a;
+    }
+
+    /* Match Day Groups */
+    .match-day-group {
+      margin-bottom: 30px;
+      background: rgba(0,0,0,0.4);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .match-day-header {
+      background: linear-gradient(135deg, #1a472a 0%, #0d2a1a 100%);
+      padding: 15px 20px;
+      border-left: 4px solid #ffd700;
+    }
+
+    .match-day-date {
+      color: #ffd700;
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .match-day-count {
+      font-size: 14px;
+      color: rgba(255,255,255,0.6);
+      margin-top: 5px;
+    }
+
+    .matches-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 1px;
+      background: rgba(255,255,255,0.05);
+    }
+
+    .match-card {
+      background: rgba(0,0,0,0.6);
+      padding: 20px;
+      transition: all 0.3s;
+    }
+
+    .match-card:hover {
+      background: rgba(0,0,0,0.8);
+      transform: translateX(5px);
+    }
+
+    .match-title {
+      font-size: 18px;
+      font-weight: bold;
+      text-align: center;
+      padding-bottom: 10px;
+      margin-bottom: 10px;
+      border-bottom: 1px solid rgba(255,215,0,0.3);
+    }
+
+    .match-stage {
+      display: inline-block;
+      padding: 3px 8px;
+      background: rgba(255,215,0,0.2);
+      border-radius: 4px;
+      font-size: 11px;
+      margin-left: 10px;
+    }
+
+    .finished-badge {
+      display: inline-block;
+      background: #ffd700;
+      color: #1a472a;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      margin-left: 10px;
+    }
+
+    .result-display {
+      text-align: center;
+      color: #ffd700;
+      margin-bottom: 15px;
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .prediction-inputs {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      margin: 15px 0;
+    }
+
+    .prediction-inputs input {
+      width: 80px;
+      padding: 10px;
+      text-align: center;
+      font-size: 18px;
+      border: 2px solid rgba(255,255,255,0.2);
+      background: rgba(0,0,0,0.6);
+      color: white;
+      border-radius: 8px;
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 10px;
+      background: #ffd700;
+      color: #1a472a;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+
+    .deadline {
+      font-size: 11px;
+      text-align: center;
+      margin-top: 10px;
+      color: rgba(255,255,255,0.5);
+    }
+
+    /* Leaderboard */
+    .leaderboard-container {
+      background: rgba(0,0,0,0.6);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .leaderboard-header {
+      display: grid;
+      grid-template-columns: 80px 1fr 100px;
+      background: #ffd700;
+      color: #1a472a;
+      padding: 15px 20px;
+      font-weight: bold;
+    }
+
+    .leaderboard-item {
+      display: grid;
+      grid-template-columns: 80px 1fr 100px;
+      padding: 12px 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .leaderboard-rank {
+      font-weight: bold;
+      color: #ffd700;
+    }
+
+    .leaderboard-points {
+      font-weight: bold;
+      color: #ffd700;
+      text-align: right;
+    }
+
+    /* Admin Panel */
+    .admin-result-inputs {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin: 10px 0;
+    }
+
+    .admin-result-inputs input, .admin-result-inputs select {
+      padding: 8px 12px;
+      border-radius: 6px;
+      border: 1px solid rgba(255,255,255,0.2);
+      background: rgba(0,0,0,0.6);
+      color: white;
+    }
+
+    .admin-btn {
+      background: #ff8c00;
+    }
+
+    .reset-btn {
+      background: #dc3545;
+    }
+
+    .filter-group {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      background: rgba(0,0,0,0.5);
+      padding: 15px;
+      border-radius: 12px;
+    }
+
+    .filter-group select, .filter-group input {
+      padding: 10px 15px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.2);
+      background: rgba(0,0,0,0.6);
+      color: white;
+    }
+
+    .sort-btn {
+      padding: 8px 15px;
+      background: rgba(0,0,0,0.6);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 8px;
+      color: white;
+      cursor: pointer;
+    }
+
+    .sort-btn.active {
+      background: #ffd700;
+      color: #1a472a;
+    }
+
+    .stats {
+      color: #ffd700;
+      margin-left: auto;
+    }
+
+    .msg {
+      margin-top: 20px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+<!-- LOGIN BOX -->
+<div id="loginBox">
   <h2 style="text-align:center;">WORLD CUP 2026</h2>
-  
-  <input type="email" id="email" placeholder="Email" style="width:100%; padding:10px; margin:10px 0;">
-  <input type="password" id="password" placeholder="Password" style="width:100%; padding:10px; margin:10px 0;">
-  
-  <button id="loginBtn" style="width:100%; padding:10px; background: #ffd700; color: black; font-weight: bold; border: none; cursor: pointer;">LOGIN</button>
-  <button id="signupBtn" style="width:100%; padding:10px; margin-top:10px; background: #666; color: white; border: none; cursor: pointer;">CREATE ACCOUNT</button>
-  
-  <div id="msg" style="margin-top:20px; text-align:center;"></div>
+  <input type="email" id="email" placeholder="Email">
+  <input type="password" id="password" placeholder="Password">
+  <button id="loginBtn">LOGIN</button>
+  <button id="signupBtn" style="background:#666; color:white;">CREATE ACCOUNT</button>
+  <div id="msg" class="msg"></div>
 </div>
 
-<div id="mainPage" style="display:none; max-width: 800px; margin: 0 auto;">
-  <div style="background: black; padding: 20px; border-radius: 10px;">
-    <div style="display: flex; justify-content: space-between; align-items: center;">
-      <h2>WORLD CUP 2026</h2>
-      <button id="logoutBtn" style="background: #dc3545; color: white; padding: 10px 20px; border: none; cursor: pointer;">LOGOUT</button>
+<!-- MAIN PAGE -->
+<div id="mainPage" style="display:none;">
+  <div class="header">
+    <h2>WORLD CUP 2026 PREDICTOR</h2>
+    <div>
+      <span id="userEmail"></span>
+      <span id="adminBadge" class="admin-badge" style="display:none;">ADMIN</span>
+      <button id="logoutBtn" class="logout-btn">LOGOUT</button>
     </div>
-    <div style="margin-top: 20px; padding: 20px; background: #2a2a2a; border-radius: 10px;">
-      <h3>Welcome! You are logged in.</h3>
-      <p id="userEmail"></p>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" id="showPredictions">MATCH PREDICTIONS</button>
+    <button class="tab" id="showLeaderboard">LEADERBOARD</button>
+    <button class="tab" id="showAdmin" style="display:none;">ADMIN CONTROL</button>
+  </div>
+
+  <!-- PREDICTIONS PANEL -->
+  <div id="predictionsPanel">
+    <div class="filter-group">
+      <select id="matchFilter">
+        <option value="all">All Matches</option>
+        <option value="group">Group Stage</option>
+        <option value="knockout">Knockout Stage</option>
+      </select>
+      <input type="text" id="teamSearch" placeholder="Search teams...">
+      <div>
+        <button class="sort-btn active" data-sort="date">Sort by Date</button>
+        <button class="sort-btn" data-sort="team">Sort by Team</button>
+      </div>
+      <span class="stats" id="matchCount"></span>
     </div>
+    <div id="matchesList"></div>
+  </div>
+
+  <!-- LEADERBOARD PANEL -->
+  <div id="leaderboardPanel" style="display:none;">
+    <div id="leaderboardList"></div>
+  </div>
+
+  <!-- ADMIN PANEL -->
+  <div id="adminPanel" style="display:none;">
+    <div class="filter-group">
+      <select id="adminFilter">
+        <option value="all">All Matches</option>
+        <option value="pending">Pending Results</option>
+        <option value="finished">Finished</option>
+      </select>
+      <input type="text" id="adminSearch" placeholder="Search teams...">
+    </div>
+    <div id="adminMatchesList"></div>
   </div>
 </div>
 
@@ -39,6 +406,8 @@ const _supabase = window.supabase.createClient(
 );
 
 let user = null;
+let allMatches = [];
+let currentSort = 'date';
 
 function showMsg(text, isError = false) {
   const msgDiv = document.getElementById('msg');
@@ -70,7 +439,16 @@ async function login() {
     user = data.user;
     document.getElementById('loginBox').style.display = 'none';
     document.getElementById('mainPage').style.display = 'block';
-    document.getElementById('userEmail').innerHTML = 'Logged in as: ' + user.email;
+    document.getElementById('userEmail').innerHTML = user.email;
+    
+    // Check if admin
+    if (user.email === 'admin@worldcup.com') {
+      document.getElementById('adminBadge').style.display = 'inline-block';
+      document.getElementById('showAdmin').style.display = 'inline-block';
+    }
+    
+    loadMatches();
+    loadLeaderboard();
   }
 }
 
@@ -113,14 +491,352 @@ async function logout() {
   document.getElementById('password').value = '';
 }
 
-// CHECK IF ALREADY LOGGED IN
+// LOAD MATCHES
+async function loadMatches() {
+  const { data, error } = await _supabase.from('matches').select('*').order('kickoff_time');
+  if (error) {
+    console.error('Error loading matches:', error);
+    return;
+  }
+  allMatches = data;
+  document.getElementById('matchCount').textContent = data.length + ' matches';
+  filterAndShowMatches();
+}
+
+function filterAndShowMatches() {
+  let filtered = [...allMatches];
+  const stage = document.getElementById('matchFilter').value;
+  const search = document.getElementById('teamSearch').value.toLowerCase();
+  
+  if (stage === 'group') filtered = filtered.filter(m => !m.is_knockout);
+  if (stage === 'knockout') filtered = filtered.filter(m => m.is_knockout);
+  if (search) filtered = filtered.filter(m => 
+    m.team_a.toLowerCase().includes(search) || m.team_b.toLowerCase().includes(search)
+  );
+  
+  if (currentSort === 'date') {
+    filtered.sort((a,b) => new Date(a.kickoff_time) - new Date(b.kickoff_time));
+  } else {
+    filtered.sort((a,b) => a.team_a.localeCompare(b.team_a));
+  }
+  
+  renderMatchesGroupedByDay(filtered);
+}
+
+async function renderMatchesGroupedByDay(matches) {
+  const container = document.getElementById('matchesList');
+  container.innerHTML = '';
+  
+  const { data: predictions } = await _supabase
+    .from('predictions')
+    .select('*')
+    .eq('user_id', user.id);
+  
+  const predMap = {};
+  if (predictions) predictions.forEach(p => predMap[p.match_id] = p);
+  
+  // Group by date
+  const grouped = {};
+  matches.forEach(m => {
+    const date = new Date(m.kickoff_time).toLocaleDateString('en-US', {
+      weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+    });
+    if (!grouped[date]) grouped[date] = [];
+    grouped[date].push(m);
+  });
+  
+  for (const [date, dayMatches] of Object.entries(grouped)) {
+    const dayGroup = document.createElement('div');
+    dayGroup.className = 'match-day-group';
+    
+    dayGroup.innerHTML = `
+      <div class="match-day-header">
+        <div class="match-day-date">${date}</div>
+        <div class="match-day-count">${dayMatches.length} matches</div>
+      </div>
+      <div class="matches-grid" id="grid-${date.replace(/[^a-z0-9]/gi, '')}"></div>
+    `;
+    container.appendChild(dayGroup);
+    
+    const grid = dayGroup.querySelector('.matches-grid');
+    
+    for (const match of dayMatches) {
+      const deadlinePassed = new Date(match.kickoff_time) < new Date();
+      const userPred = predMap[match.id];
+      
+      const card = document.createElement('div');
+      card.className = 'match-card';
+      
+      card.innerHTML = `
+        <div class="match-title">
+          ${match.team_a} vs ${match.team_b}
+          <span class="match-stage">${match.is_knockout ? 'KNOCKOUT' : 'GROUP'}</span>
+          ${match.finished ? '<span class="finished-badge">COMPLETED</span>' : ''}
+        </div>
+        ${match.finished ? `<div class="result-display">FINAL: ${match.score_a} - ${match.score_b}</div>` : ''}
+        ${!deadlinePassed && !match.finished ? `
+          <div class="prediction-inputs">
+            <input type="number" id="scoreA_${match.id}" placeholder="${match.team_a}" value="${userPred ? userPred.pred_score_a : ''}">
+            <span>-</span>
+            <input type="number" id="scoreB_${match.id}" placeholder="${match.team_b}" value="${userPred ? userPred.pred_score_b : ''}">
+          </div>
+          <button class="submit-btn" onclick="savePrediction('${match.id}')">${userPred ? 'UPDATE' : 'SUBMIT'}</button>
+        ` : match.finished && userPred ? `
+          <div style="text-align:center; margin-top:10px; padding:8px; background:rgba(0,0,0,0.5); border-radius:6px;">
+            Your pick: ${userPred.pred_score_a} - ${userPred.pred_score_b} ${userPred.points ? `| POINTS: ${userPred.points}` : ''}
+          </div>
+        ` : deadlinePassed && !match.finished ? `<div style="text-align:center; color:#ffd700;">DEADLINE PASSED</div>` : ''}
+        <div class="deadline">KICKOFF: ${new Date(match.kickoff_time).toLocaleString()}</div>
+      `;
+      grid.appendChild(card);
+    }
+  }
+}
+
+window.savePrediction = async function(matchId) {
+  const scoreA = parseInt(document.getElementById(`scoreA_${matchId}`).value);
+  const scoreB = parseInt(document.getElementById(`scoreB_${matchId}`).value);
+  if (isNaN(scoreA) || isNaN(scoreB)) {
+    showMsg('Enter both scores', true);
+    return;
+  }
+  
+  const { data: existing } = await _supabase
+    .from('predictions')
+    .select('id')
+    .eq('user_id', user.id)
+    .eq('match_id', matchId)
+    .maybeSingle();
+  
+  let error;
+  if (existing) {
+    const { error: updateError } = await _supabase
+      .from('predictions')
+      .update({ pred_score_a: scoreA, pred_score_b: scoreB })
+      .eq('id', existing.id);
+    error = updateError;
+  } else {
+    const { error: insertError } = await _supabase
+      .from('predictions')
+      .insert({ user_id: user.id, match_id: matchId, pred_score_a: scoreA, pred_score_b: scoreB });
+    error = insertError;
+  }
+  
+  if (error) {
+    showMsg(error.message, true);
+  } else {
+    showMsg('Prediction saved!');
+    loadMatches();
+    loadLeaderboard();
+  }
+};
+
+// LEADERBOARD
+async function loadLeaderboard() {
+  const { data, error } = await _supabase.from('leaderboard').select('*').limit(50);
+  if (error) return;
+  
+  const container = document.getElementById('leaderboardList');
+  if (!data || data.length === 0) {
+    container.innerHTML = '<div style="text-align:center; padding:40px;">No users yet</div>';
+    return;
+  }
+  
+  container.innerHTML = `
+    <div class="leaderboard-container">
+      <div class="leaderboard-header">
+        <div>RANK</div>
+        <div>PLAYER</div>
+        <div>POINTS</div>
+      </div>
+      <div id="leaderboardItems"></div>
+    </div>
+  `;
+  
+  const itemsDiv = container.querySelector('#leaderboardItems');
+  data.forEach((u, i) => {
+    const item = document.createElement('div');
+    item.className = 'leaderboard-item';
+    item.innerHTML = `
+      <div class="leaderboard-rank">${i+1}</div>
+      <div>${u.username || 'User'}</div>
+      <div class="leaderboard-points">${u.total_points || 0}</div>
+    `;
+    itemsDiv.appendChild(item);
+  });
+}
+
+// ADMIN FUNCTIONS
+async function loadAdminMatches() {
+  const { data, error } = await _supabase.from('matches').select('*').order('kickoff_time');
+  if (error) return;
+  renderAdminMatches(data);
+}
+
+function renderAdminMatches(matches) {
+  const container = document.getElementById('adminMatchesList');
+  const filter = document.getElementById('adminFilter').value;
+  const search = document.getElementById('adminSearch').value.toLowerCase();
+  
+  let filtered = matches;
+  if (filter === 'pending') filtered = filtered.filter(m => !m.finished);
+  if (filter === 'finished') filtered = filtered.filter(m => m.finished);
+  if (search) filtered = filtered.filter(m => 
+    m.team_a.toLowerCase().includes(search) || m.team_b.toLowerCase().includes(search)
+  );
+  
+  const grouped = {};
+  filtered.forEach(m => {
+    const date = new Date(m.kickoff_time).toLocaleDateString('en-US', {
+      weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+    });
+    if (!grouped[date]) grouped[date] = [];
+    grouped[date].push(m);
+  });
+  
+  container.innerHTML = '';
+  for (const [date, dayMatches] of Object.entries(grouped)) {
+    const dayGroup = document.createElement('div');
+    dayGroup.className = 'match-day-group';
+    dayGroup.innerHTML = `<div class="match-day-header"><div class="match-day-date">${date}</div><div class="match-day-count">${dayMatches.length} matches</div></div><div class="matches-grid" id="adminGrid-${date.replace(/[^a-z0-9]/gi, '')}"></div>`;
+    container.appendChild(dayGroup);
+    
+    const grid = dayGroup.querySelector('.matches-grid');
+    
+    for (const match of dayMatches) {
+      const card = document.createElement('div');
+      card.className = 'match-card';
+      
+      if (match.finished) {
+        card.innerHTML = `
+          <div class="match-title">${match.team_a} vs ${match.team_b}</div>
+          <div class="result-display">RESULT: ${match.score_a} - ${match.score_b}</div>
+          <button class="submit-btn reset-btn" onclick="resetMatch('${match.id}')">RESET RESULT</button>
+          <div class="deadline">${new Date(match.kickoff_time).toLocaleString()}</div>
+        `;
+      } else {
+        card.innerHTML = `
+          <div class="match-title">${match.team_a} vs ${match.team_b}</div>
+          <div class="admin-result-inputs">
+            <input type="number" id="adminA_${match.id}" placeholder="${match.team_a}">
+            <span>-</span>
+            <input type="number" id="adminB_${match.id}" placeholder="${match.team_b}">
+          </div>
+          ${match.is_knockout ? `<select id="advance_${match.id}" style="width:100%; margin:10px 0; padding:8px;"><option value="">Who advanced?</option><option value="${match.team_a}">${match.team_a}</option><option value="${match.team_b}">${match.team_b}</option></select>` : ''}
+          <button class="submit-btn admin-btn" onclick="setResult('${match.id}', ${match.is_knockout})">SET RESULT & CALCULATE</button>
+          <div class="deadline">${new Date(match.kickoff_time).toLocaleString()}</div>
+        `;
+      }
+      grid.appendChild(card);
+    }
+  }
+}
+
+window.setResult = async function(matchId, isKnockout) {
+  const a = parseInt(document.getElementById(`adminA_${matchId}`).value);
+  const b = parseInt(document.getElementById(`adminB_${matchId}`).value);
+  if (isNaN(a) || isNaN(b)) {
+    showMsg('Enter valid scores', true);
+    return;
+  }
+  
+  let advance = null;
+  if (isKnockout) {
+    advance = document.getElementById(`advance_${matchId}`).value;
+    if (!advance) {
+      showMsg('Select advancing team', true);
+      return;
+    }
+  }
+  
+  const update = { score_a: a, score_b: b, finished: true };
+  if (advance) update.advancing_team = advance;
+  
+  const { error } = await _supabase.from('matches').update(update).eq('id', matchId);
+  if (error) {
+    showMsg(error.message, true);
+  } else {
+    showMsg('Result set! Points calculated!');
+    loadMatches();
+    loadAdminMatches();
+    loadLeaderboard();
+  }
+};
+
+window.resetMatch = async function(matchId) {
+  const { error } = await _supabase
+    .from('matches')
+    .update({ score_a: null, score_b: null, finished: false, advancing_team: null })
+    .eq('id', matchId);
+  if (error) {
+    showMsg(error.message, true);
+  } else {
+    showMsg('Result reset!');
+    loadMatches();
+    loadAdminMatches();
+    loadLeaderboard();
+  }
+};
+
+// TAB SWITCHING
+document.getElementById('showPredictions').onclick = () => {
+  document.getElementById('predictionsPanel').style.display = 'block';
+  document.getElementById('leaderboardPanel').style.display = 'none';
+  document.getElementById('adminPanel').style.display = 'none';
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('showPredictions').classList.add('active');
+  loadMatches();
+};
+
+document.getElementById('showLeaderboard').onclick = () => {
+  document.getElementById('predictionsPanel').style.display = 'none';
+  document.getElementById('leaderboardPanel').style.display = 'block';
+  document.getElementById('adminPanel').style.display = 'none';
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('showLeaderboard').classList.add('active');
+  loadLeaderboard();
+};
+
+document.getElementById('showAdmin').onclick = async () => {
+  document.getElementById('predictionsPanel').style.display = 'none';
+  document.getElementById('leaderboardPanel').style.display = 'none';
+  document.getElementById('adminPanel').style.display = 'block';
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('showAdmin').classList.add('active');
+  await loadAdminMatches();
+};
+
+// FILTERS
+document.getElementById('matchFilter').onchange = filterAndShowMatches;
+document.getElementById('teamSearch').onkeyup = filterAndShowMatches;
+document.querySelectorAll('.sort-btn').forEach(btn => {
+  btn.onclick = () => {
+    currentSort = btn.dataset.sort;
+    document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    filterAndShowMatches();
+  };
+});
+
+document.getElementById('adminFilter').onchange = loadAdminMatches;
+document.getElementById('adminSearch').onkeyup = loadAdminMatches;
+
+// CHECK SESSION
 async function checkSession() {
   const { data: { session } } = await _supabase.auth.getSession();
   if (session) {
     user = session.user;
     document.getElementById('loginBox').style.display = 'none';
     document.getElementById('mainPage').style.display = 'block';
-    document.getElementById('userEmail').innerHTML = 'Logged in as: ' + user.email;
+    document.getElementById('userEmail').innerHTML = user.email;
+    
+    if (user.email === 'admin@worldcup.com') {
+      document.getElementById('adminBadge').style.display = 'inline-block';
+      document.getElementById('showAdmin').style.display = 'inline-block';
+    }
+    
+    loadMatches();
+    loadLeaderboard();
   }
 }
 
