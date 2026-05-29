@@ -667,9 +667,9 @@ async function renderMatchesGroupedByDay(matches) {
       var predictionHtml = '';
       if (!deadlinePassed && !match.finished) {
         predictionHtml = '<div class="prediction-inputs">' +
-          '<input type="number" id="scoreA_' + match.id + '" min="0" max="10" placeholder="' + match.team_a + '" value="' + (userPred ? userPred.pred_score_a : '') + '" onchange="this.value = validateGoal(this.value)">' +
+          '<input type="number" id="scoreA_' + match.id + '" min="0" max="10" placeholder="' + match.team_a + '" value="' + (userPred ? userPred.pred_score_a : '') + '">' +
           '<span style="font-weight:bold;">-</span>' +
-          '<input type="number" id="scoreB_' + match.id + '" min="0" max="10" placeholder="' + match.team_b + '" value="' + (userPred ? userPred.pred_score_b : '') + '" onchange="this.value = validateGoal(this.value)">' +
+          '<input type="number" id="scoreB_' + match.id + '" min="0" max="10" placeholder="' + match.team_b + '" value="' + (userPred ? userPred.pred_score_b : '') + '">' +
           '</div>' +
           '<button class="submit-btn" onclick="savePrediction(\'' + match.id + '\')">' + (userPred ? 'UPDATE PREDICTION' : 'SUBMIT PREDICTION') + '</button>';
       } else if (match.finished && userPred) {
@@ -695,10 +695,6 @@ async function renderMatchesGroupedByDay(matches) {
   }
 }
 
-window.validateGoal = function(value) {
-  return validateGoal(value);
-}
-
 window.savePrediction = async function(matchId) {
   var scoreA = parseInt(document.getElementById('scoreA_' + matchId).value);
   var scoreB = parseInt(document.getElementById('scoreB_' + matchId).value);
@@ -707,17 +703,57 @@ window.savePrediction = async function(matchId) {
   scoreA = Math.max(0, Math.min(10, scoreA));
   scoreB = Math.max(0, Math.min(10, scoreB));
   
-  var existingResult = await _supabase.from('predictions').select('id').eq('user_id', user.id).eq('match_id', matchId).maybeSingle();
-  
-  if (existingResult.data) {
-    await _supabase.from('predictions').update({ pred_score_a: scoreA, pred_score_b: scoreB }).eq('id', existingResult.data.id);
-  } else {
-    await _supabase.from('predictions').insert({ user_id: user.id, match_id: matchId, pred_score_a: scoreA, pred_score_b: scoreB });
+  try {
+    // First check if prediction exists
+    var existingResult = await _supabase
+      .from('predictions')
+      .select('id')
+      .eq('user_id', user.id)
+      .eq('match_id', matchId)
+      .maybeSingle();
+    
+    if (existingResult.error) {
+      showMsg('Error checking prediction: ' + existingResult.error.message, true);
+      return;
+    }
+    
+    var result;
+    if (existingResult.data) {
+      // Update existing prediction
+      result = await _supabase
+        .from('predictions')
+        .update({ 
+          pred_score_a: scoreA, 
+          pred_score_b: scoreB,
+          updated_at: new Date()
+        })
+        .eq('id', existingResult.data.id);
+    } else {
+      // Insert new prediction
+      result = await _supabase
+        .from('predictions')
+        .insert({ 
+          user_id: user.id, 
+          match_id: matchId, 
+          pred_score_a: scoreA, 
+          pred_score_b: scoreB 
+        });
+    }
+    
+    if (result.error) {
+      if (result.error.code === '409') {
+        showMsg('You already have a prediction for this match. Use UPDATE instead.', true);
+      } else {
+        showMsg('Error: ' + result.error.message, true);
+      }
+    } else {
+      showMsg('Prediction saved!', false);
+      loadMatches();
+      loadLeaderboard();
+    }
+  } catch(err) {
+    showMsg('Error: ' + err.message, true);
   }
-  
-  showMsg('Prediction saved!', false);
-  loadMatches();
-  loadLeaderboard();
 };
 
 async function loadLeaderboard() {
@@ -778,9 +814,9 @@ function renderAdminMatches(matches) {
     } else {
       card.innerHTML = '<div class="match-title">' + getTeamHtml(match.team_a) + ' VS ' + getTeamHtml(match.team_b) + ' ' + groupHtml + '</div>' +
         '<div class="admin-result-inputs">' +
-        '<input type="number" id="adminA_' + match.id + '" min="0" max="10" placeholder="' + match.team_a + ' score" onchange="this.value = validateGoal(this.value)">' +
+        '<input type="number" id="adminA_' + match.id + '" min="0" max="10" placeholder="' + match.team_a + ' score">' +
         '<span>-</span>' +
-        '<input type="number" id="adminB_' + match.id + '" min="0" max="10" placeholder="' + match.team_b + ' score" onchange="this.value = validateGoal(this.value)">' +
+        '<input type="number" id="adminB_' + match.id + '" min="0" max="10" placeholder="' + match.team_b + ' score">' +
         '</div>' +
         (match.is_knockout ? '<select id="advance_' + match.id + '" style="width:100%; margin:10px 0; padding:10px; border:2px solid #e0e0e0; border-radius:8px;"><option value="">Who advanced?</option><option value="' + match.team_a + '">' + match.team_a + '</option><option value="' + match.team_b + '">' + match.team_b + '</option></select>' : '') +
         '<button class="submit-btn admin-btn" onclick="setResult(\'' + match.id + '\', ' + match.is_knockout + ')">SET RESULT AND CALCULATE</button>';
