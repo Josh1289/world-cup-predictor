@@ -17,385 +17,94 @@
       padding: 20px;
     }
 
-    body.theme-orange {
-      background: linear-gradient(135deg, #FF6B35 0%, #F7931E 50%, #FFD700 100%);
-    }
+    /* THEMES */
+    body.theme-orange { background: linear-gradient(135deg, #FF6B35 0%, #F7931E 50%, #FFD700 100%); }
     body.theme-orange .header, body.theme-orange .match-day-group, 
     body.theme-orange .leaderboard-container, body.theme-orange .filter-group,
-    body.theme-orange #loginBox, body.theme-orange .match-card {
-      background: white;
-      color: black;
-    }
-    body.theme-orange .tab.active, body.theme-orange .leaderboard-header {
-      background: #FF6B35;
-      color: white;
-    }
-    body.theme-orange .submit-btn, body.theme-orange .admin-btn {
-      background: #FF6B35;
-      color: white;
-    }
+    body.theme-orange #loginBox, body.theme-orange .match-card { background: white; color: black; }
+    body.theme-orange .tab.active, body.theme-orange .leaderboard-header { background: #FF6B35; color: white; }
+    body.theme-orange .submit-btn, body.theme-orange .admin-btn { background: #FF6B35; color: white; }
 
-    body.theme-green {
-      background: linear-gradient(135deg, #0a5c2e 0%, #0a3d1f 50%, #062a15 100%);
-    }
+    body.theme-green { background: linear-gradient(135deg, #0a5c2e 0%, #0a3d1f 50%, #062a15 100%); }
     body.theme-green .header, body.theme-green .match-day-group,
     body.theme-green .leaderboard-container, body.theme-green .filter-group,
-    body.theme-green #loginBox, body.theme-green .match-card {
-      background: white;
-      color: black;
-    }
-    body.theme-green .tab.active, body.theme-green .leaderboard-header {
-      background: #2E7D32;
-      color: white;
-    }
-    body.theme-green .submit-btn, body.theme-green .admin-btn {
-      background: #2E7D32;
-      color: white;
-    }
+    body.theme-green #loginBox, body.theme-green .match-card { background: white; color: black; }
+    body.theme-green .tab.active, body.theme-green .leaderboard-header { background: #2E7D32; color: white; }
+    body.theme-green .submit-btn, body.theme-green .admin-btn { background: #2E7D32; color: white; }
 
-    body.theme-night {
-      background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
-    }
+    body.theme-night { background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%); }
     body.theme-night .header, body.theme-night .match-day-group,
     body.theme-night .leaderboard-container, body.theme-night .filter-group,
-    body.theme-night #loginBox, body.theme-night .match-card {
-      background: rgba(30,30,50,0.95);
-      color: white;
-    }
-    body.theme-night .tab.active, body.theme-night .leaderboard-header {
-      background: #FFD700;
-      color: #1a1a2e;
-    }
-    body.theme-night .submit-btn, body.theme-night .admin-btn {
-      background: #FFD700;
-      color: #1a1a2e;
-    }
+    body.theme-night #loginBox, body.theme-night .match-card { background: rgba(30,30,50,0.95); color: white; }
+    body.theme-night .tab.active, body.theme-night .leaderboard-header { background: #FFD700; color: #1a1a2e; }
+    body.theme-night .submit-btn, body.theme-night .admin-btn { background: #FFD700; color: #1a1a2e; }
 
-    body.theme-classic {
-      background: linear-gradient(135deg, #1a472a 0%, #0a2a1a 100%);
-    }
+    body.theme-classic { background: linear-gradient(135deg, #1a472a 0%, #0a2a1a 100%); }
     body.theme-classic .header, body.theme-classic .match-day-group,
     body.theme-classic .leaderboard-container, body.theme-classic .filter-group,
-    body.theme-classic #loginBox, body.theme-classic .match-card {
-      background: #f5f5dc;
-      color: black;
-    }
-    body.theme-classic .tab.active, body.theme-classic .leaderboard-header {
-      background: #8B4513;
-      color: white;
-    }
-    body.theme-classic .submit-btn, body.theme-classic .admin-btn {
-      background: #8B4513;
-      color: white;
-    }
+    body.theme-classic #loginBox, body.theme-classic .match-card { background: #f5f5dc; color: black; }
+    body.theme-classic .tab.active, body.theme-classic .leaderboard-header { background: #8B4513; color: white; }
+    body.theme-classic .submit-btn, body.theme-classic .admin-btn { background: #8B4513; color: white; }
 
-    #loginBox {
-      max-width: 450px;
-      margin: 100px auto;
-      padding: 40px;
-      border-radius: 20px;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-    }
-    #loginBox h2 {
-      text-align: center;
-      font-size: 32px;
-      margin-bottom: 30px;
-    }
-    #loginBox input {
-      width: 100%;
-      padding: 14px;
-      margin: 12px 0;
-      border-radius: 12px;
-      border: 2px solid #e0e0e0;
-      font-size: 16px;
-    }
-    #loginBox button {
-      width: 100%;
-      padding: 14px;
-      margin: 12px 0;
-      border: none;
-      border-radius: 12px;
-      cursor: pointer;
-      font-weight: bold;
-      font-size: 16px;
-      transition: all 0.3s;
-      color: white;
-    }
-    #loginBox button:hover {
-      transform: translateY(-2px);
-    }
+    #loginBox { max-width: 450px; margin: 100px auto; padding: 40px; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
+    #loginBox h2 { text-align: center; font-size: 32px; margin-bottom: 30px; }
+    #loginBox input { width: 100%; padding: 14px; margin: 12px 0; border-radius: 12px; border: 2px solid #e0e0e0; font-size: 16px; }
+    #loginBox button { width: 100%; padding: 14px; margin: 12px 0; border: none; border-radius: 12px; cursor: pointer; font-weight: bold; font-size: 16px; transition: all 0.3s; color: white; }
+    #loginBox button:hover { transform: translateY(-2px); }
 
-    #mainPage {
-      max-width: 1400px;
-      margin: 0 auto;
-    }
-
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 20px 30px;
-      border-radius: 16px;
-      margin-bottom: 25px;
-      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-    }
-    .header-left {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-    }
-    .theme-selector {
-      display: flex;
-      gap: 8px;
-    }
-    .theme-btn {
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-      border: 2px solid white;
-      cursor: pointer;
-      transition: all 0.3s;
-    }
-    .theme-btn:hover {
-      transform: scale(1.1);
-    }
+    #mainPage { max-width: 1400px; margin: 0 auto; }
+    .header { display: flex; justify-content: space-between; align-items: center; padding: 20px 30px; border-radius: 16px; margin-bottom: 25px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); }
+    .header-left { display: flex; align-items: center; gap: 20px; }
+    .theme-selector { display: flex; gap: 8px; }
+    .theme-btn { width: 30px; height: 30px; border-radius: 50%; border: 2px solid white; cursor: pointer; transition: all 0.3s; }
+    .theme-btn:hover { transform: scale(1.1); }
     .theme-orange-btn { background: #FF6B35; }
     .theme-green-btn { background: #2E7D32; }
     .theme-night-btn { background: #302b63; }
     .theme-classic-btn { background: #8B4513; }
 
-    .admin-badge {
-      padding: 5px 15px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: bold;
-      margin-left: 10px;
-    }
-    .logout-btn {
-      padding: 10px 25px;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: all 0.3s;
-    }
+    .admin-badge { padding: 5px 15px; border-radius: 20px; font-size: 12px; font-weight: bold; margin-left: 10px; }
+    .logout-btn { padding: 10px 25px; border: none; border-radius: 10px; cursor: pointer; transition: all 0.3s; }
 
-    .tabs {
-      display: flex;
-      gap: 15px;
-      margin-bottom: 25px;
-    }
-    .tab {
-      padding: 12px 30px;
-      border: none;
-      cursor: pointer;
-      border-radius: 12px;
-      font-weight: bold;
-      transition: all 0.3s;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-    .tab.active {
-      background: #FF6B35;
-      color: white;
-    }
+    .tabs { display: flex; gap: 15px; margin-bottom: 25px; }
+    .tab { padding: 12px 30px; border: none; cursor: pointer; border-radius: 12px; font-weight: bold; transition: all 0.3s; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    .tab.active { background: #FF6B35; color: white; }
 
-    .match-day-group {
-      margin-bottom: 30px;
-      border-radius: 16px;
-      overflow: hidden;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-    }
-    .match-day-header {
-      padding: 15px 25px;
-      color: white;
-    }
-    .match-day-date {
-      font-size: 22px;
-      font-weight: bold;
-    }
-    .match-day-count {
-      font-size: 13px;
-      opacity: 0.9;
-      margin-top: 5px;
-    }
-    .matches-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
-      gap: 1px;
-      background: #e0e0e0;
-    }
-    .match-card {
-      padding: 20px;
-      transition: all 0.3s;
-    }
-    .match-card:hover {
-      transform: translateX(5px);
-    }
-    .match-title {
-      font-size: 18px;
-      font-weight: bold;
-      text-align: center;
-      padding-bottom: 10px;
-      margin-bottom: 12px;
-      border-bottom: 2px solid;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-    .team-with-flag {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .flag-img {
-      width: 24px;
-      height: 18px;
-      border-radius: 2px;
-    }
-    .vs {
-      font-weight: bold;
-      font-size: 16px;
-    }
-    .match-stage {
-      display: inline-block;
-      padding: 3px 10px;
-      border-radius: 20px;
-      font-size: 11px;
-      font-weight: bold;
-      margin-left: 10px;
-    }
-    .group-letter {
-      display: inline-block;
-      padding: 3px 8px;
-      border-radius: 20px;
-      font-size: 11px;
-      font-weight: bold;
-      margin-left: 5px;
-      background: #FF6B35;
-      color: white;
-    }
-    .finished-badge {
-      display: inline-block;
-      padding: 3px 10px;
-      border-radius: 20px;
-      font-size: 11px;
-      font-weight: bold;
-      margin-left: 10px;
-      background: #4CAF50;
-      color: white;
-    }
-    .result-display {
-      text-align: center;
-      margin-bottom: 15px;
-      padding: 10px;
-      font-size: 20px;
-      font-weight: bold;
-      border-radius: 10px;
-    }
-    .prediction-inputs {
-      display: flex;
-      gap: 15px;
-      justify-content: center;
-      margin: 15px 0;
-    }
-    .prediction-inputs input {
-      width: 80px;
-      padding: 10px;
-      text-align: center;
-      font-size: 18px;
-      border: 2px solid #e0e0e0;
-      border-radius: 10px;
-      font-weight: bold;
-    }
-    .submit-btn {
-      width: 100%;
-      padding: 12px;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      font-weight: bold;
-      margin-top: 10px;
-      transition: all 0.3s;
-      color: white;
-    }
-    .submit-btn:hover {
-      transform: translateY(-2px);
-    }
-    .deadline {
-      font-size: 11px;
-      text-align: center;
-      margin-top: 12px;
-    }
+    .match-day-group { margin-bottom: 30px; border-radius: 16px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+    .match-day-header { padding: 15px 25px; color: white; }
+    .match-day-date { font-size: 22px; font-weight: bold; }
+    .match-day-count { font-size: 13px; opacity: 0.9; margin-top: 5px; }
+    .matches-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 1px; background: #e0e0e0; }
+    .match-card { padding: 20px; transition: all 0.3s; }
+    .match-card:hover { transform: translateX(5px); }
+    .match-title { font-size: 18px; font-weight: bold; text-align: center; padding-bottom: 10px; margin-bottom: 12px; border-bottom: 2px solid; display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; }
+    .team-with-flag { display: inline-flex; align-items: center; gap: 8px; }
+    .flag-img { width: 24px; height: 18px; border-radius: 2px; }
+    .vs { font-weight: bold; font-size: 16px; }
+    .match-stage { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; margin-left: 10px; }
+    .group-letter { display: inline-block; padding: 3px 8px; border-radius: 20px; font-size: 11px; font-weight: bold; margin-left: 5px; background: #FF6B35; color: white; }
+    .finished-badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; margin-left: 10px; background: #4CAF50; color: white; }
+    .result-display { text-align: center; margin-bottom: 15px; padding: 10px; font-size: 20px; font-weight: bold; border-radius: 10px; }
+    .prediction-inputs { display: flex; gap: 15px; justify-content: center; margin: 15px 0; }
+    .prediction-inputs input { width: 80px; padding: 10px; text-align: center; font-size: 18px; border: 2px solid #e0e0e0; border-radius: 10px; font-weight: bold; }
+    .submit-btn { width: 100%; padding: 12px; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; margin-top: 10px; transition: all 0.3s; color: white; }
+    .submit-btn:hover { transform: translateY(-2px); }
+    .deadline { font-size: 11px; text-align: center; margin-top: 12px; }
 
-    .leaderboard-container {
-      border-radius: 16px;
-      overflow: hidden;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-    }
-    .leaderboard-header {
-      display: grid;
-      grid-template-columns: 80px 1fr 100px;
-      padding: 15px 25px;
-      font-weight: bold;
-      color: white;
-    }
-    .leaderboard-item {
-      display: grid;
-      grid-template-columns: 80px 1fr 100px;
-      padding: 14px 25px;
-      border-bottom: 1px solid #f0f0f0;
-    }
+    .leaderboard-container { border-radius: 16px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+    .leaderboard-header { display: grid; grid-template-columns: 80px 1fr 100px; padding: 15px 25px; font-weight: bold; color: white; }
+    .leaderboard-item { display: grid; grid-template-columns: 80px 1fr 100px; padding: 14px 25px; border-bottom: 1px solid #f0f0f0; }
 
-    .filter-group {
-      display: flex;
-      gap: 15px;
-      margin-bottom: 25px;
-      flex-wrap: wrap;
-      padding: 15px 20px;
-      border-radius: 12px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-    .filter-group select, .filter-group input {
-      padding: 10px 15px;
-      border-radius: 10px;
-      border: 2px solid #e0e0e0;
-    }
-    .sort-btn {
-      padding: 8px 18px;
-      border: 2px solid #e0e0e0;
-      border-radius: 8px;
-      cursor: pointer;
-      background: white;
-    }
-    .sort-btn.active {
-      background: #FF6B35;
-      color: white;
-    }
-    .stats {
-      font-weight: bold;
-      margin-left: auto;
-    }
-    .msg {
-      margin-top: 20px;
-      text-align: center;
-    }
+    .filter-group { display: flex; gap: 15px; margin-bottom: 25px; flex-wrap: wrap; padding: 15px 20px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    .filter-group select, .filter-group input { padding: 10px 15px; border-radius: 10px; border: 2px solid #e0e0e0; }
+    .sort-btn { padding: 8px 18px; border: 2px solid #e0e0e0; border-radius: 8px; cursor: pointer; background: white; }
+    .sort-btn.active { background: #FF6B35; color: white; }
+    .stats { font-weight: bold; margin-left: auto; }
+    .msg { margin-top: 20px; text-align: center; }
 
-    .admin-result-inputs {
-      display: flex;
-      gap: 10px;
-      justify-content: center;
-      margin: 10px 0;
-    }
-    .admin-result-inputs input, .admin-result-inputs select {
-      padding: 10px;
-      border-radius: 8px;
-      border: 2px solid #e0e0e0;
-    }
-    .reset-btn {
-      background: #dc3545;
-      color: white;
-    }
+    .admin-result-inputs { display: flex; gap: 10px; justify-content: center; margin: 10px 0; }
+    .admin-result-inputs input, .admin-result-inputs select { padding: 10px; border-radius: 8px; border: 2px solid #e0e0e0; }
+    .reset-btn { background: #dc3545; color: white; }
   </style>
 </head>
 <body class="theme-orange">
@@ -565,8 +274,8 @@ async function login() {
     document.getElementById('showAdmin').style.display = 'inline-block';
   }
   
-  loadMatches();
-  loadLeaderboard();
+  await loadMatches();
+  await loadLeaderboard();
 }
 
 async function signup() {
@@ -592,10 +301,10 @@ async function loadMatches() {
   if (result.error) return;
   allMatches = result.data;
   document.getElementById('matchCount').textContent = result.data.length + ' matches';
-  filterAndShowMatches();
+  await filterAndShowMatches();
 }
 
-function filterAndShowMatches() {
+async function filterAndShowMatches() {
   var filtered = allMatches.slice();
   var stage = document.getElementById('matchFilter').value;
   var search = document.getElementById('teamSearch').value.toLowerCase();
@@ -612,7 +321,7 @@ function filterAndShowMatches() {
     filtered.sort(function(a,b) { return a.team_a.localeCompare(b.team_a); });
   }
   
-  renderMatchesGroupedByDay(filtered);
+  await renderMatchesGroupedByDay(filtered);
 }
 
 async function renderMatchesGroupedByDay(matches) {
@@ -664,12 +373,15 @@ async function renderMatchesGroupedByDay(matches) {
           '<input type="number" id="scoreB_' + match.id + '" min="0" max="10" placeholder="' + match.team_b + '" value="' + (userPred ? userPred.pred_score_b : '') + '">' +
           '</div>' +
           '<button class="submit-btn" onclick="savePrediction(\'' + match.id + '\')">' + (userPred ? 'UPDATE PREDICTION' : 'SUBMIT PREDICTION') + '</button>';
-      } else if (match.finished && userPred) {
+      } else if (match.finished) {
         predictionHtml = '<div style="text-align:center; margin-top:10px; padding:10px; border-radius:10px; background:#f5f5f5;">' +
-          'Your prediction: ' + userPred.pred_score_a + ' - ' + userPred.pred_score_b + (userPred.points ? ' | POINTS: ' + userPred.points : '') +
+          (userPred ? 'Your prediction: <strong>' + userPred.pred_score_a + ' - ' + userPred.pred_score_b + '</strong>' + (userPred.points !== undefined ? ' | POINTS: ' + userPred.points : '') : 'No prediction submitted') +
           '</div>';
       } else if (deadlinePassed && !match.finished) {
-        predictionHtml = '<div style="text-align:center;">DEADLINE PASSED</div>';
+        predictionHtml = '<div style="text-align:center; margin-top:10px; padding:10px; border-radius:10px; background:#f5f5f5;">' +
+          '<div style="color:#dc3545; font-weight:bold; margin-bottom:5px;">MATCH LOCKED</div>' +
+          (userPred ? 'Your prediction: <strong>' + userPred.pred_score_a + ' - ' + userPred.pred_score_b + '</strong>' : 'No prediction submitted') +
+          '</div>';
       }
       
       card.innerHTML = '<div class="match-title">' +
@@ -688,14 +400,16 @@ async function renderMatchesGroupedByDay(matches) {
 }
 
 window.savePrediction = async function(matchId) {
-  var scoreA = parseInt(document.getElementById('scoreA_' + matchId).value);
-  var scoreB = parseInt(document.getElementById('scoreB_' + matchId).value);
-  if (isNaN(scoreA)) scoreA = 0;
-  if (isNaN(scoreB)) scoreB = 0;
-  scoreA = Math.max(0, Math.min(10, scoreA));
-  scoreB = Math.max(0, Math.min(10, scoreB));
+  var scoreAInput = document.getElementById('scoreA_' + matchId).value;
+  var scoreBInput = document.getElementById('scoreB_' + matchId).value;
   
-  // First check if prediction exists
+  if (scoreAInput === '' || scoreBInput === '') {
+    return alert('Please enter scores for both teams.');
+  }
+
+  var scoreA = Math.max(0, Math.min(10, parseInt(scoreAInput)));
+  var scoreB = Math.max(0, Math.min(10, parseInt(scoreBInput)));
+  
   var checkResult = await _supabase
     .from('predictions')
     .select('id')
@@ -704,17 +418,15 @@ window.savePrediction = async function(matchId) {
   
   var result;
   if (checkResult.data && checkResult.data.length > 0) {
-    // Update existing prediction
     result = await _supabase
       .from('predictions')
       .update({ 
         pred_score_a: scoreA, 
         pred_score_b: scoreB,
-        updated_at: new Date()
+        updated_at: new Date().toISOString()
       })
       .eq('id', checkResult.data[0].id);
   } else {
-    // Insert new prediction
     result = await _supabase
       .from('predictions')
       .insert({ 
@@ -722,17 +434,17 @@ window.savePrediction = async function(matchId) {
         match_id: matchId, 
         pred_score_a: scoreA, 
         pred_score_b: scoreB,
-        created_at: new Date(),
-        updated_at: new Date()
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
       });
   }
   
   if (result.error) {
-    showMsg('Error: ' + result.error.message, true);
+    alert('Database Error: ' + result.error.message);
   } else {
-    showMsg('Prediction saved!', false);
-    loadMatches();
-    loadLeaderboard();
+    // Await the refreshes to guarantee synchronous UI updates
+    await loadMatches();
+    await loadLeaderboard();
   }
 };
 
@@ -808,67 +520,68 @@ function renderAdminMatches(matches) {
 window.setResult = async function(matchId, isKnockout) {
   var a = parseInt(document.getElementById('adminA_' + matchId).value);
   var b = parseInt(document.getElementById('adminB_' + matchId).value);
-  if (isNaN(a)) a = 0;
-  if (isNaN(b)) b = 0;
+  if (isNaN(a) || isNaN(b)) return alert('Enter valid numeric scores');
+  
   a = Math.max(0, Math.min(10, a));
   b = Math.max(0, Math.min(10, b));
   
   var advance = null;
   if (isKnockout) {
     advance = document.getElementById('advance_' + matchId).value;
-    if (!advance) return showMsg('Select advancing team', true);
+    if (!advance) return alert('Select advancing team');
   }
   
   var update = { score_a: a, score_b: b, finished: true };
   if (advance) update.advancing_team = advance;
   
   await _supabase.from('matches').update(update).eq('id', matchId);
-  showMsg('Result set! Points calculated!', false);
-  loadMatches();
-  loadAdminMatches();
-  loadLeaderboard();
+  alert('Result set! Points calculated!');
+  
+  await loadMatches();
+  await loadAdminMatches();
+  await loadLeaderboard();
 };
 
 window.resetMatch = async function(matchId) {
   await _supabase.from('matches').update({ score_a: null, score_b: null, finished: false, advancing_team: null }).eq('id', matchId);
-  showMsg('Result reset!', false);
-  loadMatches();
-  loadAdminMatches();
-  loadLeaderboard();
+  alert('Result reset!');
+  await loadMatches();
+  await loadAdminMatches();
+  await loadLeaderboard();
 };
 
 document.getElementById('loginBtn').onclick = login;
 document.getElementById('signupBtn').onclick = signup;
 document.getElementById('logoutBtn').onclick = logout;
 
-document.getElementById('showPredictions').onclick = function() {
+document.getElementById('showPredictions').onclick = async function() {
   document.getElementById('predictionsPanel').style.display = 'block';
   document.getElementById('leaderboardPanel').style.display = 'none';
   document.getElementById('adminPanel').style.display = 'none';
   var tabs = document.querySelectorAll('.tab');
   for (var i = 0; i < tabs.length; i++) tabs[i].classList.remove('active');
   document.getElementById('showPredictions').classList.add('active');
-  loadMatches();
+  await loadMatches();
 };
 
-document.getElementById('showLeaderboard').onclick = function() {
+document.getElementById('showLeaderboard').onclick = async function() {
   document.getElementById('predictionsPanel').style.display = 'none';
   document.getElementById('leaderboardPanel').style.display = 'block';
   document.getElementById('adminPanel').style.display = 'none';
   var tabs = document.querySelectorAll('.tab');
   for (var i = 0; i < tabs.length; i++) tabs[i].classList.remove('active');
   document.getElementById('showLeaderboard').classList.add('active');
-  loadLeaderboard();
+  await loadLeaderboard();
 };
 
-document.getElementById('showAdmin').onclick = function() {
+document.getElementById('showAdmin').onclick = async function() {
   document.getElementById('predictionsPanel').style.display = 'none';
   document.getElementById('leaderboardPanel').style.display = 'none';
   document.getElementById('adminPanel').style.display = 'block';
   var tabs = document.querySelectorAll('.tab');
   for (var i = 0; i < tabs.length; i++) tabs[i].classList.remove('active');
   document.getElementById('showAdmin').classList.add('active');
-  loadAdminMatches();
+  await loadAdminMatches();
 };
 
 document.getElementById('matchFilter').onchange = filterAndShowMatches;
@@ -891,18 +604,22 @@ document.getElementById('adminSearch').onkeyup = loadAdminMatches;
 loadTheme();
 
 (async function() {
-  var sessionResult = await _supabase.auth.getSession();
-  if (sessionResult.data.session) {
-    user = sessionResult.data.session.user;
-    document.getElementById('loginBox').style.display = 'none';
-    document.getElementById('mainPage').style.display = 'block';
-    document.getElementById('userEmail').innerHTML = user.email;
-    if (user.email === 'admin@worldcup.com') {
-      document.getElementById('adminBadge').style.display = 'inline-block';
-      document.getElementById('showAdmin').style.display = 'inline-block';
+  try {
+    var sessionResult = await _supabase.auth.getSession();
+    if (sessionResult.data && sessionResult.data.session) {
+      user = sessionResult.data.session.user;
+      document.getElementById('loginBox').style.display = 'none';
+      document.getElementById('mainPage').style.display = 'block';
+      document.getElementById('userEmail').innerHTML = user.email;
+      if (user.email === 'admin@worldcup.com') {
+        document.getElementById('adminBadge').style.display = 'inline-block';
+        document.getElementById('showAdmin').style.display = 'inline-block';
+      }
+      await loadMatches();
+      await loadLeaderboard();
     }
-    loadMatches();
-    loadLeaderboard();
+  } catch (err) {
+    console.error("Auth initialization error:", err);
   }
 })();
 </script>
