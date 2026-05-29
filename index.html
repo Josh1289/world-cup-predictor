@@ -1,296 +1,72 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>World Cup Predictor 2026</title>
+  <title>World Cup Test</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: 'Segoe UI', Arial, sans-serif;
-      background: linear-gradient(135deg, #FF6B35 0%, #F7931E 100%);
-      min-height: 100vh;
-      padding: 20px;
-    }
-    #loginBox {
-      max-width: 450px;
-      margin: 100px auto;
-      background: white;
-      padding: 40px;
-      border-radius: 20px;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-    }
-    #loginBox h2 { text-align: center; font-size: 32px; margin-bottom: 30px; color: #FF6B35; }
-    #loginBox input {
-      width: 100%;
-      padding: 14px;
-      margin: 12px 0;
-      border-radius: 12px;
-      border: 2px solid #e0e0e0;
-      font-size: 16px;
-    }
-    #loginBox button {
-      width: 100%;
-      padding: 14px;
-      margin: 12px 0;
-      background: #FF6B35;
-      color: white;
-      border: none;
-      border-radius: 12px;
-      cursor: pointer;
-      font-weight: bold;
-      font-size: 16px;
-    }
-    #mainPage {
-      max-width: 1400px;
-      margin: 0 auto;
-      display: none;
-    }
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: white;
-      padding: 20px 30px;
-      border-radius: 16px;
-      margin-bottom: 25px;
-    }
-    .logout-btn {
-      background: #dc3545;
-      color: white;
-      padding: 10px 25px;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-    }
-    .match-card {
-      background: white;
-      border-radius: 16px;
-      padding: 20px;
-      margin-bottom: 15px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-    }
-    .match-title {
-      font-size: 18px;
-      font-weight: bold;
-      text-align: center;
-      padding-bottom: 10px;
-      margin-bottom: 12px;
-      border-bottom: 2px solid #FF6B35;
-    }
-    .match-stage {
-      display: inline-block;
-      padding: 3px 10px;
-      background: #FFF3E0;
-      border-radius: 20px;
-      font-size: 11px;
-      margin-left: 10px;
-      color: #FF6B35;
-    }
-    .prediction-inputs {
-      display: flex;
-      gap: 15px;
-      justify-content: center;
-      margin: 15px 0;
-    }
-    .prediction-inputs input {
-      width: 80px;
-      padding: 10px;
-      text-align: center;
-      font-size: 18px;
-      border: 2px solid #e0e0e0;
-      border-radius: 10px;
-    }
-    .submit-btn {
-      width: 100%;
-      padding: 12px;
-      background: #FF6B35;
-      color: white;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      font-weight: bold;
-      margin-top: 10px;
-    }
-    .deadline {
-      font-size: 11px;
-      text-align: center;
-      margin-top: 12px;
-      color: #999;
-    }
-    .msg { margin-top: 20px; text-align: center; color: #FF6B35; }
-    .error-msg { color: #dc3545; text-align: center; padding: 20px; background: white; border-radius: 16px; }
-  </style>
 </head>
-<body>
-
-<div id="loginBox">
-  <h2>WORLD CUP 2026</h2>
-  <input type="email" id="email" placeholder="Email">
-  <input type="password" id="password" placeholder="Password">
-  <button id="loginBtn">SIGN IN</button>
-  <button id="signupBtn">CREATE ACCOUNT</button>
-  <div id="msg" class="msg"></div>
-</div>
-
-<div id="mainPage">
-  <div class="header">
-    <h2>WORLD CUP 2026 PREDICTOR</h2>
-    <div>
-      <span id="userEmail"></span>
-      <button id="logoutBtn" class="logout-btn">LOGOUT</button>
-    </div>
-  </div>
+<body style="font-family: Arial; padding: 20px; background: #333; color: white;">
+  <h1>Database Test</h1>
+  <div id="result">Loading...</div>
   <div id="matchesList"></div>
-</div>
 
 <script>
-const _supabase = window.supabase.createClient(
+// Supabase
+const supabase = window.supabase.createClient(
   "https://igatvhqatxrhgnshmdld.supabase.co",
   "sb_publishable_kZYMgSK-0VcalUaTuo7gfQ_7cMMse21"
 );
 
-let user = null;
-
-function showMsg(text, isError = false) {
-  const msgDiv = document.getElementById('msg');
-  msgDiv.innerHTML = text;
-  msgDiv.style.color = isError ? '#dc3545' : '#FF6B35';
-  setTimeout(() => { msgDiv.innerHTML = ''; }, 3000);
-}
-
-async function login() {
-  const email = document.getElementById('email').value;
-  const password = document.getElementById('password').value;
-  if (!email || !password) return showMsg('Enter email and password', true);
+async function testConnection() {
+  const resultDiv = document.getElementById('result');
+  const matchesDiv = document.getElementById('matchesList');
   
-  const { data, error } = await _supabase.auth.signInWithPassword({ email, password });
-  if (error) return showMsg(error.message, true);
+  resultDiv.innerHTML = 'Testing connection...';
   
-  user = data.user;
-  document.getElementById('loginBox').style.display = 'none';
-  document.getElementById('mainPage').style.display = 'block';
-  document.getElementById('userEmail').innerHTML = user.email;
-  
-  loadMatches();
-}
-
-async function signup() {
-  const email = document.getElementById('email').value;
-  const password = document.getElementById('password').value;
-  if (!email || !password) return showMsg('Enter email and password', true);
-  if (password.length < 6) return showMsg('Password min 6 characters', true);
-  
-  const { error } = await _supabase.auth.signUp({ email, password });
-  if (error) return showMsg(error.message, true);
-  showMsg('Account created! You can now login.');
-}
-
-async function logout() {
-  await _supabase.auth.signOut();
-  user = null;
-  document.getElementById('loginBox').style.display = 'block';
-  document.getElementById('mainPage').style.display = 'none';
-}
-
-async function loadMatches() {
-  showMsg('Loading matches...');
-  
-  // Direct query to get all matches
-  const { data, error, count } = await _supabase
-    .from('matches')
-    .select('*', { count: 'exact' })
-    .order('kickoff_time', { ascending: true });
-  
-  console.log('Matches data:', data);
-  console.log('Error:', error);
-  console.log('Count:', count);
-  
-  if (error) {
-    showMsg('Error: ' + error.message, true);
-    document.getElementById('matchesList').innerHTML = `<div class="error-msg">Database Error: ${error.message}</div>`;
-    return;
-  }
-  
-  if (!data || data.length === 0) {
-    showMsg('No matches found in database!', true);
-    document.getElementById('matchesList').innerHTML = '<div class="error-msg">No matches found. Please add matches to the database.</div>';
-    return;
-  }
-  
-  showMsg(`Loaded ${data.length} matches!`);
-  
-  // Render matches
-  const container = document.getElementById('matchesList');
-  container.innerHTML = '';
-  
-  for (const match of data) {
-    const card = document.createElement('div');
-    card.className = 'match-card';
+  try {
+    // Test 1: Try to get matches
+    const { data: matches, error: matchesError } = await supabase
+      .from('matches')
+      .select('*')
+      .limit(5);
     
-    card.innerHTML = `
-      <div class="match-title">
-        ${match.team_a} vs ${match.team_b}
-        <span class="match-stage">${match.is_knockout ? 'KNOCKOUT' : 'GROUP'}</span>
-        ${match.finished ? '<span class="match-stage" style="background:#4CAF50; color:white;">FINISHED</span>' : ''}
-      </div>
-      ${match.finished ? `<div style="text-align:center; background:#FFF3E0; padding:10px; border-radius:10px; margin-bottom:15px;">FINAL: ${match.score_a} - ${match.score_b}</div>` : ''}
-      <div class="prediction-inputs">
-        <input type="number" id="scoreA_${match.id}" min="0" max="10" placeholder="${match.team_a}">
-        <span>-</span>
-        <input type="number" id="scoreB_${match.id}" min="0" max="10" placeholder="${match.team_b}">
-      </div>
-      <button class="submit-btn" onclick="savePrediction('${match.id}')">SUBMIT PREDICTION</button>
-      <div class="deadline">Kickoff: ${new Date(match.kickoff_time).toLocaleString()}</div>
-    `;
-    container.appendChild(card);
+    if (matchesError) {
+      resultDiv.innerHTML = 'ERROR fetching matches: ' + matchesError.message;
+      return;
+    }
+    
+    resultDiv.innerHTML = 'SUCCESS! Found ' + (matches?.length || 0) + ' matches in database.';
+    
+    if (matches && matches.length > 0) {
+      matchesDiv.innerHTML = '<h2>First 5 Matches:</h2>';
+      matches.forEach(match => {
+        matchesDiv.innerHTML += `
+          <div style="background: #555; padding: 10px; margin: 10px 0; border-radius: 5px;">
+            <strong>${match.team_a} vs ${match.team_b}</strong><br>
+            Date: ${new Date(match.kickoff_time).toLocaleString()}<br>
+            Stage: ${match.is_knockout ? 'Knockout' : 'Group'}<br>
+            Finished: ${match.finished ? 'Yes' : 'No'}
+          </div>
+        `;
+      });
+    } else {
+      matchesDiv.innerHTML = '<h2>No matches found in database!</h2>';
+    }
+    
+    // Test 2: Try to get count
+    const { count, error: countError } = await supabase
+      .from('matches')
+      .select('*', { count: 'exact', head: true });
+    
+    if (!countError) {
+      resultDiv.innerHTML += `<br>Total matches in database: ${count}`;
+    }
+    
+  } catch (err) {
+    resultDiv.innerHTML = 'ERROR: ' + err.message;
   }
 }
 
-window.savePrediction = async function(matchId) {
-  if (!user) {
-    showMsg('Please login first', true);
-    return;
-  }
-  
-  let scoreA = parseInt(document.getElementById(`scoreA_${matchId}`).value);
-  let scoreB = parseInt(document.getElementById(`scoreB_${matchId}`).value);
-  if (isNaN(scoreA)) scoreA = 0;
-  if (isNaN(scoreB)) scoreB = 0;
-  scoreA = Math.max(0, Math.min(10, scoreA));
-  scoreB = Math.max(0, Math.min(10, scoreB));
-  
-  const { data: existing } = await _supabase
-    .from('predictions')
-    .select('id')
-    .eq('user_id', user.id)
-    .eq('match_id', matchId)
-    .maybeSingle();
-  
-  if (existing) {
-    await _supabase.from('predictions').update({ pred_score_a: scoreA, pred_score_b: scoreB }).eq('id', existing.id);
-  } else {
-    await _supabase.from('predictions').insert({ user_id: user.id, match_id: matchId, pred_score_a: scoreA, pred_score_b: scoreB });
-  }
-  
-  showMsg('Prediction saved!');
-};
-
-// Event listeners
-document.getElementById('loginBtn').onclick = login;
-document.getElementById('signupBtn').onclick = signup;
-document.getElementById('logoutBtn').onclick = logout;
-
-// Check session
-(async () => {
-  const { data: { session } } = await _supabase.auth.getSession();
-  if (session) {
-    user = session.user;
-    document.getElementById('loginBox').style.display = 'none';
-    document.getElementById('mainPage').style.display = 'block';
-    document.getElementById('userEmail').innerHTML = user.email;
-    loadMatches();
-  }
-})();
+testConnection();
 </script>
 </body>
 </html>
