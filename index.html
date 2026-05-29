@@ -12,45 +12,26 @@
 
     body {
       font-family: 'Segoe UI', 'Poppins', 'Arial', sans-serif;
-      background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+      background: linear-gradient(135deg, #FF6B35 0%, #F7931E 50%, #FFD700 100%);
       min-height: 100vh;
-      color: #ffffff;
+      color: #1a1a2e;
       padding: 20px;
-    }
-
-    /* Stadium light effect */
-    body::before {
-      content: "";
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: radial-gradient(circle at 50% 0%, rgba(255,215,0,0.08) 0%, transparent 50%);
-      pointer-events: none;
-      z-index: 0;
     }
 
     /* Login Box */
     #loginBox {
       max-width: 450px;
       margin: 100px auto;
-      background: linear-gradient(135deg, rgba(20, 20, 40, 0.95) 0%, rgba(10, 10, 30, 0.95) 100%);
-      backdrop-filter: blur(10px);
+      background: white;
       padding: 40px;
       border-radius: 20px;
-      border: 1px solid rgba(255, 215, 0, 0.3);
-      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
     }
 
     #loginBox h2 {
-      background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
+      color: #FF6B35;
       text-align: center;
       font-size: 32px;
-      letter-spacing: 3px;
       margin-bottom: 30px;
     }
 
@@ -59,24 +40,21 @@
       padding: 14px;
       margin: 12px 0;
       border-radius: 12px;
-      border: 1px solid rgba(255, 215, 0, 0.2);
-      background: rgba(30, 30, 50, 0.8);
-      color: #fff;
+      border: 2px solid #e0e0e0;
       font-size: 16px;
     }
 
     #loginBox input:focus {
       outline: none;
-      border-color: #FFD700;
-      box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
+      border-color: #FF6B35;
     }
 
     #loginBox button {
       width: 100%;
       padding: 14px;
       margin: 12px 0;
-      background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
-      color: #1a1a2e;
+      background: #FF6B35;
+      color: white;
       border: none;
       border-radius: 12px;
       cursor: pointer;
@@ -86,33 +64,37 @@
     }
 
     #loginBox button:hover {
+      background: #F7931E;
       transform: translateY(-2px);
-      box-shadow: 0 5px 20px rgba(255, 215, 0, 0.3);
+    }
+
+    #loginBox button:last-of-type {
+      background: #2E7D32;
+    }
+
+    #loginBox button:last-of-type:hover {
+      background: #1B5E20;
     }
 
     /* Main Page */
     #mainPage {
       max-width: 1400px;
       margin: 0 auto;
-      position: relative;
-      z-index: 1;
     }
 
     .header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: linear-gradient(135deg, rgba(20, 20, 40, 0.95) 0%, rgba(10, 10, 30, 0.95) 100%);
-      backdrop-filter: blur(10px);
+      background: white;
       padding: 20px 30px;
       border-radius: 16px;
       margin-bottom: 25px;
-      border-bottom: 2px solid #FFD700;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
     }
 
     .header h2 {
-      background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+      background: linear-gradient(135deg, #FF6B35 0%, #F7931E 100%);
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
@@ -120,8 +102,8 @@
     }
 
     .admin-badge {
-      background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
-      color: #1a1a2e;
+      background: #FF6B35;
+      color: white;
       padding: 5px 15px;
       border-radius: 20px;
       font-size: 12px;
@@ -130,17 +112,17 @@
     }
 
     .logout-btn {
-      background: rgba(255, 215, 0, 0.15);
-      color: #FFD700;
+      background: #dc3545;
+      color: white;
       padding: 10px 25px;
-      border: 1px solid #FFD700;
+      border: none;
       border-radius: 10px;
       cursor: pointer;
       transition: all 0.3s;
     }
 
     .logout-btn:hover {
-      background: rgba(255, 215, 0, 0.3);
+      background: #c82333;
     }
 
     .tabs {
@@ -151,47 +133,44 @@
 
     .tab {
       padding: 12px 30px;
-      background: rgba(20, 20, 40, 0.8);
-      backdrop-filter: blur(5px);
-      border: 1px solid rgba(255, 215, 0, 0.2);
-      color: #FFD700;
+      background: white;
+      border: none;
+      color: #666;
       cursor: pointer;
       border-radius: 12px;
       font-weight: bold;
       transition: all 0.3s;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
 
     .tab.active {
-      background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
-      color: #1a1a2e;
-      border-color: #FFD700;
+      background: #FF6B35;
+      color: white;
     }
 
     /* Match Day Groups */
     .match-day-group {
       margin-bottom: 30px;
-      background: rgba(20, 20, 40, 0.7);
-      backdrop-filter: blur(5px);
+      background: white;
       border-radius: 16px;
       overflow: hidden;
-      border: 1px solid rgba(255, 215, 0, 0.15);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
     }
 
     .match-day-header {
-      background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(255, 165, 0, 0.05) 100%);
+      background: linear-gradient(135deg, #FF6B35 0%, #F7931E 100%);
       padding: 15px 25px;
-      border-left: 4px solid #FFD700;
+      color: white;
     }
 
     .match-day-date {
-      color: #FFD700;
       font-size: 22px;
       font-weight: bold;
     }
 
     .match-day-count {
       font-size: 13px;
-      color: rgba(255,255,255,0.5);
+      opacity: 0.9;
       margin-top: 5px;
     }
 
@@ -199,17 +178,17 @@
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
       gap: 1px;
-      background: rgba(0,0,0,0.2);
+      background: #f0f0f0;
     }
 
     .match-card {
-      background: rgba(25, 25, 45, 0.9);
+      background: white;
       padding: 20px;
       transition: all 0.3s;
     }
 
     .match-card:hover {
-      background: rgba(35, 35, 60, 0.95);
+      background: #fff9f5;
       transform: translateX(5px);
     }
 
@@ -219,7 +198,7 @@
       text-align: center;
       padding-bottom: 10px;
       margin-bottom: 12px;
-      border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+      border-bottom: 2px solid #FF6B35;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -234,28 +213,29 @@
     }
 
     .flag {
-      font-size: 24px;
+      font-size: 28px;
     }
 
     .vs {
-      color: #FFD700;
+      color: #FF6B35;
       font-weight: bold;
-      margin: 0 5px;
+      font-size: 16px;
     }
 
     .match-stage {
       display: inline-block;
       padding: 3px 10px;
-      background: rgba(255, 215, 0, 0.15);
+      background: #FFF3E0;
       border-radius: 20px;
       font-size: 11px;
-      color: #FFD700;
+      color: #FF6B35;
+      font-weight: bold;
     }
 
     .finished-badge {
       display: inline-block;
-      background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
-      color: #1a1a2e;
+      background: #4CAF50;
+      color: white;
       padding: 3px 10px;
       border-radius: 20px;
       font-size: 11px;
@@ -265,10 +245,13 @@
 
     .result-display {
       text-align: center;
-      color: #FFD700;
+      background: #FFF3E0;
+      color: #FF6B35;
       margin-bottom: 15px;
-      font-size: 22px;
+      padding: 10px;
+      font-size: 20px;
       font-weight: bold;
+      border-radius: 10px;
     }
 
     .prediction-inputs {
@@ -283,18 +266,21 @@
       padding: 10px;
       text-align: center;
       font-size: 18px;
-      border: 2px solid rgba(255, 215, 0, 0.3);
-      background: rgba(0,0,0,0.5);
-      color: #FFD700;
+      border: 2px solid #e0e0e0;
       border-radius: 10px;
       font-weight: bold;
+    }
+
+    .prediction-inputs input:focus {
+      outline: none;
+      border-color: #FF6B35;
     }
 
     .submit-btn {
       width: 100%;
       padding: 12px;
-      background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
-      color: #1a1a2e;
+      background: #FF6B35;
+      color: white;
       border: none;
       border-radius: 10px;
       cursor: pointer;
@@ -304,30 +290,30 @@
     }
 
     .submit-btn:hover {
+      background: #F7931E;
       transform: translateY(-2px);
-      box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);
     }
 
     .deadline {
       font-size: 11px;
       text-align: center;
       margin-top: 12px;
-      color: rgba(255,255,255,0.4);
+      color: #999;
     }
 
     /* Leaderboard */
     .leaderboard-container {
-      background: rgba(20, 20, 40, 0.7);
-      backdrop-filter: blur(5px);
+      background: white;
       border-radius: 16px;
       overflow: hidden;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
     }
 
     .leaderboard-header {
       display: grid;
       grid-template-columns: 80px 1fr 100px;
-      background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 165, 0, 0.1) 100%);
-      color: #FFD700;
+      background: #FF6B35;
+      color: white;
       padding: 15px 25px;
       font-weight: bold;
     }
@@ -336,50 +322,25 @@
       display: grid;
       grid-template-columns: 80px 1fr 100px;
       padding: 14px 25px;
-      border-bottom: 1px solid rgba(255, 215, 0, 0.1);
+      border-bottom: 1px solid #f0f0f0;
     }
 
     .leaderboard-item:hover {
-      background: rgba(255, 215, 0, 0.05);
+      background: #FFF3E0;
     }
 
-    .filter-group {
-      display: flex;
-      gap: 15px;
-      margin-bottom: 25px;
-      flex-wrap: wrap;
-      background: rgba(20, 20, 40, 0.7);
-      padding: 15px 20px;
-      border-radius: 12px;
+    .leaderboard-rank {
+      font-weight: bold;
+      color: #FF6B35;
     }
 
-    .filter-group select, .filter-group input {
-      padding: 10px 15px;
-      border-radius: 10px;
-      border: 1px solid rgba(255, 215, 0, 0.2);
-      background: rgba(30, 30, 50, 0.8);
-      color: #FFD700;
+    .leaderboard-points {
+      font-weight: bold;
+      color: #FF6B35;
+      text-align: right;
     }
 
-    .sort-btn {
-      padding: 8px 18px;
-      background: rgba(30, 30, 50, 0.8);
-      border: 1px solid rgba(255, 215, 0, 0.2);
-      border-radius: 8px;
-      color: #FFD700;
-      cursor: pointer;
-    }
-
-    .sort-btn.active {
-      background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
-      color: #1a1a2e;
-    }
-
-    .stats {
-      color: #FFD700;
-      margin-left: auto;
-    }
-
+    /* Admin Panel */
     .admin-result-inputs {
       display: flex;
       gap: 10px;
@@ -390,25 +351,60 @@
     .admin-result-inputs input, .admin-result-inputs select {
       padding: 10px;
       border-radius: 8px;
-      border: 1px solid rgba(255, 215, 0, 0.3);
-      background: rgba(30, 30, 50, 0.8);
-      color: #FFD700;
+      border: 2px solid #e0e0e0;
     }
 
     .admin-btn {
-      background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
-      color: #1a1a2e;
+      background: #FF6B35;
+      color: white;
     }
 
     .reset-btn {
-      background: rgba(220, 53, 69, 0.8);
+      background: #dc3545;
       color: white;
+    }
+
+    .filter-group {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 25px;
+      flex-wrap: wrap;
+      background: white;
+      padding: 15px 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .filter-group select, .filter-group input {
+      padding: 10px 15px;
+      border-radius: 10px;
+      border: 2px solid #e0e0e0;
+    }
+
+    .sort-btn {
+      padding: 8px 18px;
+      background: #f5f5f5;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .sort-btn.active {
+      background: #FF6B35;
+      color: white;
+      border-color: #FF6B35;
+    }
+
+    .stats {
+      color: #FF6B35;
+      font-weight: bold;
+      margin-left: auto;
     }
 
     .msg {
       margin-top: 20px;
       text-align: center;
-      color: #FFD700;
+      color: #FF6B35;
     }
   </style>
 </head>
@@ -430,7 +426,7 @@
     <h2>?? WORLD CUP 2026 PREDICTOR ??</h2>
     <div>
       <span id="userEmail"></span>
-      <span id="adminBadge" class="admin-badge">ADMIN</span>
+      <span id="adminBadge" class="admin-badge" style="display:none;">ADMIN</span>
       <button id="logoutBtn" class="logout-btn">LOGOUT</button>
     </div>
   </div>
@@ -450,8 +446,8 @@
       </select>
       <input type="text" id="teamSearch" placeholder="?? Search teams...">
       <div>
-        <button class="sort-btn active" data-sort="date">?? Date</button>
-        <button class="sort-btn" data-sort="team">?? Team</button>
+        <button class="sort-btn active" data-sort="date">?? Sort by Date</button>
+        <button class="sort-btn" data-sort="team">?? Sort by Team</button>
       </div>
       <span class="stats" id="matchCount"></span>
     </div>
@@ -476,8 +472,8 @@
 </div>
 
 <script>
-// Country flags mapping
-const flags = {
+// Complete country flags mapping
+const countryFlags = {
   'Mexico': '????', 'South Africa': '????', 'South Korea': '????', 'Czech Republic': '????',
   'Canada': '????', 'Bosnia and Herzegovina': '????', 'Qatar': '????', 'Switzerland': '????',
   'Brazil': '????', 'Morocco': '????', 'Haiti': '????', 'Scotland': '??????????????',
@@ -492,8 +488,12 @@ const flags = {
   'England': '??????????????', 'Croatia': '????', 'Ghana': '????', 'Panama': '????'
 };
 
-function getTeamWithFlag(teamName) {
-  const flag = flags[teamName] || '??';
+function getFlag(country) {
+  return countryFlags[country] || '??';
+}
+
+function getTeamHtml(teamName) {
+  const flag = getFlag(teamName);
   return `<span class="team-with-flag"><span class="flag">${flag}</span> ${teamName}</span>`;
 }
 
@@ -510,7 +510,7 @@ let currentSort = 'date';
 function showMsg(text, isError = false) {
   const msgDiv = document.getElementById('msg');
   msgDiv.innerHTML = text;
-  msgDiv.style.color = isError ? '#ff6b6b' : '#FFD700';
+  msgDiv.style.color = isError ? '#dc3545' : '#FF6B35';
   setTimeout(() => { msgDiv.innerHTML = ''; }, 3000);
 }
 
@@ -602,7 +602,7 @@ async function renderMatchesGroupedByDay(matches) {
   for (const [date, dayMatches] of Object.entries(grouped)) {
     const dayGroup = document.createElement('div');
     dayGroup.className = 'match-day-group';
-    dayGroup.innerHTML = `<div class="match-day-header"><div class="match-day-date">${date}</div><div class="match-day-count">${dayMatches.length} matches</div></div><div class="matches-grid"></div>`;
+    dayGroup.innerHTML = `<div class="match-day-header"><div class="match-day-date">?? ${date}</div><div class="match-day-count">? ${dayMatches.length} matches</div></div><div class="matches-grid"></div>`;
     container.appendChild(dayGroup);
     
     const grid = dayGroup.querySelector('.matches-grid');
@@ -615,24 +615,24 @@ async function renderMatchesGroupedByDay(matches) {
       
       card.innerHTML = `
         <div class="match-title">
-          ${getTeamWithFlag(match.team_a)} <span class="vs">VS</span> ${getTeamWithFlag(match.team_b)}
-          <span class="match-stage">${match.is_knockout ? 'KNOCKOUT' : 'GROUP'}</span>
+          ${getTeamHtml(match.team_a)} <span class="vs">VS</span> ${getTeamHtml(match.team_b)}
+          <span class="match-stage">${match.is_knockout ? '?? KNOCKOUT' : '?? GROUP'}</span>
           ${match.finished ? '<span class="finished-badge">? FINISHED</span>' : ''}
         </div>
-        ${match.finished ? `<div class="result-display">FINAL: ${match.score_a} - ${match.score_b}</div>` : ''}
+        ${match.finished ? `<div class="result-display">?? FINAL SCORE: ${match.score_a} - ${match.score_b}</div>` : ''}
         ${!deadlinePassed && !match.finished ? `
           <div class="prediction-inputs">
             <input type="number" id="scoreA_${match.id}" placeholder="${match.team_a}" value="${userPred ? userPred.pred_score_a : ''}">
-            <span>vs</span>
+            <span style="font-weight:bold;">-</span>
             <input type="number" id="scoreB_${match.id}" placeholder="${match.team_b}" value="${userPred ? userPred.pred_score_b : ''}">
           </div>
-          <button class="submit-btn" onclick="savePrediction('${match.id}')">${userPred ? 'UPDATE' : 'SUBMIT'} PREDICTION</button>
+          <button class="submit-btn" onclick="savePrediction('${match.id}')">${userPred ? '?? UPDATE PREDICTION' : '? SUBMIT PREDICTION'}</button>
         ` : match.finished && userPred ? `
-          <div style="text-align:center; margin-top:10px; padding:10px; background:rgba(0,0,0,0.3); border-radius:8px;">
-            Your pick: ${userPred.pred_score_a} - ${userPred.pred_score_b} ${userPred.points ? `| POINTS: ${userPred.points}` : ''}
+          <div style="text-align:center; margin-top:10px; padding:10px; background:#FFF3E0; border-radius:10px;">
+            ?? Your prediction: ${userPred.pred_score_a} - ${userPred.pred_score_b} ${userPred.points ? `| ? POINTS: ${userPred.points}` : ''}
           </div>
-        ` : deadlinePassed && !match.finished ? `<div style="text-align:center; color:#FFD700;">? DEADLINE PASSED</div>` : ''}
-        <div class="deadline">? ${new Date(match.kickoff_time).toLocaleString()}</div>
+        ` : deadlinePassed && !match.finished ? `<div style="text-align:center; color:#FF6B35;">? DEADLINE PASSED</div>` : ''}
+        <div class="deadline">?? ${new Date(match.kickoff_time).toLocaleString()}</div>
       `;
       grid.appendChild(card);
     }
@@ -652,7 +652,7 @@ window.savePrediction = async function(matchId) {
     await _supabase.from('predictions').insert({ user_id: user.id, match_id: matchId, pred_score_a: scoreA, pred_score_b: scoreB });
   }
   
-  showMsg('Prediction saved!');
+  showMsg('Prediction saved! ?');
   loadMatches();
   loadLeaderboard();
 };
@@ -663,7 +663,7 @@ async function loadLeaderboard() {
   
   const container = document.getElementById('leaderboardList');
   if (!data || data.length === 0) {
-    container.innerHTML = '<div style="text-align:center; padding:40px;">No users yet</div>';
+    container.innerHTML = '<div style="text-align:center; padding:40px;">No users yet. Make predictions to appear!</div>';
     return;
   }
   
@@ -678,7 +678,7 @@ async function loadLeaderboard() {
   data.forEach((u, i) => {
     const item = document.createElement('div');
     item.className = 'leaderboard-item';
-    item.innerHTML = `<div>${i+1}</div><div>${u.username || 'User'}</div><div style="color:#FFD700; font-weight:bold;">${u.total_points || 0}</div>`;
+    item.innerHTML = `<div class="leaderboard-rank">${i+1}</div><div>${u.username || 'User'}</div><div class="leaderboard-points">${u.total_points || 0}</div>`;
     itemsDiv.appendChild(item);
   });
 }
@@ -710,7 +710,7 @@ function renderAdminMatches(matches) {
   for (const [date, dayMatches] of Object.entries(grouped)) {
     const dayGroup = document.createElement('div');
     dayGroup.className = 'match-day-group';
-    dayGroup.innerHTML = `<div class="match-day-header"><div class="match-day-date">${date}</div><div class="match-day-count">${dayMatches.length} matches</div></div><div class="matches-grid"></div>`;
+    dayGroup.innerHTML = `<div class="match-day-header"><div class="match-day-date">?? ${date}</div><div class="match-day-count">? ${dayMatches.length} matches</div></div><div class="matches-grid"></div>`;
     container.appendChild(dayGroup);
     
     const grid = dayGroup.querySelector('.matches-grid');
@@ -720,20 +720,20 @@ function renderAdminMatches(matches) {
       card.className = 'match-card';
       if (match.finished) {
         card.innerHTML = `
-          <div class="match-title">${getTeamWithFlag(match.team_a)} VS ${getTeamWithFlag(match.team_b)}</div>
-          <div class="result-display">RESULT: ${match.score_a} - ${match.score_b}</div>
-          <button class="submit-btn reset-btn" onclick="resetMatch('${match.id}')">?? RESET</button>
+          <div class="match-title">${getTeamHtml(match.team_a)} VS ${getTeamHtml(match.team_b)}</div>
+          <div class="result-display">?? RESULT: ${match.score_a} - ${match.score_b}</div>
+          <button class="submit-btn reset-btn" onclick="resetMatch('${match.id}')">?? RESET RESULT</button>
         `;
       } else {
         card.innerHTML = `
-          <div class="match-title">${getTeamWithFlag(match.team_a)} VS ${getTeamWithFlag(match.team_b)}</div>
+          <div class="match-title">${getTeamHtml(match.team_a)} VS ${getTeamHtml(match.team_b)}</div>
           <div class="admin-result-inputs">
-            <input type="number" id="adminA_${match.id}" placeholder="${match.team_a}">
-            <span>vs</span>
-            <input type="number" id="adminB_${match.id}" placeholder="${match.team_b}">
+            <input type="number" id="adminA_${match.id}" placeholder="${match.team_a} score">
+            <span>-</span>
+            <input type="number" id="adminB_${match.id}" placeholder="${match.team_b} score">
           </div>
-          ${match.is_knockout ? `<select id="advance_${match.id}" style="width:100%; margin:10px 0; padding:10px; background:rgba(30,30,50,0.8); color:#FFD700; border:1px solid rgba(255,215,0,0.3); border-radius:8px;"><option value="">?? Who advanced?</option><option value="${match.team_a}">${match.team_a}</option><option value="${match.team_b}">${match.team_b}</option></select>` : ''}
-          <button class="submit-btn admin-btn" onclick="setResult('${match.id}', ${match.is_knockout})">? SET RESULT</button>
+          ${match.is_knockout ? `<select id="advance_${match.id}" style="width:100%; margin:10px 0; padding:10px; border:2px solid #e0e0e0; border-radius:8px;"><option value="">?? Who advanced?</option><option value="${match.team_a}">${match.team_a}</option><option value="${match.team_b}">${match.team_b}</option></select>` : ''}
+          <button class="submit-btn admin-btn" onclick="setResult('${match.id}', ${match.is_knockout})">? SET RESULT & CALCULATE</button>
         `;
       }
       grid.appendChild(card);
@@ -756,7 +756,7 @@ window.setResult = async function(matchId, isKnockout) {
   if (advance) update.advancing_team = advance;
   
   await _supabase.from('matches').update(update).eq('id', matchId);
-  showMsg('Result set! Points calculated!');
+  showMsg('Result set! Points calculated! ?');
   loadMatches();
   loadAdminMatches();
   loadLeaderboard();
