@@ -425,6 +425,7 @@
       padding: 15px 20px;
       border-radius: 12px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      align-items: center;
     }
 
     .filter-group select, .filter-group input {
@@ -478,11 +479,19 @@
       color: white;
     }
 
-    .goal-warning {
-      font-size: 10px;
-      text-align: center;
-      margin-top: 5px;
-      color: #dc3545;
+    .filter-label {
+      font-weight: bold;
+      margin-right: 5px;
+    }
+
+    .date-range {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .date-range input {
+      width: 130px;
     }
   </style>
 </head>
@@ -525,16 +534,44 @@
 
   <div id="predictionsPanel">
     <div class="filter-group">
-      <select id="matchFilter">
-        <option value="all">All Matches</option>
+      <select id="groupFilter">
+        <option value="all">All Groups</option>
+        <option value="A">Group A</option>
+        <option value="B">Group B</option>
+        <option value="C">Group C</option>
+        <option value="D">Group D</option>
+        <option value="E">Group E</option>
+        <option value="F">Group F</option>
+        <option value="G">Group G</option>
+        <option value="H">Group H</option>
+        <option value="I">Group I</option>
+        <option value="J">Group J</option>
+        <option value="K">Group K</option>
+        <option value="L">Group L</option>
+      </select>
+      
+      <select id="stageFilter">
+        <option value="all">All Stages</option>
         <option value="group">Group Stage</option>
         <option value="knockout">Knockout Stage</option>
       </select>
-      <input type="text" id="teamSearch" placeholder="Search teams...">
+      
+      <input type="text" id="teamSearch" placeholder="Search team...">
+      
+      <div class="date-range">
+        <span class="filter-label">From:</span>
+        <input type="date" id="dateFrom">
+        <span class="filter-label">To:</span>
+        <input type="date" id="dateTo">
+      </div>
+      
       <div>
         <button class="sort-btn active" data-sort="date">Sort by Date</button>
         <button class="sort-btn" data-sort="team">Sort by Team</button>
       </div>
+      
+      <button id="clearFilters" class="sort-btn" style="background:#FF6B35; color:white;">Clear Filters</button>
+      
       <span class="stats" id="matchCount"></span>
     </div>
     <div id="matchesList"></div>
@@ -693,28 +730,61 @@ async function loadMatches() {
   const { data, error } = await _supabase.from('matches').select('*').order('kickoff_time');
   if (error) return;
   allMatches = data;
-  document.getElementById('matchCount').textContent = data.length + ' matches';
   filterAndShowMatches();
 }
 
 function filterAndShowMatches() {
   let filtered = [...allMatches];
-  const stage = document.getElementById('matchFilter').value;
-  const search = document.getElementById('teamSearch').value.toLowerCase();
   
+  // Filter by group
+  const selectedGroup = document.getElementById('groupFilter').value;
+  if (selectedGroup !== 'all') {
+    filtered = filtered.filter(m => getGroupLetter(m.team_a, m.team_b) === selectedGroup);
+  }
+  
+  // Filter by stage (group/knockout)
+  const stage = document.getElementById('stageFilter').value;
   if (stage === 'group') filtered = filtered.filter(m => !m.is_knockout);
   if (stage === 'knockout') filtered = filtered.filter(m => m.is_knockout);
+  
+  // Filter by team name
+  const search = document.getElementById('teamSearch').value.toLowerCase();
   if (search) filtered = filtered.filter(m => 
     m.team_a.toLowerCase().includes(search) || m.team_b.toLowerCase().includes(search)
   );
   
+  // Filter by date range
+  const dateFrom = document.getElementById('dateFrom').value;
+  const dateTo = document.getElementById('dateTo').value;
+  if (dateFrom) {
+    const fromDate = new Date(dateFrom);
+    fromDate.setHours(0, 0, 0, 0);
+    filtered = filtered.filter(m => new Date(m.kickoff_time) >= fromDate);
+  }
+  if (dateTo) {
+    const toDate = new Date(dateTo);
+    toDate.setHours(23, 59, 59, 999);
+    filtered = filtered.filter(m => new Date(m.kickoff_time) <= toDate);
+  }
+  
+  // Sort
   if (currentSort === 'date') {
     filtered.sort((a,b) => new Date(a.kickoff_time) - new Date(b.kickoff_time));
   } else {
     filtered.sort((a,b) => a.team_a.localeCompare(b.team_a));
   }
   
+  document.getElementById('matchCount').textContent = filtered.length + ' matches';
   renderMatchesGroupedByDay(filtered);
+}
+
+function clearFilters() {
+  document.getElementById('groupFilter').value = 'all';
+  document.getElementById('stageFilter').value = 'all';
+  document.getElementById('teamSearch').value = '';
+  document.getElementById('dateFrom').value = '';
+  document.getElementById('dateTo').value = '';
+  filterAndShowMatches();
 }
 
 async function renderMatchesGroupedByDay(matches) {
@@ -765,7 +835,6 @@ async function renderMatchesGroupedByDay(matches) {
             <span style="font-weight:bold;">-</span>
             <input type="number" id="scoreB_${match.id}" min="0" max="10" placeholder="${match.team_b}" value="${userPred ? userPred.pred_score_b : ''}" onchange="this.value = validateGoal(this.value)">
           </div>
-          <div class="goal-warning">Goals allowed: 0-10</div>
           <button class="submit-btn" onclick="savePrediction('${match.id}')">${userPred ? 'UPDATE PREDICTION' : 'SUBMIT PREDICTION'}</button>
         ` : match.finished && userPred ? `
           <div style="text-align:center; margin-top:10px; padding:10px; border-radius:10px; background:#f5f5f5;">
@@ -787,7 +856,6 @@ window.savePrediction = async function(matchId) {
   let scoreA = parseInt(document.getElementById(`scoreA_${matchId}`).value);
   let scoreB = parseInt(document.getElementById(`scoreB_${matchId}`).value);
   
-  // Validate goals (0-10 range)
   if (isNaN(scoreA)) scoreA = 0;
   if (isNaN(scoreB)) scoreB = 0;
   scoreA = Math.max(0, Math.min(10, scoreA));
@@ -884,7 +952,6 @@ function renderAdminMatches(matches) {
             <span>-</span>
             <input type="number" id="adminB_${match.id}" min="0" max="10" placeholder="${match.team_b} score" onchange="this.value = validateGoal(this.value)">
           </div>
-          <div class="goal-warning">Goals allowed: 0-10</div>
           ${match.is_knockout ? `<select id="advance_${match.id}" style="width:100%; margin:10px 0; padding:10px; border:2px solid #e0e0e0; border-radius:8px;"><option value="">Who advanced?</option><option value="${match.team_a}">${match.team_a}</option><option value="${match.team_b}">${match.team_b}</option></select>` : ''}
           <button class="submit-btn admin-btn" onclick="setResult('${match.id}', ${match.is_knockout})">SET RESULT AND CALCULATE</button>
         `;
@@ -898,7 +965,6 @@ window.setResult = async function(matchId, isKnockout) {
   let a = parseInt(document.getElementById(`adminA_${matchId}`).value);
   let b = parseInt(document.getElementById(`adminB_${matchId}`).value);
   
-  // Validate goals (0-10 range)
   if (isNaN(a)) a = 0;
   if (isNaN(b)) b = 0;
   a = Math.max(0, Math.min(10, a));
@@ -957,14 +1023,22 @@ document.getElementById('showAdmin').onclick = async () => {
   await loadAdminMatches();
 };
 
-document.getElementById('matchFilter').onchange = filterAndShowMatches;
+// Filter event listeners
+document.getElementById('groupFilter').onchange = filterAndShowMatches;
+document.getElementById('stageFilter').onchange = filterAndShowMatches;
 document.getElementById('teamSearch').onkeyup = filterAndShowMatches;
+document.getElementById('dateFrom').onchange = filterAndShowMatches;
+document.getElementById('dateTo').onchange = filterAndShowMatches;
+document.getElementById('clearFilters').onclick = clearFilters;
+
 document.querySelectorAll('.sort-btn').forEach(btn => {
   btn.onclick = () => {
-    currentSort = btn.dataset.sort;
-    document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    filterAndShowMatches();
+    if (btn.dataset.sort) {
+      currentSort = btn.dataset.sort;
+      document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      filterAndShowMatches();
+    }
   };
 });
 document.getElementById('adminFilter').onchange = loadAdminMatches;
