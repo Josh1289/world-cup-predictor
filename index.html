@@ -12,14 +12,13 @@
 
     body {
       font-family: 'Segoe UI', 'Poppins', 'Arial', sans-serif;
-      background: linear-gradient(135deg, #0a5c2e 0%, #0a3d1f 50%, #062a15 100%);
+      background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
       min-height: 100vh;
       color: #ffffff;
       padding: 20px;
-      position: relative;
     }
 
-    /* Football pattern overlay */
+    /* Stadium light effect */
     body::before {
       content: "";
       position: fixed;
@@ -27,36 +26,32 @@
       left: 0;
       right: 0;
       bottom: 0;
-      background-image: radial-gradient(circle at 20% 40%, rgba(255,215,0,0.05) 2%, transparent 2%);
-      background-size: 50px 50px;
+      background: radial-gradient(circle at 50% 0%, rgba(255,215,0,0.08) 0%, transparent 50%);
       pointer-events: none;
       z-index: 0;
-    }
-
-    .container {
-      position: relative;
-      z-index: 1;
     }
 
     /* Login Box */
     #loginBox {
       max-width: 450px;
       margin: 100px auto;
-      background: linear-gradient(135deg, rgba(10, 35, 20, 0.95) 0%, rgba(6, 25, 12, 0.95) 100%);
+      background: linear-gradient(135deg, rgba(20, 20, 40, 0.95) 0%, rgba(10, 10, 30, 0.95) 100%);
       backdrop-filter: blur(10px);
       padding: 40px;
       border-radius: 20px;
-      border: 2px solid rgba(212, 175, 55, 0.5);
-      box-shadow: 0 20px 40px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
+      border: 1px solid rgba(255, 215, 0, 0.3);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
     }
 
     #loginBox h2 {
-      color: #D4AF37;
+      background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
       text-align: center;
       font-size: 32px;
       letter-spacing: 3px;
       margin-bottom: 30px;
-      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
     }
 
     #loginBox input {
@@ -64,78 +59,69 @@
       padding: 14px;
       margin: 12px 0;
       border-radius: 12px;
-      border: 1px solid rgba(212, 175, 55, 0.3);
-      background: rgba(20, 50, 30, 0.8);
+      border: 1px solid rgba(255, 215, 0, 0.2);
+      background: rgba(30, 30, 50, 0.8);
       color: #fff;
       font-size: 16px;
-      transition: all 0.3s;
     }
 
     #loginBox input:focus {
       outline: none;
-      border-color: #D4AF37;
-      box-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
-    }
-
-    #loginBox input::placeholder {
-      color: rgba(255,255,255,0.5);
+      border-color: #FFD700;
+      box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
     }
 
     #loginBox button {
       width: 100%;
       padding: 14px;
       margin: 12px 0;
-      background: linear-gradient(135deg, #D4AF37 0%, #B8960F 100%);
-      color: #0a2a1a;
+      background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+      color: #1a1a2e;
       border: none;
       border-radius: 12px;
       cursor: pointer;
       font-weight: bold;
       font-size: 16px;
       transition: all 0.3s;
-      text-transform: uppercase;
-      letter-spacing: 1px;
     }
 
     #loginBox button:hover {
       transform: translateY(-2px);
-      box-shadow: 0 5px 20px rgba(212, 175, 55, 0.4);
-    }
-
-    #loginBox button:last-of-type {
-      background: linear-gradient(135deg, #2d6a4f 0%, #1b4d3e 100%);
-      border: 1px solid rgba(212, 175, 55, 0.3);
+      box-shadow: 0 5px 20px rgba(255, 215, 0, 0.3);
     }
 
     /* Main Page */
     #mainPage {
       max-width: 1400px;
       margin: 0 auto;
+      position: relative;
+      z-index: 1;
     }
 
     .header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: linear-gradient(135deg, rgba(10, 35, 20, 0.95) 0%, rgba(6, 25, 12, 0.95) 100%);
+      background: linear-gradient(135deg, rgba(20, 20, 40, 0.95) 0%, rgba(10, 10, 30, 0.95) 100%);
       backdrop-filter: blur(10px);
       padding: 20px 30px;
       border-radius: 16px;
       margin-bottom: 25px;
-      border-bottom: 3px solid #D4AF37;
+      border-bottom: 2px solid #FFD700;
       box-shadow: 0 8px 20px rgba(0,0,0,0.3);
     }
 
     .header h2 {
-      color: #D4AF37;
+      background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
       font-size: 28px;
-      letter-spacing: 2px;
-      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
     }
 
     .admin-badge {
-      background: linear-gradient(135deg, #D4AF37 0%, #B8960F 100%);
-      color: #0a2a1a;
+      background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+      color: #1a1a2e;
       padding: 5px 15px;
       border-radius: 20px;
       font-size: 12px;
@@ -144,19 +130,17 @@
     }
 
     .logout-btn {
-      background: rgba(212, 175, 55, 0.2);
-      color: #D4AF37;
+      background: rgba(255, 215, 0, 0.15);
+      color: #FFD700;
       padding: 10px 25px;
-      border: 1px solid #D4AF37;
+      border: 1px solid #FFD700;
       border-radius: 10px;
       cursor: pointer;
-      font-weight: bold;
       transition: all 0.3s;
     }
 
     .logout-btn:hover {
-      background: rgba(212, 175, 55, 0.4);
-      transform: translateY(-2px);
+      background: rgba(255, 215, 0, 0.3);
     }
 
     .tabs {
@@ -167,78 +151,66 @@
 
     .tab {
       padding: 12px 30px;
-      background: rgba(10, 35, 20, 0.8);
+      background: rgba(20, 20, 40, 0.8);
       backdrop-filter: blur(5px);
-      border: 1px solid rgba(212, 175, 55, 0.3);
-      color: #D4AF37;
+      border: 1px solid rgba(255, 215, 0, 0.2);
+      color: #FFD700;
       cursor: pointer;
       border-radius: 12px;
       font-weight: bold;
       transition: all 0.3s;
-      text-transform: uppercase;
-      letter-spacing: 1px;
     }
 
     .tab.active {
-      background: linear-gradient(135deg, #D4AF37 0%, #B8960F 100%);
-      color: #0a2a1a;
-      border-color: #D4AF37;
-      box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
-    }
-
-    .tab:hover:not(.active) {
-      background: rgba(212, 175, 55, 0.2);
-      transform: translateY(-2px);
+      background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+      color: #1a1a2e;
+      border-color: #FFD700;
     }
 
     /* Match Day Groups */
     .match-day-group {
       margin-bottom: 30px;
-      background: rgba(10, 35, 20, 0.7);
+      background: rgba(20, 20, 40, 0.7);
       backdrop-filter: blur(5px);
       border-radius: 16px;
       overflow: hidden;
-      border: 1px solid rgba(212, 175, 55, 0.2);
-      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      border: 1px solid rgba(255, 215, 0, 0.15);
     }
 
     .match-day-header {
-      background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(184, 150, 15, 0.1) 100%);
+      background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(255, 165, 0, 0.05) 100%);
       padding: 15px 25px;
-      border-left: 4px solid #D4AF37;
+      border-left: 4px solid #FFD700;
     }
 
     .match-day-date {
-      color: #D4AF37;
+      color: #FFD700;
       font-size: 22px;
       font-weight: bold;
-      letter-spacing: 1px;
     }
 
     .match-day-count {
       font-size: 13px;
-      color: rgba(255,255,255,0.6);
+      color: rgba(255,255,255,0.5);
       margin-top: 5px;
     }
 
     .matches-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
       gap: 1px;
       background: rgba(0,0,0,0.2);
     }
 
     .match-card {
-      background: rgba(15, 45, 25, 0.8);
+      background: rgba(25, 25, 45, 0.9);
       padding: 20px;
       transition: all 0.3s;
-      border-bottom: 1px solid rgba(212, 175, 55, 0.1);
     }
 
     .match-card:hover {
-      background: rgba(25, 65, 40, 0.9);
+      background: rgba(35, 35, 60, 0.95);
       transform: translateX(5px);
-      border-left: 3px solid #D4AF37;
     }
 
     .match-title {
@@ -247,39 +219,56 @@
       text-align: center;
       padding-bottom: 10px;
       margin-bottom: 12px;
-      border-bottom: 1px solid rgba(212, 175, 55, 0.3);
-      color: #fff;
+      border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .team-with-flag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .flag {
+      font-size: 24px;
+    }
+
+    .vs {
+      color: #FFD700;
+      font-weight: bold;
+      margin: 0 5px;
     }
 
     .match-stage {
       display: inline-block;
       padding: 3px 10px;
-      background: rgba(212, 175, 55, 0.15);
+      background: rgba(255, 215, 0, 0.15);
       border-radius: 20px;
       font-size: 11px;
-      margin-left: 10px;
-      color: #D4AF37;
-      font-weight: bold;
+      color: #FFD700;
     }
 
     .finished-badge {
       display: inline-block;
-      background: linear-gradient(135deg, #D4AF37 0%, #B8960F 100%);
-      color: #0a2a1a;
+      background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+      color: #1a1a2e;
       padding: 3px 10px;
       border-radius: 20px;
       font-size: 11px;
-      margin-left: 10px;
       font-weight: bold;
+      margin-left: 10px;
     }
 
     .result-display {
       text-align: center;
-      color: #D4AF37;
+      color: #FFD700;
       margin-bottom: 15px;
       font-size: 22px;
       font-weight: bold;
-      text-shadow: 0 1px 2px rgba(0,0,0,0.3);
     }
 
     .prediction-inputs {
@@ -294,91 +283,103 @@
       padding: 10px;
       text-align: center;
       font-size: 18px;
-      border: 2px solid rgba(212, 175, 55, 0.3);
+      border: 2px solid rgba(255, 215, 0, 0.3);
       background: rgba(0,0,0,0.5);
-      color: #D4AF37;
+      color: #FFD700;
       border-radius: 10px;
       font-weight: bold;
-    }
-
-    .prediction-inputs input:focus {
-      outline: none;
-      border-color: #D4AF37;
     }
 
     .submit-btn {
       width: 100%;
       padding: 12px;
-      background: linear-gradient(135deg, #2d6a4f 0%, #1b4d3e 100%);
-      color: #D4AF37;
-      border: 1px solid rgba(212, 175, 55, 0.3);
+      background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+      color: #1a1a2e;
+      border: none;
       border-radius: 10px;
       cursor: pointer;
       font-weight: bold;
       margin-top: 10px;
       transition: all 0.3s;
-      text-transform: uppercase;
-      letter-spacing: 1px;
     }
 
     .submit-btn:hover {
-      background: linear-gradient(135deg, #3d7a5f 0%, #2b5d4e 100%);
       transform: translateY(-2px);
-      border-color: #D4AF37;
+      box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);
     }
 
     .deadline {
       font-size: 11px;
       text-align: center;
       margin-top: 12px;
-      color: rgba(255,255,255,0.5);
+      color: rgba(255,255,255,0.4);
     }
 
     /* Leaderboard */
     .leaderboard-container {
-      background: rgba(10, 35, 20, 0.7);
+      background: rgba(20, 20, 40, 0.7);
       backdrop-filter: blur(5px);
       border-radius: 16px;
       overflow: hidden;
-      border: 1px solid rgba(212, 175, 55, 0.2);
     }
 
     .leaderboard-header {
       display: grid;
       grid-template-columns: 80px 1fr 100px;
-      background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(184, 150, 15, 0.1) 100%);
-      color: #D4AF37;
+      background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 165, 0, 0.1) 100%);
+      color: #FFD700;
       padding: 15px 25px;
       font-weight: bold;
-      font-size: 16px;
-      border-bottom: 1px solid rgba(212, 175, 55, 0.3);
     }
 
     .leaderboard-item {
       display: grid;
       grid-template-columns: 80px 1fr 100px;
       padding: 14px 25px;
-      border-bottom: 1px solid rgba(212, 175, 55, 0.1);
-      color: #fff;
-      transition: all 0.3s;
+      border-bottom: 1px solid rgba(255, 215, 0, 0.1);
     }
 
     .leaderboard-item:hover {
-      background: rgba(212, 175, 55, 0.1);
+      background: rgba(255, 215, 0, 0.05);
     }
 
-    .leaderboard-rank {
-      font-weight: bold;
-      color: #D4AF37;
+    .filter-group {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 25px;
+      flex-wrap: wrap;
+      background: rgba(20, 20, 40, 0.7);
+      padding: 15px 20px;
+      border-radius: 12px;
     }
 
-    .leaderboard-points {
-      font-weight: bold;
-      color: #D4AF37;
-      text-align: right;
+    .filter-group select, .filter-group input {
+      padding: 10px 15px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 215, 0, 0.2);
+      background: rgba(30, 30, 50, 0.8);
+      color: #FFD700;
     }
 
-    /* Admin Panel */
+    .sort-btn {
+      padding: 8px 18px;
+      background: rgba(30, 30, 50, 0.8);
+      border: 1px solid rgba(255, 215, 0, 0.2);
+      border-radius: 8px;
+      color: #FFD700;
+      cursor: pointer;
+    }
+
+    .sort-btn.active {
+      background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+      color: #1a1a2e;
+    }
+
+    .stats {
+      color: #FFD700;
+      margin-left: auto;
+    }
+
     .admin-result-inputs {
       display: flex;
       gap: 10px;
@@ -387,75 +388,27 @@
     }
 
     .admin-result-inputs input, .admin-result-inputs select {
-      padding: 10px 15px;
+      padding: 10px;
       border-radius: 8px;
-      border: 1px solid rgba(212, 175, 55, 0.3);
-      background: rgba(0,0,0,0.5);
-      color: #D4AF37;
+      border: 1px solid rgba(255, 215, 0, 0.3);
+      background: rgba(30, 30, 50, 0.8);
+      color: #FFD700;
     }
 
     .admin-btn {
-      background: linear-gradient(135deg, #D4AF37 0%, #B8960F 100%);
-      color: #0a2a1a;
+      background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+      color: #1a1a2e;
     }
 
     .reset-btn {
       background: rgba(220, 53, 69, 0.8);
       color: white;
-      border: none;
-    }
-
-    .filter-group {
-      display: flex;
-      gap: 15px;
-      margin-bottom: 25px;
-      flex-wrap: wrap;
-      align-items: center;
-      background: rgba(10, 35, 20, 0.7);
-      backdrop-filter: blur(5px);
-      padding: 15px 20px;
-      border-radius: 12px;
-      border: 1px solid rgba(212, 175, 55, 0.2);
-    }
-
-    .filter-group select, .filter-group input {
-      padding: 10px 15px;
-      border-radius: 10px;
-      border: 1px solid rgba(212, 175, 55, 0.3);
-      background: rgba(0,0,0,0.5);
-      color: #D4AF37;
-    }
-
-    .sort-btn {
-      padding: 8px 18px;
-      background: rgba(0,0,0,0.5);
-      border: 1px solid rgba(212, 175, 55, 0.3);
-      border-radius: 8px;
-      color: #D4AF37;
-      cursor: pointer;
-      transition: all 0.3s;
-    }
-
-    .sort-btn.active {
-      background: linear-gradient(135deg, #D4AF37 0%, #B8960F 100%);
-      color: #0a2a1a;
-      border-color: #D4AF37;
-    }
-
-    .sort-btn:hover {
-      background: rgba(212, 175, 55, 0.2);
-    }
-
-    .stats {
-      color: #D4AF37;
-      margin-left: auto;
-      font-weight: bold;
     }
 
     .msg {
       margin-top: 20px;
       text-align: center;
-      color: #D4AF37;
+      color: #FFD700;
     }
   </style>
 </head>
@@ -464,7 +417,7 @@
 <!-- LOGIN BOX -->
 <div id="loginBox">
   <h2>?? WORLD CUP 2026 ??</h2>
-  <input type="email" id="email" placeholder="Email Address">
+  <input type="email" id="email" placeholder="Email">
   <input type="password" id="password" placeholder="Password">
   <button id="loginBtn">SIGN IN</button>
   <button id="signupBtn">CREATE ACCOUNT</button>
@@ -477,7 +430,7 @@
     <h2>?? WORLD CUP 2026 PREDICTOR ??</h2>
     <div>
       <span id="userEmail"></span>
-      <span id="adminBadge" class="admin-badge" style="display:none;">ADMIN</span>
+      <span id="adminBadge" class="admin-badge">ADMIN</span>
       <button id="logoutBtn" class="logout-btn">LOGOUT</button>
     </div>
   </div>
@@ -485,10 +438,9 @@
   <div class="tabs">
     <button class="tab active" id="showPredictions">? MATCH PREDICTIONS</button>
     <button class="tab" id="showLeaderboard">?? LEADERBOARD</button>
-    <button class="tab" id="showAdmin" style="display:none;">?? ADMIN CONTROL</button>
+    <button class="tab" id="showAdmin" style="display:none;">?? ADMIN</button>
   </div>
 
-  <!-- PREDICTIONS PANEL -->
   <div id="predictionsPanel">
     <div class="filter-group">
       <select id="matchFilter">
@@ -498,20 +450,18 @@
       </select>
       <input type="text" id="teamSearch" placeholder="?? Search teams...">
       <div>
-        <button class="sort-btn active" data-sort="date">?? Sort by Date</button>
-        <button class="sort-btn" data-sort="team">?? Sort by Team</button>
+        <button class="sort-btn active" data-sort="date">?? Date</button>
+        <button class="sort-btn" data-sort="team">?? Team</button>
       </div>
       <span class="stats" id="matchCount"></span>
     </div>
     <div id="matchesList"></div>
   </div>
 
-  <!-- LEADERBOARD PANEL -->
   <div id="leaderboardPanel" style="display:none;">
     <div id="leaderboardList"></div>
   </div>
 
-  <!-- ADMIN PANEL -->
   <div id="adminPanel" style="display:none;">
     <div class="filter-group">
       <select id="adminFilter">
@@ -526,6 +476,27 @@
 </div>
 
 <script>
+// Country flags mapping
+const flags = {
+  'Mexico': '????', 'South Africa': '????', 'South Korea': '????', 'Czech Republic': '????',
+  'Canada': '????', 'Bosnia and Herzegovina': '????', 'Qatar': '????', 'Switzerland': '????',
+  'Brazil': '????', 'Morocco': '????', 'Haiti': '????', 'Scotland': '??????????????',
+  'USA': '????', 'Paraguay': '????', 'Australia': '????', 'Turkey': '????',
+  'Germany': '????', 'Curaçao': '????', 'Ivory Coast': '????', 'Ecuador': '????',
+  'Netherlands': '????', 'Japan': '????', 'Sweden': '????', 'Tunisia': '????',
+  'Belgium': '????', 'Egypt': '????', 'Iran': '????', 'New Zealand': '????',
+  'Spain': '????', 'Cape Verde': '????', 'Saudi Arabia': '????', 'Uruguay': '????',
+  'France': '????', 'Senegal': '????', 'Iraq': '????', 'Norway': '????',
+  'Austria': '????', 'Jordan': '????', 'Argentina': '????', 'Algeria': '????',
+  'Portugal': '????', 'DR Congo': '????', 'Uzbekistan': '????', 'Colombia': '????',
+  'England': '??????????????', 'Croatia': '????', 'Ghana': '????', 'Panama': '????'
+};
+
+function getTeamWithFlag(teamName) {
+  const flag = flags[teamName] || '??';
+  return `<span class="team-with-flag"><span class="flag">${flag}</span> ${teamName}</span>`;
+}
+
 // Supabase
 const _supabase = window.supabase.createClient(
   "https://igatvhqatxrhgnshmdld.supabase.co",
@@ -539,91 +510,53 @@ let currentSort = 'date';
 function showMsg(text, isError = false) {
   const msgDiv = document.getElementById('msg');
   msgDiv.innerHTML = text;
-  msgDiv.style.color = isError ? '#ff6b6b' : '#D4AF37';
+  msgDiv.style.color = isError ? '#ff6b6b' : '#FFD700';
   setTimeout(() => { msgDiv.innerHTML = ''; }, 3000);
 }
 
-// LOGIN
 async function login() {
   const email = document.getElementById('email').value;
   const password = document.getElementById('password').value;
+  if (!email || !password) return showMsg('Enter email and password', true);
   
-  if (!email || !password) {
-    showMsg('Please enter email and password', true);
-    return;
+  const { data, error } = await _supabase.auth.signInWithPassword({ email, password });
+  if (error) return showMsg(error.message, true);
+  
+  user = data.user;
+  document.getElementById('loginBox').style.display = 'none';
+  document.getElementById('mainPage').style.display = 'block';
+  document.getElementById('userEmail').innerHTML = user.email;
+  
+  if (user.email === 'admin@worldcup.com') {
+    document.getElementById('adminBadge').style.display = 'inline-block';
+    document.getElementById('showAdmin').style.display = 'inline-block';
   }
   
-  showMsg('Logging in...');
-  
-  const { data, error } = await _supabase.auth.signInWithPassword({
-    email: email,
-    password: password
-  });
-  
-  if (error) {
-    showMsg(error.message, true);
-  } else {
-    user = data.user;
-    document.getElementById('loginBox').style.display = 'none';
-    document.getElementById('mainPage').style.display = 'block';
-    document.getElementById('userEmail').innerHTML = user.email;
-    
-    if (user.email === 'admin@worldcup.com') {
-      document.getElementById('adminBadge').style.display = 'inline-block';
-      document.getElementById('showAdmin').style.display = 'inline-block';
-    }
-    
-    loadMatches();
-    loadLeaderboard();
-  }
+  loadMatches();
+  loadLeaderboard();
 }
 
-// SIGNUP
 async function signup() {
   const email = document.getElementById('email').value;
   const password = document.getElementById('password').value;
+  if (!email || !password) return showMsg('Enter email and password', true);
+  if (password.length < 6) return showMsg('Password min 6 characters', true);
   
-  if (!email || !password) {
-    showMsg('Please enter email and password', true);
-    return;
-  }
-  
-  if (password.length < 6) {
-    showMsg('Password must be at least 6 characters', true);
-    return;
-  }
-  
-  showMsg('Creating account...');
-  
-  const { data, error } = await _supabase.auth.signUp({
-    email: email,
-    password: password,
-  });
-  
-  if (error) {
-    showMsg(error.message, true);
-  } else {
-    showMsg('Account created! You can now login.');
-  }
+  const { error } = await _supabase.auth.signUp({ email, password });
+  if (error) return showMsg(error.message, true);
+  showMsg('Account created! You can now login.');
 }
 
-// LOGOUT
 async function logout() {
   await _supabase.auth.signOut();
   user = null;
   document.getElementById('loginBox').style.display = 'block';
   document.getElementById('mainPage').style.display = 'none';
-  document.getElementById('email').value = '';
-  document.getElementById('password').value = '';
 }
 
-// LOAD MATCHES
 async function loadMatches() {
   const { data, error } = await _supabase.from('matches').select('*').order('kickoff_time');
-  if (error) {
-    console.error('Error loading matches:', error);
-    return;
-  }
+  if (error) return;
   allMatches = data;
   document.getElementById('matchCount').textContent = data.length + ' matches';
   filterAndShowMatches();
@@ -653,11 +586,7 @@ async function renderMatchesGroupedByDay(matches) {
   const container = document.getElementById('matchesList');
   container.innerHTML = '';
   
-  const { data: predictions } = await _supabase
-    .from('predictions')
-    .select('*')
-    .eq('user_id', user.id);
-  
+  const { data: predictions } = await _supabase.from('predictions').select('*').eq('user_id', user.id);
   const predMap = {};
   if (predictions) predictions.forEach(p => predMap[p.match_id] = p);
   
@@ -673,14 +602,7 @@ async function renderMatchesGroupedByDay(matches) {
   for (const [date, dayMatches] of Object.entries(grouped)) {
     const dayGroup = document.createElement('div');
     dayGroup.className = 'match-day-group';
-    
-    dayGroup.innerHTML = `
-      <div class="match-day-header">
-        <div class="match-day-date">${date}</div>
-        <div class="match-day-count">${dayMatches.length} matches</div>
-      </div>
-      <div class="matches-grid" id="grid-${date.replace(/[^a-z0-9]/gi, '')}"></div>
-    `;
+    dayGroup.innerHTML = `<div class="match-day-header"><div class="match-day-date">${date}</div><div class="match-day-count">${dayMatches.length} matches</div></div><div class="matches-grid"></div>`;
     container.appendChild(dayGroup);
     
     const grid = dayGroup.querySelector('.matches-grid');
@@ -688,15 +610,14 @@ async function renderMatchesGroupedByDay(matches) {
     for (const match of dayMatches) {
       const deadlinePassed = new Date(match.kickoff_time) < new Date();
       const userPred = predMap[match.id];
-      
       const card = document.createElement('div');
       card.className = 'match-card';
       
       card.innerHTML = `
         <div class="match-title">
-          ${match.team_a} vs ${match.team_b}
+          ${getTeamWithFlag(match.team_a)} <span class="vs">VS</span> ${getTeamWithFlag(match.team_b)}
           <span class="match-stage">${match.is_knockout ? 'KNOCKOUT' : 'GROUP'}</span>
-          ${match.finished ? '<span class="finished-badge">COMPLETED</span>' : ''}
+          ${match.finished ? '<span class="finished-badge">? FINISHED</span>' : ''}
         </div>
         ${match.finished ? `<div class="result-display">FINAL: ${match.score_a} - ${match.score_b}</div>` : ''}
         ${!deadlinePassed && !match.finished ? `
@@ -705,13 +626,13 @@ async function renderMatchesGroupedByDay(matches) {
             <span>vs</span>
             <input type="number" id="scoreB_${match.id}" placeholder="${match.team_b}" value="${userPred ? userPred.pred_score_b : ''}">
           </div>
-          <button class="submit-btn" onclick="savePrediction('${match.id}')">${userPred ? 'UPDATE PREDICTION' : 'SUBMIT PREDICTION'}</button>
+          <button class="submit-btn" onclick="savePrediction('${match.id}')">${userPred ? 'UPDATE' : 'SUBMIT'} PREDICTION</button>
         ` : match.finished && userPred ? `
-          <div style="text-align:center; margin-top:10px; padding:10px; background:rgba(0,0,0,0.5); border-radius:8px;">
-            Your prediction: ${userPred.pred_score_a} - ${userPred.pred_score_b} ${userPred.points ? `| POINTS EARNED: ${userPred.points}` : ''}
+          <div style="text-align:center; margin-top:10px; padding:10px; background:rgba(0,0,0,0.3); border-radius:8px;">
+            Your pick: ${userPred.pred_score_a} - ${userPred.pred_score_b} ${userPred.points ? `| POINTS: ${userPred.points}` : ''}
           </div>
-        ` : deadlinePassed && !match.finished ? `<div style="text-align:center; color:#D4AF37;">? DEADLINE PASSED</div>` : ''}
-        <div class="deadline">? KICKOFF: ${new Date(match.kickoff_time).toLocaleString()}</div>
+        ` : deadlinePassed && !match.finished ? `<div style="text-align:center; color:#FFD700;">? DEADLINE PASSED</div>` : ''}
+        <div class="deadline">? ${new Date(match.kickoff_time).toLocaleString()}</div>
       `;
       grid.appendChild(card);
     }
@@ -721,59 +642,34 @@ async function renderMatchesGroupedByDay(matches) {
 window.savePrediction = async function(matchId) {
   const scoreA = parseInt(document.getElementById(`scoreA_${matchId}`).value);
   const scoreB = parseInt(document.getElementById(`scoreB_${matchId}`).value);
-  if (isNaN(scoreA) || isNaN(scoreB)) {
-    showMsg('Please enter both scores', true);
-    return;
-  }
+  if (isNaN(scoreA) || isNaN(scoreB)) return showMsg('Enter both scores', true);
   
-  const { data: existing } = await _supabase
-    .from('predictions')
-    .select('id')
-    .eq('user_id', user.id)
-    .eq('match_id', matchId)
-    .maybeSingle();
+  const { data: existing } = await _supabase.from('predictions').select('id').eq('user_id', user.id).eq('match_id', matchId).maybeSingle();
   
-  let error;
   if (existing) {
-    const { error: updateError } = await _supabase
-      .from('predictions')
-      .update({ pred_score_a: scoreA, pred_score_b: scoreB })
-      .eq('id', existing.id);
-    error = updateError;
+    await _supabase.from('predictions').update({ pred_score_a: scoreA, pred_score_b: scoreB }).eq('id', existing.id);
   } else {
-    const { error: insertError } = await _supabase
-      .from('predictions')
-      .insert({ user_id: user.id, match_id: matchId, pred_score_a: scoreA, pred_score_b: scoreB });
-    error = insertError;
+    await _supabase.from('predictions').insert({ user_id: user.id, match_id: matchId, pred_score_a: scoreA, pred_score_b: scoreB });
   }
   
-  if (error) {
-    showMsg(error.message, true);
-  } else {
-    showMsg('Prediction saved successfully!');
-    loadMatches();
-    loadLeaderboard();
-  }
+  showMsg('Prediction saved!');
+  loadMatches();
+  loadLeaderboard();
 };
 
-// LEADERBOARD
 async function loadLeaderboard() {
   const { data, error } = await _supabase.from('leaderboard').select('*').limit(50);
   if (error) return;
   
   const container = document.getElementById('leaderboardList');
   if (!data || data.length === 0) {
-    container.innerHTML = '<div style="text-align:center; padding:40px; color:#D4AF37;">No users yet. Make predictions to appear on the leaderboard!</div>';
+    container.innerHTML = '<div style="text-align:center; padding:40px;">No users yet</div>';
     return;
   }
   
   container.innerHTML = `
     <div class="leaderboard-container">
-      <div class="leaderboard-header">
-        <div>?? RANK</div>
-        <div>?? PLAYER</div>
-        <div>? POINTS</div>
-      </div>
+      <div class="leaderboard-header"><div>?? RANK</div><div>?? PLAYER</div><div>? POINTS</div></div>
       <div id="leaderboardItems"></div>
     </div>
   `;
@@ -782,16 +678,11 @@ async function loadLeaderboard() {
   data.forEach((u, i) => {
     const item = document.createElement('div');
     item.className = 'leaderboard-item';
-    item.innerHTML = `
-      <div class="leaderboard-rank">${i+1}</div>
-      <div>${u.username || 'User'}</div>
-      <div class="leaderboard-points">${u.total_points || 0}</div>
-    `;
+    item.innerHTML = `<div>${i+1}</div><div>${u.username || 'User'}</div><div style="color:#FFD700; font-weight:bold;">${u.total_points || 0}</div>`;
     itemsDiv.appendChild(item);
   });
 }
 
-// ADMIN FUNCTIONS
 async function loadAdminMatches() {
   const { data, error } = await _supabase.from('matches').select('*').order('kickoff_time');
   if (error) return;
@@ -806,15 +697,11 @@ function renderAdminMatches(matches) {
   let filtered = matches;
   if (filter === 'pending') filtered = filtered.filter(m => !m.finished);
   if (filter === 'finished') filtered = filtered.filter(m => m.finished);
-  if (search) filtered = filtered.filter(m => 
-    m.team_a.toLowerCase().includes(search) || m.team_b.toLowerCase().includes(search)
-  );
+  if (search) filtered = filtered.filter(m => m.team_a.toLowerCase().includes(search) || m.team_b.toLowerCase().includes(search));
   
   const grouped = {};
   filtered.forEach(m => {
-    const date = new Date(m.kickoff_time).toLocaleDateString('en-US', {
-      weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
-    });
+    const date = new Date(m.kickoff_time).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
     if (!grouped[date]) grouped[date] = [];
     grouped[date].push(m);
   });
@@ -823,7 +710,7 @@ function renderAdminMatches(matches) {
   for (const [date, dayMatches] of Object.entries(grouped)) {
     const dayGroup = document.createElement('div');
     dayGroup.className = 'match-day-group';
-    dayGroup.innerHTML = `<div class="match-day-header"><div class="match-day-date">${date}</div><div class="match-day-count">${dayMatches.length} matches</div></div><div class="matches-grid" id="adminGrid-${date.replace(/[^a-z0-9]/gi, '')}"></div>`;
+    dayGroup.innerHTML = `<div class="match-day-header"><div class="match-day-date">${date}</div><div class="match-day-count">${dayMatches.length} matches</div></div><div class="matches-grid"></div>`;
     container.appendChild(dayGroup);
     
     const grid = dayGroup.querySelector('.matches-grid');
@@ -831,25 +718,22 @@ function renderAdminMatches(matches) {
     for (const match of dayMatches) {
       const card = document.createElement('div');
       card.className = 'match-card';
-      
       if (match.finished) {
         card.innerHTML = `
-          <div class="match-title">${match.team_a} vs ${match.team_b}</div>
+          <div class="match-title">${getTeamWithFlag(match.team_a)} VS ${getTeamWithFlag(match.team_b)}</div>
           <div class="result-display">RESULT: ${match.score_a} - ${match.score_b}</div>
-          <button class="submit-btn reset-btn" onclick="resetMatch('${match.id}')">?? RESET RESULT</button>
-          <div class="deadline">${new Date(match.kickoff_time).toLocaleString()}</div>
+          <button class="submit-btn reset-btn" onclick="resetMatch('${match.id}')">?? RESET</button>
         `;
       } else {
         card.innerHTML = `
-          <div class="match-title">${match.team_a} vs ${match.team_b}</div>
+          <div class="match-title">${getTeamWithFlag(match.team_a)} VS ${getTeamWithFlag(match.team_b)}</div>
           <div class="admin-result-inputs">
-            <input type="number" id="adminA_${match.id}" placeholder="${match.team_a} score">
+            <input type="number" id="adminA_${match.id}" placeholder="${match.team_a}">
             <span>vs</span>
-            <input type="number" id="adminB_${match.id}" placeholder="${match.team_b} score">
+            <input type="number" id="adminB_${match.id}" placeholder="${match.team_b}">
           </div>
-          ${match.is_knockout ? `<select id="advance_${match.id}" style="width:100%; margin:10px 0; padding:10px; background:rgba(0,0,0,0.5); color:#D4AF37; border:1px solid rgba(212,175,55,0.3); border-radius:8px;"><option value="">?? Who advanced after extra time?</option><option value="${match.team_a}">${match.team_a}</option><option value="${match.team_b}">${match.team_b}</option></select>` : ''}
-          <button class="submit-btn admin-btn" onclick="setResult('${match.id}', ${match.is_knockout})">? SET RESULT & CALCULATE POINTS</button>
-          <div class="deadline">${new Date(match.kickoff_time).toLocaleString()}</div>
+          ${match.is_knockout ? `<select id="advance_${match.id}" style="width:100%; margin:10px 0; padding:10px; background:rgba(30,30,50,0.8); color:#FFD700; border:1px solid rgba(255,215,0,0.3); border-radius:8px;"><option value="">?? Who advanced?</option><option value="${match.team_a}">${match.team_a}</option><option value="${match.team_b}">${match.team_b}</option></select>` : ''}
+          <button class="submit-btn admin-btn" onclick="setResult('${match.id}', ${match.is_knockout})">? SET RESULT</button>
         `;
       }
       grid.appendChild(card);
@@ -860,50 +744,36 @@ function renderAdminMatches(matches) {
 window.setResult = async function(matchId, isKnockout) {
   const a = parseInt(document.getElementById(`adminA_${matchId}`).value);
   const b = parseInt(document.getElementById(`adminB_${matchId}`).value);
-  if (isNaN(a) || isNaN(b)) {
-    showMsg('Please enter valid scores', true);
-    return;
-  }
+  if (isNaN(a) || isNaN(b)) return showMsg('Enter valid scores', true);
   
   let advance = null;
   if (isKnockout) {
     advance = document.getElementById(`advance_${matchId}`).value;
-    if (!advance) {
-      showMsg('Please select which team advanced', true);
-      return;
-    }
+    if (!advance) return showMsg('Select advancing team', true);
   }
   
   const update = { score_a: a, score_b: b, finished: true };
   if (advance) update.advancing_team = advance;
   
-  const { error } = await _supabase.from('matches').update(update).eq('id', matchId);
-  if (error) {
-    showMsg(error.message, true);
-  } else {
-    showMsg('Result set! Points calculated automatically!');
-    loadMatches();
-    loadAdminMatches();
-    loadLeaderboard();
-  }
+  await _supabase.from('matches').update(update).eq('id', matchId);
+  showMsg('Result set! Points calculated!');
+  loadMatches();
+  loadAdminMatches();
+  loadLeaderboard();
 };
 
 window.resetMatch = async function(matchId) {
-  const { error } = await _supabase
-    .from('matches')
-    .update({ score_a: null, score_b: null, finished: false, advancing_team: null })
-    .eq('id', matchId);
-  if (error) {
-    showMsg(error.message, true);
-  } else {
-    showMsg('Result reset!');
-    loadMatches();
-    loadAdminMatches();
-    loadLeaderboard();
-  }
+  await _supabase.from('matches').update({ score_a: null, score_b: null, finished: false, advancing_team: null }).eq('id', matchId);
+  showMsg('Result reset!');
+  loadMatches();
+  loadAdminMatches();
+  loadLeaderboard();
 };
 
-// TAB SWITCHING
+// Event listeners
+document.getElementById('loginBtn').onclick = login;
+document.getElementById('signupBtn').onclick = signup;
+document.getElementById('logoutBtn').onclick = logout;
 document.getElementById('showPredictions').onclick = () => {
   document.getElementById('predictionsPanel').style.display = 'block';
   document.getElementById('leaderboardPanel').style.display = 'none';
@@ -912,7 +782,6 @@ document.getElementById('showPredictions').onclick = () => {
   document.getElementById('showPredictions').classList.add('active');
   loadMatches();
 };
-
 document.getElementById('showLeaderboard').onclick = () => {
   document.getElementById('predictionsPanel').style.display = 'none';
   document.getElementById('leaderboardPanel').style.display = 'block';
@@ -921,5 +790,44 @@ document.getElementById('showLeaderboard').onclick = () => {
   document.getElementById('showLeaderboard').classList.add('active');
   loadLeaderboard();
 };
+document.getElementById('showAdmin').onclick = async () => {
+  document.getElementById('predictionsPanel').style.display = 'none';
+  document.getElementById('leaderboardPanel').style.display = 'none';
+  document.getElementById('adminPanel').style.display = 'block';
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('showAdmin').classList.add('active');
+  await loadAdminMatches();
+};
 
-document.getElementById('showAdmin').onclick = async
+document.getElementById('matchFilter').onchange = filterAndShowMatches;
+document.getElementById('teamSearch').onkeyup = filterAndShowMatches;
+document.querySelectorAll('.sort-btn').forEach(btn => {
+  btn.onclick = () => {
+    currentSort = btn.dataset.sort;
+    document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    filterAndShowMatches();
+  };
+});
+document.getElementById('adminFilter').onchange = loadAdminMatches;
+document.getElementById('adminSearch').onkeyup = loadAdminMatches;
+
+// Check session
+(async () => {
+  const { data: { session } } = await _supabase.auth.getSession();
+  if (session) {
+    user = session.user;
+    document.getElementById('loginBox').style.display = 'none';
+    document.getElementById('mainPage').style.display = 'block';
+    document.getElementById('userEmail').innerHTML = user.email;
+    if (user.email === 'admin@worldcup.com') {
+      document.getElementById('adminBadge').style.display = 'inline-block';
+      document.getElementById('showAdmin').style.display = 'inline-block';
+    }
+    loadMatches();
+    loadLeaderboard();
+  }
+})();
+</script>
+</body>
+</html>
