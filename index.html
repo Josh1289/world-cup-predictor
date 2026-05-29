@@ -9,14 +9,12 @@
       padding: 0;
       box-sizing: border-box;
     }
-
     body {
       font-family: 'Segoe UI', Arial, sans-serif;
       background: linear-gradient(135deg, #FF6B35 0%, #F7931E 100%);
       min-height: 100vh;
       padding: 20px;
     }
-
     #loginBox {
       max-width: 450px;
       margin: 100px auto;
@@ -25,14 +23,12 @@
       border-radius: 20px;
       box-shadow: 0 20px 40px rgba(0,0,0,0.2);
     }
-
     #loginBox h2 {
       text-align: center;
       font-size: 32px;
       margin-bottom: 30px;
       color: #FF6B35;
     }
-
     #loginBox input {
       width: 100%;
       padding: 14px;
@@ -41,7 +37,6 @@
       border: 2px solid #e0e0e0;
       font-size: 16px;
     }
-
     #loginBox button {
       width: 100%;
       padding: 14px;
@@ -54,13 +49,11 @@
       font-weight: bold;
       font-size: 16px;
     }
-
     #mainPage {
       max-width: 1400px;
       margin: 0 auto;
       display: none;
     }
-
     .header {
       display: flex;
       justify-content: space-between;
@@ -70,7 +63,6 @@
       border-radius: 16px;
       margin-bottom: 25px;
     }
-
     .logout-btn {
       background: #dc3545;
       color: white;
@@ -79,7 +71,6 @@
       border-radius: 10px;
       cursor: pointer;
     }
-
     .filter-group {
       display: flex;
       gap: 15px;
@@ -90,13 +81,11 @@
       border-radius: 12px;
       align-items: center;
     }
-
     .filter-group select, .filter-group input {
       padding: 10px 15px;
       border-radius: 10px;
       border: 2px solid #e0e0e0;
     }
-
     .sort-btn {
       padding: 8px 18px;
       background: white;
@@ -104,18 +93,15 @@
       border-radius: 8px;
       cursor: pointer;
     }
-
     .sort-btn.active {
       background: #FF6B35;
       color: white;
     }
-
     .stats {
       color: #FF6B35;
       font-weight: bold;
       margin-left: auto;
     }
-
     .match-day-group {
       margin-bottom: 30px;
       background: white;
@@ -123,41 +109,25 @@
       overflow: hidden;
       box-shadow: 0 5px 15px rgba(0,0,0,0.1);
     }
-
     .match-day-header {
       background: #FF6B35;
       padding: 15px 25px;
       color: white;
     }
-
-    .match-day-date {
-      font-size: 22px;
-      font-weight: bold;
-    }
-
-    .match-day-count {
-      font-size: 13px;
-      opacity: 0.9;
-      margin-top: 5px;
-    }
-
+    .match-day-date { font-size: 22px; font-weight: bold; }
+    .match-day-count { font-size: 13px; opacity: 0.9; margin-top: 5px; }
     .matches-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
       gap: 1px;
       background: #f0f0f0;
     }
-
     .match-card {
       background: white;
       padding: 20px;
       transition: all 0.3s;
     }
-
-    .match-card:hover {
-      background: #fff9f5;
-    }
-
+    .match-card:hover { background: #fff9f5; }
     .match-title {
       font-size: 18px;
       font-weight: bold;
@@ -166,7 +136,6 @@
       margin-bottom: 12px;
       border-bottom: 2px solid #FF6B35;
     }
-
     .match-stage {
       display: inline-block;
       padding: 3px 10px;
@@ -176,7 +145,6 @@
       margin-left: 10px;
       color: #FF6B35;
     }
-
     .finished-badge {
       background: #4CAF50;
       color: white;
@@ -185,7 +153,6 @@
       font-size: 11px;
       margin-left: 10px;
     }
-
     .result-display {
       text-align: center;
       background: #FFF3E0;
@@ -196,14 +163,12 @@
       font-weight: bold;
       border-radius: 10px;
     }
-
     .prediction-inputs {
       display: flex;
       gap: 15px;
       justify-content: center;
       margin: 15px 0;
     }
-
     .prediction-inputs input {
       width: 80px;
       padding: 10px;
@@ -212,7 +177,6 @@
       border: 2px solid #e0e0e0;
       border-radius: 10px;
     }
-
     .submit-btn {
       width: 100%;
       padding: 12px;
@@ -224,19 +188,13 @@
       font-weight: bold;
       margin-top: 10px;
     }
-
     .deadline {
       font-size: 11px;
       text-align: center;
       margin-top: 12px;
       color: #999;
     }
-
-    .msg {
-      margin-top: 20px;
-      text-align: center;
-      color: #FF6B35;
-    }
+    .msg { margin-top: 20px; text-align: center; color: #FF6B35; }
   </style>
 </head>
 <body>
@@ -274,220 +232,215 @@
 </div>
 
 <script>
-// SINGLE SUPABASE CLIENT - NO DUPLICATES
-const SB = window.supabase.createClient(
-  "https://igatvhqatxrhgnshmdld.supabase.co",
-  "sb_publishable_kZYMgSK-0VcalUaTuo7gfQ_7cMMse21"
-);
-
-let USER = null;
-let ALL_MATCHES = [];
-let SORT_TYPE = 'date';
-
-function showMsg(text) {
-  const msgDiv = document.getElementById('msg');
-  msgDiv.innerHTML = text;
-  setTimeout(() => { msgDiv.innerHTML = ''; }, 3000);
-}
-
-// LOGIN
-async function doLogin() {
-  const email = document.getElementById('email').value;
-  const password = document.getElementById('password').value;
-  if (!email || !password) {
-    showMsg('Enter email and password');
-    return;
-  }
-  
-  const { data, error } = await SB.auth.signInWithPassword({ email, password });
-  if (error) {
-    showMsg(error.message);
-    return;
-  }
-  
-  USER = data.user;
-  document.getElementById('loginBox').style.display = 'none';
-  document.getElementById('mainPage').style.display = 'block';
-  loadAllMatches();
-}
-
-// SIGNUP
-async function doSignup() {
-  const email = document.getElementById('email').value;
-  const password = document.getElementById('password').value;
-  if (!email || !password) {
-    showMsg('Enter email and password');
-    return;
-  }
-  if (password.length < 6) {
-    showMsg('Password must be at least 6 characters');
-    return;
-  }
-  
-  const { error } = await SB.auth.signUp({ email, password });
-  if (error) {
-    showMsg(error.message);
-  } else {
-    showMsg('Account created! You can now login.');
-  }
-}
-
-// LOGOUT
-async function doLogout() {
-  await SB.auth.signOut();
-  USER = null;
-  document.getElementById('loginBox').style.display = 'block';
-  document.getElementById('mainPage').style.display = 'none';
-}
-
-// LOAD MATCHES
-async function loadAllMatches() {
-  const { data, error } = await SB.from('matches').select('*').order('kickoff_time');
-  
-  if (error) {
-    document.getElementById('matchesList').innerHTML = '<div style="text-align:center; padding:40px;">Error loading matches</div>';
-    return;
-  }
-  
-  if (!data || data.length === 0) {
-    document.getElementById('matchesList').innerHTML = '<div style="text-align:center; padding:40px;">No matches found. Please add matches to database.</div>';
-    return;
-  }
-  
-  ALL_MATCHES = data;
-  document.getElementById('matchCount').textContent = data.length + ' matches';
-  filterAndDisplay();
-}
-
-function filterAndDisplay() {
-  let filtered = [...ALL_MATCHES];
-  const stage = document.getElementById('stageFilter').value;
-  const search = document.getElementById('teamSearch').value.toLowerCase();
-  
-  if (stage === 'group') filtered = filtered.filter(m => !m.is_knockout);
-  if (stage === 'knockout') filtered = filtered.filter(m => m.is_knockout);
-  if (search) filtered = filtered.filter(m => 
-    m.team_a.toLowerCase().includes(search) || m.team_b.toLowerCase().includes(search)
+(function() {
+  const MY_SUPABASE = window.supabase.createClient(
+    "https://igatvhqatxrhgnshmdld.supabase.co",
+    "sb_publishable_kZYMgSK-0VcalUaTuo7gfQ_7cMMse21"
   );
-  
-  if (SORT_TYPE === 'date') {
-    filtered.sort((a,b) => new Date(a.kickoff_time) - new Date(b.kickoff_time));
-  } else {
-    filtered.sort((a,b) => a.team_a.localeCompare(b.team_a));
-  }
-  
-  renderMatches(filtered);
-}
 
-async function renderMatches(matches) {
-  const container = document.getElementById('matchesList');
-  container.innerHTML = '';
-  
-  const { data: predictions } = await SB.from('predictions').select('*').eq('user_id', USER?.id);
-  const predMap = {};
-  if (predictions) predictions.forEach(p => predMap[p.match_id] = p);
-  
-  const grouped = {};
-  matches.forEach(m => {
-    const date = new Date(m.kickoff_time).toLocaleDateString('en-US', {
-      weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
-    });
-    if (!grouped[date]) grouped[date] = [];
-    grouped[date].push(m);
-  });
-  
-  for (const [date, dayMatches] of Object.entries(grouped)) {
-    const dayGroup = document.createElement('div');
-    dayGroup.className = 'match-day-group';
-    dayGroup.innerHTML = `
-      <div class="match-day-header">
-        <div class="match-day-date">${date}</div>
-        <div class="match-day-count">${dayMatches.length} matches</div>
-      </div>
-      <div class="matches-grid"></div>
-    `;
-    container.appendChild(dayGroup);
-    
-    const grid = dayGroup.querySelector('.matches-grid');
-    
-    for (const match of dayMatches) {
-      const deadlinePassed = new Date(match.kickoff_time) < new Date();
-      const userPred = predMap[match.id];
-      
-      const card = document.createElement('div');
-      card.className = 'match-card';
-      
-      card.innerHTML = `
-        <div class="match-title">
-          ${match.team_a} vs ${match.team_b}
-          <span class="match-stage">${match.is_knockout ? 'KNOCKOUT' : 'GROUP'}</span>
-          ${match.finished ? '<span class="finished-badge">FINISHED</span>' : ''}
-        </div>
-        ${match.finished ? `<div class="result-display">FINAL: ${match.score_a} - ${match.score_b}</div>` : ''}
-        ${!deadlinePassed && !match.finished ? `
-          <div class="prediction-inputs">
-            <input type="number" id="scoreA_${match.id}" min="0" max="10" placeholder="${match.team_a}" value="${userPred ? userPred.pred_score_a : ''}">
-            <span>-</span>
-            <input type="number" id="scoreB_${match.id}" min="0" max="10" placeholder="${match.team_b}" value="${userPred ? userPred.pred_score_b : ''}">
-          </div>
-          <button class="submit-btn" onclick="savePrediction('${match.id}')">${userPred ? 'UPDATE' : 'SUBMIT'} PREDICTION</button>
-        ` : match.finished && userPred ? `
-          <div style="text-align:center; margin-top:10px; padding:10px; background:#f5f5f5; border-radius:10px;">
-            Your prediction: ${userPred.pred_score_a} - ${userPred.pred_score_b} ${userPred.points ? `| POINTS: ${userPred.points}` : ''}
-          </div>
-        ` : deadlinePassed && !match.finished ? `<div style="text-align:center;">DEADLINE PASSED</div>` : ''}
-        <div class="deadline">Kickoff: ${new Date(match.kickoff_time).toLocaleString()}</div>
-      `;
-      grid.appendChild(card);
+  let currentUser = null;
+  let allMatches = [];
+  let currentSort = 'date';
+
+  function showMsg(text) {
+    const msgDiv = document.getElementById('msg');
+    msgDiv.innerHTML = text;
+    setTimeout(() => { msgDiv.innerHTML = ''; }, 3000);
+  }
+
+  async function handleLogin() {
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    if (!email || !password) {
+      showMsg('Enter email and password');
+      return;
     }
-  }
-}
-
-window.savePrediction = async function(matchId) {
-  let scoreA = parseInt(document.getElementById(`scoreA_${matchId}`).value);
-  let scoreB = parseInt(document.getElementById(`scoreB_${matchId}`).value);
-  if (isNaN(scoreA)) scoreA = 0;
-  if (isNaN(scoreB)) scoreB = 0;
-  scoreA = Math.max(0, Math.min(10, scoreA));
-  scoreB = Math.max(0, Math.min(10, scoreB));
-  
-  const { data: existing } = await SB.from('predictions').select('id').eq('user_id', USER.id).eq('match_id', matchId).maybeSingle();
-  
-  if (existing) {
-    await SB.from('predictions').update({ pred_score_a: scoreA, pred_score_b: scoreB }).eq('id', existing.id);
-  } else {
-    await SB.from('predictions').insert({ user_id: USER.id, match_id: matchId, pred_score_a: scoreA, pred_score_b: scoreB });
-  }
-  
-  showMsg('Prediction saved!');
-  loadAllMatches();
-};
-
-// EVENT LISTENERS
-document.getElementById('loginBtn').onclick = doLogin;
-document.getElementById('signupBtn').onclick = doSignup;
-document.getElementById('logoutBtn').onclick = doLogout;
-document.getElementById('stageFilter').onchange = filterAndDisplay;
-document.getElementById('teamSearch').onkeyup = filterAndDisplay;
-
-document.querySelectorAll('.sort-btn').forEach(btn => {
-  btn.onclick = () => {
-    SORT_TYPE = btn.dataset.sort;
-    document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    filterAndDisplay();
-  };
-});
-
-// CHECK SESSION
-(async () => {
-  const { data: { session } } = await SB.auth.getSession();
-  if (session) {
-    USER = session.user;
+    
+    const { data, error } = await MY_SUPABASE.auth.signInWithPassword({ email, password });
+    if (error) {
+      showMsg(error.message);
+      return;
+    }
+    
+    currentUser = data.user;
     document.getElementById('loginBox').style.display = 'none';
     document.getElementById('mainPage').style.display = 'block';
-    loadAllMatches();
+    loadMatches();
   }
+
+  async function handleSignup() {
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    if (!email || !password) {
+      showMsg('Enter email and password');
+      return;
+    }
+    if (password.length < 6) {
+      showMsg('Password must be at least 6 characters');
+      return;
+    }
+    
+    const { error } = await MY_SUPABASE.auth.signUp({ email, password });
+    if (error) {
+      showMsg(error.message);
+    } else {
+      showMsg('Account created! You can now login.');
+    }
+  }
+
+  async function handleLogout() {
+    await MY_SUPABASE.auth.signOut();
+    currentUser = null;
+    document.getElementById('loginBox').style.display = 'block';
+    document.getElementById('mainPage').style.display = 'none';
+  }
+
+  async function loadMatches() {
+    const { data, error } = await MY_SUPABASE.from('matches').select('*').order('kickoff_time');
+    
+    if (error) {
+      document.getElementById('matchesList').innerHTML = '<div style="text-align:center; padding:40px;">Error loading matches</div>';
+      return;
+    }
+    
+    if (!data || data.length === 0) {
+      document.getElementById('matchesList').innerHTML = '<div style="text-align:center; padding:40px;">No matches found. Please add matches to database.</div>';
+      return;
+    }
+    
+    allMatches = data;
+    document.getElementById('matchCount').textContent = data.length + ' matches';
+    filterAndShow();
+  }
+
+  function filterAndShow() {
+    let filtered = [...allMatches];
+    const stage = document.getElementById('stageFilter').value;
+    const search = document.getElementById('teamSearch').value.toLowerCase();
+    
+    if (stage === 'group') filtered = filtered.filter(m => !m.is_knockout);
+    if (stage === 'knockout') filtered = filtered.filter(m => m.is_knockout);
+    if (search) filtered = filtered.filter(m => 
+      m.team_a.toLowerCase().includes(search) || m.team_b.toLowerCase().includes(search)
+    );
+    
+    if (currentSort === 'date') {
+      filtered.sort((a,b) => new Date(a.kickoff_time) - new Date(b.kickoff_time));
+    } else {
+      filtered.sort((a,b) => a.team_a.localeCompare(b.team_a));
+    }
+    
+    renderMatches(filtered);
+  }
+
+  async function renderMatches(matches) {
+    const container = document.getElementById('matchesList');
+    container.innerHTML = '';
+    
+    const { data: predictions } = await MY_SUPABASE.from('predictions').select('*').eq('user_id', currentUser?.id);
+    const predMap = {};
+    if (predictions) predictions.forEach(p => predMap[p.match_id] = p);
+    
+    const grouped = {};
+    matches.forEach(m => {
+      const date = new Date(m.kickoff_time).toLocaleDateString('en-US', {
+        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+      });
+      if (!grouped[date]) grouped[date] = [];
+      grouped[date].push(m);
+    });
+    
+    for (const [date, dayMatches] of Object.entries(grouped)) {
+      const dayGroup = document.createElement('div');
+      dayGroup.className = 'match-day-group';
+      dayGroup.innerHTML = `
+        <div class="match-day-header">
+          <div class="match-day-date">${date}</div>
+          <div class="match-day-count">${dayMatches.length} matches</div>
+        </div>
+        <div class="matches-grid"></div>
+      `;
+      container.appendChild(dayGroup);
+      
+      const grid = dayGroup.querySelector('.matches-grid');
+      
+      for (const match of dayMatches) {
+        const deadlinePassed = new Date(match.kickoff_time) < new Date();
+        const userPred = predMap[match.id];
+        
+        const card = document.createElement('div');
+        card.className = 'match-card';
+        
+        card.innerHTML = `
+          <div class="match-title">
+            ${match.team_a} vs ${match.team_b}
+            <span class="match-stage">${match.is_knockout ? 'KNOCKOUT' : 'GROUP'}</span>
+            ${match.finished ? '<span class="finished-badge">FINISHED</span>' : ''}
+          </div>
+          ${match.finished ? `<div class="result-display">FINAL: ${match.score_a} - ${match.score_b}</div>` : ''}
+          ${!deadlinePassed && !match.finished ? `
+            <div class="prediction-inputs">
+              <input type="number" id="scoreA_${match.id}" min="0" max="10" placeholder="${match.team_a}" value="${userPred ? userPred.pred_score_a : ''}">
+              <span>-</span>
+              <input type="number" id="scoreB_${match.id}" min="0" max="10" placeholder="${match.team_b}" value="${userPred ? userPred.pred_score_b : ''}">
+            </div>
+            <button class="submit-btn" onclick="window.savePrediction('${match.id}')">${userPred ? 'UPDATE' : 'SUBMIT'} PREDICTION</button>
+          ` : match.finished && userPred ? `
+            <div style="text-align:center; margin-top:10px; padding:10px; background:#f5f5f5; border-radius:10px;">
+              Your prediction: ${userPred.pred_score_a} - ${userPred.pred_score_b} ${userPred.points ? `| POINTS: ${userPred.points}` : ''}
+            </div>
+          ` : deadlinePassed && !match.finished ? `<div style="text-align:center;">DEADLINE PASSED</div>` : ''}
+          <div class="deadline">Kickoff: ${new Date(match.kickoff_time).toLocaleString()}</div>
+        `;
+        grid.appendChild(card);
+      }
+    }
+  }
+
+  window.savePrediction = async function(matchId) {
+    let scoreA = parseInt(document.getElementById(`scoreA_${matchId}`).value);
+    let scoreB = parseInt(document.getElementById(`scoreB_${matchId}`).value);
+    if (isNaN(scoreA)) scoreA = 0;
+    if (isNaN(scoreB)) scoreB = 0;
+    scoreA = Math.max(0, Math.min(10, scoreA));
+    scoreB = Math.max(0, Math.min(10, scoreB));
+    
+    const { data: existing } = await MY_SUPABASE.from('predictions').select('id').eq('user_id', currentUser.id).eq('match_id', matchId).maybeSingle();
+    
+    if (existing) {
+      await MY_SUPABASE.from('predictions').update({ pred_score_a: scoreA, pred_score_b: scoreB }).eq('id', existing.id);
+    } else {
+      await MY_SUPABASE.from('predictions').insert({ user_id: currentUser.id, match_id: matchId, pred_score_a: scoreA, pred_score_b: scoreB });
+    }
+    
+    showMsg('Prediction saved!');
+    loadMatches();
+  };
+
+  document.getElementById('loginBtn').onclick = handleLogin;
+  document.getElementById('signupBtn').onclick = handleSignup;
+  document.getElementById('logoutBtn').onclick = handleLogout;
+  document.getElementById('stageFilter').onchange = filterAndShow;
+  document.getElementById('teamSearch').onkeyup = filterAndShow;
+
+  document.querySelectorAll('.sort-btn').forEach(btn => {
+    btn.onclick = () => {
+      currentSort = btn.dataset.sort;
+      document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      filterAndShow();
+    };
+  });
+
+  (async () => {
+    const { data: { session } } = await MY_SUPABASE.auth.getSession();
+    if (session) {
+      currentUser = session.user;
+      document.getElementById('loginBox').style.display = 'none';
+      document.getElementById('mainPage').style.display = 'block';
+      loadMatches();
+    }
+  })();
 })();
 </script>
 </body>
