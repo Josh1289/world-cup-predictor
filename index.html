@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
   <title>World Cup Predictor 2026</title>
@@ -71,15 +71,6 @@
       margin-bottom: 25px;
     }
 
-    .admin-badge {
-      background: #FF6B35;
-      color: white;
-      padding: 5px 15px;
-      border-radius: 20px;
-      font-size: 12px;
-      margin-left: 10px;
-    }
-
     .logout-btn {
       background: #dc3545;
       color: white;
@@ -87,6 +78,42 @@
       border: none;
       border-radius: 10px;
       cursor: pointer;
+    }
+
+    .filter-group {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 25px;
+      flex-wrap: wrap;
+      background: white;
+      padding: 15px 20px;
+      border-radius: 12px;
+      align-items: center;
+    }
+
+    .filter-group select, .filter-group input {
+      padding: 10px 15px;
+      border-radius: 10px;
+      border: 2px solid #e0e0e0;
+    }
+
+    .sort-btn {
+      padding: 8px 18px;
+      background: white;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .sort-btn.active {
+      background: #FF6B35;
+      color: white;
+    }
+
+    .stats {
+      color: #FF6B35;
+      font-weight: bold;
+      margin-left: auto;
     }
 
     .match-day-group {
@@ -150,6 +177,15 @@
       color: #FF6B35;
     }
 
+    .finished-badge {
+      background: #4CAF50;
+      color: white;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      margin-left: 10px;
+    }
+
     .result-display {
       text-align: center;
       background: #FFF3E0;
@@ -196,42 +232,6 @@
       color: #999;
     }
 
-    .filter-group {
-      display: flex;
-      gap: 15px;
-      margin-bottom: 25px;
-      flex-wrap: wrap;
-      background: white;
-      padding: 15px 20px;
-      border-radius: 12px;
-      align-items: center;
-    }
-
-    .filter-group select, .filter-group input {
-      padding: 10px 15px;
-      border-radius: 10px;
-      border: 2px solid #e0e0e0;
-    }
-
-    .sort-btn {
-      padding: 8px 18px;
-      background: white;
-      border: 2px solid #e0e0e0;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-
-    .sort-btn.active {
-      background: #FF6B35;
-      color: white;
-    }
-
-    .stats {
-      color: #FF6B35;
-      font-weight: bold;
-      margin-left: auto;
-    }
-
     .msg {
       margin-top: 20px;
       text-align: center;
@@ -253,11 +253,7 @@
 <div id="mainPage">
   <div class="header">
     <h2>WORLD CUP 2026 PREDICTOR</h2>
-    <div>
-      <span id="userEmail"></span>
-      <span id="adminBadge" class="admin-badge" style="display:none;">ADMIN</span>
-      <button id="logoutBtn" class="logout-btn">LOGOUT</button>
-    </div>
+    <button id="logoutBtn" class="logout-btn">LOGOUT</button>
   </div>
 
   <div class="filter-group">
@@ -304,12 +300,6 @@ async function login() {
   currentUser = data.user;
   document.getElementById('loginBox').style.display = 'none';
   document.getElementById('mainPage').style.display = 'block';
-  document.getElementById('userEmail').innerHTML = currentUser.email;
-  
-  if (currentUser.email === 'admin@worldcup.com') {
-    document.getElementById('adminBadge').style.display = 'inline-block';
-  }
-  
   loadMatches();
 }
 
@@ -345,11 +335,12 @@ async function loadMatches() {
   
   if (error) {
     document.getElementById('matchesList').innerHTML = '<div style="text-align:center; padding:40px;">Error loading matches</div>';
+    console.error('Error:', error);
     return;
   }
   
   if (!data || data.length === 0) {
-    document.getElementById('matchesList').innerHTML = '<div style="text-align:center; padding:40px;">No matches found. Please add matches to database.</div>';
+    document.getElementById('matchesList').innerHTML = '<div style="text-align:center; padding:40px;">No matches found. Please run the SQL to add matches.</div>';
     return;
   }
   
@@ -420,7 +411,7 @@ async function renderMatchesGroupedByDay(matches) {
         <div class="match-title">
           ${match.team_a} vs ${match.team_b}
           <span class="match-stage">${match.is_knockout ? 'KNOCKOUT' : 'GROUP'}</span>
-          ${match.finished ? '<span class="match-stage" style="background:#4CAF50; color:white;">FINISHED</span>' : ''}
+          ${match.finished ? '<span class="finished-badge">FINISHED</span>' : ''}
         </div>
         ${match.finished ? `<div class="result-display">FINAL: ${match.score_a} - ${match.score_b}</div>` : ''}
         ${!deadlinePassed && !match.finished ? `
@@ -486,10 +477,6 @@ document.querySelectorAll('.sort-btn').forEach(btn => {
     currentUser = session.user;
     document.getElementById('loginBox').style.display = 'none';
     document.getElementById('mainPage').style.display = 'block';
-    document.getElementById('userEmail').innerHTML = currentUser.email;
-    if (currentUser.email === 'admin@worldcup.com') {
-      document.getElementById('adminBadge').style.display = 'inline-block';
-    }
     loadMatches();
   }
 })();
