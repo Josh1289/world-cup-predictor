@@ -215,233 +215,215 @@
 </div>
 
 <script>
-// Supabase client
-const SUPABASE_URL = "https://igatvhqatxrhgnshmdld.supabase.co";
-const SUPABASE_KEY = "sb_publishable_kZYMgSK-0VcalUaTuo7gfQ_7cMMse21";
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+// Wrap everything in an IIFE to avoid global variable conflicts
+(function() {
+  const SUPABASE_CLIENT = window.supabase.createClient(
+    "https://igatvhqatxrhgnshmdld.supabase.co",
+    "sb_publishable_kZYMgSK-0VcalUaTuo7gfQ_7cMMse21"
+  );
 
-let currentUser = null;
+  let currentUser = null;
 
-function showMessage(msg, isError) {
-  const msgDiv = document.getElementById('msg');
-  msgDiv.innerHTML = msg;
-  msgDiv.style.color = isError ? '#dc3545' : '#28a745';
-  setTimeout(() => { msgDiv.innerHTML = ''; }, 3000);
-}
+  function showMessage(msg, isError) {
+    const msgDiv = document.getElementById('msg');
+    msgDiv.innerHTML = msg;
+    msgDiv.style.color = isError ? '#dc3545' : '#28a745';
+    setTimeout(() => { msgDiv.innerHTML = ''; }, 3000);
+  }
 
-// LOGIN
-async function handleLogin() {
-  const email = document.getElementById('email').value;
-  const password = document.getElementById('password').value;
-  
-  if (!email || !password) {
-    showMessage('Please enter email and password', true);
-    return;
-  }
-  
-  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-  
-  if (error) {
-    showMessage(error.message, true);
-  } else {
-    currentUser = data.user;
-    document.getElementById('loginSection').style.display = 'none';
-    document.getElementById('mainSection').style.display = 'block';
-    document.getElementById('userEmail').innerHTML = currentUser.email;
-    loadMatches();
-  }
-}
-
-// SIGNUP
-async function handleSignup() {
-  const email = document.getElementById('email').value;
-  const password = document.getElementById('password').value;
-  
-  if (!email || !password) {
-    showMessage('Please enter email and password', true);
-    return;
-  }
-  
-  if (password.length < 6) {
-    showMessage('Password must be at least 6 characters', true);
-    return;
-  }
-  
-  const { error } = await supabase.auth.signUp({ email, password });
-  
-  if (error) {
-    showMessage(error.message, true);
-  } else {
-    showMessage('Account created! Please login.', false);
-  }
-}
-
-// LOGOUT
-async function handleLogout() {
-  await supabase.auth.signOut();
-  currentUser = null;
-  document.getElementById('loginSection').style.display = 'block';
-  document.getElementById('mainSection').style.display = 'none';
-  document.getElementById('email').value = '';
-  document.getElementById('password').value = '';
-}
-
-// LOAD MATCHES
-async function loadMatches() {
-  const container = document.getElementById('matchesContainer');
-  container.innerHTML = '<div style="text-align:center; padding:40px;">Loading matches...</div>';
-  
-  // Refresh session first
-  const { data: { session } } = await supabase.auth.getSession();
-  
-  if (!session) {
-    container.innerHTML = '<div style="text-align:center; padding:40px;">Please login again</div>';
-    return;
-  }
-  
-  const { data: matches, error } = await supabase
-    .from('matches')
-    .select('*')
-    .order('kickoff_time', { ascending: true });
-  
-  if (error) {
-    console.error('Error:', error);
-    container.innerHTML = `<div style="text-align:center; padding:40px;">Error: ${error.message}</div>`;
-    return;
-  }
-  
-  if (!matches || matches.length === 0) {
-    container.innerHTML = '<div style="text-align:center; padding:40px;">No matches found. Please run the SQL to add matches.</div>';
-    return;
-  }
-  
-  // Get user's predictions
-  const { data: predictions } = await supabase
-    .from('predictions')
-    .select('*')
-    .eq('user_id', currentUser.id);
-  
-  const predMap = {};
-  if (predictions) {
-    predictions.forEach(p => { predMap[p.match_id] = p; });
-  }
-  
-  container.innerHTML = '';
-  
-  for (const match of matches) {
-    const userPred = predMap[match.id];
-    const isFinished = match.finished;
-    const deadlinePassed = new Date(match.kickoff_time) < new Date();
+  async function handleLogin() {
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
     
-    const card = document.createElement('div');
-    card.className = 'match-card';
-    
-    let predictionHtml = '';
-    
-    if (isFinished) {
-      predictionHtml = `<div class="result-display">? FINAL: ${match.score_a} - ${match.score_b}</div>`;
-      if (userPred) {
-        predictionHtml += `<div class="your-prediction">Your prediction: ${userPred.pred_score_a} - ${userPred.pred_score_b} ${userPred.points ? `| POINTS: ${userPred.points}` : ''}</div>`;
-      }
-    } else if (deadlinePassed) {
-      predictionHtml = `<div class="deadline-passed">? DEADLINE PASSED</div>`;
-      if (userPred) {
-        predictionHtml += `<div class="your-prediction">Your prediction: ${userPred.pred_score_a} - ${userPred.pred_score_b}</div>`;
-      }
-    } else {
-      predictionHtml = `
-        <div class="prediction-inputs">
-          <input type="number" id="scoreA_${match.id}" min="0" max="10" placeholder="${match.team_a}" value="${userPred ? userPred.pred_score_a : ''}">
-          <span style="font-size:20px;">-</span>
-          <input type="number" id="scoreB_${match.id}" min="0" max="10" placeholder="${match.team_b}" value="${userPred ? userPred.pred_score_b : ''}">
-        </div>
-        <button class="submit-btn" onclick="savePrediction('${match.id}')">${userPred ? 'UPDATE' : 'SUBMIT'} PREDICTION</button>
-      `;
+    if (!email || !password) {
+      showMessage('Please enter email and password', true);
+      return;
     }
     
-    card.innerHTML = `
-      <div class="match-title">
-        ${match.team_a} vs ${match.team_b}
-        <span class="match-stage">${match.is_knockout ? '?? KNOCKOUT' : '?? GROUP'}</span>
-        ${isFinished ? '<span class="finished-badge">FINISHED</span>' : ''}
-      </div>
-      ${predictionHtml}
-      <div class="deadline">?? ${new Date(match.kickoff_time).toLocaleString()}</div>
-    `;
+    const { data, error } = await SUPABASE_CLIENT.auth.signInWithPassword({ email, password });
     
-    container.appendChild(card);
+    if (error) {
+      showMessage(error.message, true);
+    } else {
+      currentUser = data.user;
+      document.getElementById('loginSection').style.display = 'none';
+      document.getElementById('mainSection').style.display = 'block';
+      document.getElementById('userEmail').innerHTML = currentUser.email;
+      loadMatches();
+    }
   }
-}
 
-// SAVE PREDICTION
-window.savePrediction = async function(matchId) {
-  const scoreA = parseInt(document.getElementById(`scoreA_${matchId}`).value);
-  const scoreB = parseInt(document.getElementById(`scoreB_${matchId}`).value);
-  
-  if (isNaN(scoreA) || isNaN(scoreB)) {
-    alert('Please enter both scores');
-    return;
+  async function handleSignup() {
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    
+    if (!email || !password) {
+      showMessage('Please enter email and password', true);
+      return;
+    }
+    
+    if (password.length < 6) {
+      showMessage('Password must be at least 6 characters', true);
+      return;
+    }
+    
+    const { error } = await SUPABASE_CLIENT.auth.signUp({ email, password });
+    
+    if (error) {
+      showMessage(error.message, true);
+    } else {
+      showMessage('Account created! Please login.', false);
+    }
   }
-  
-  // Check if prediction exists
-  const { data: existing } = await supabase
-    .from('predictions')
-    .select('id')
-    .eq('user_id', currentUser.id)
-    .eq('match_id', matchId);
-  
-  let result;
-  
-  if (existing && existing.length > 0) {
-    // Update
-    result = await supabase
+
+  async function handleLogout() {
+    await SUPABASE_CLIENT.auth.signOut();
+    currentUser = null;
+    document.getElementById('loginSection').style.display = 'block';
+    document.getElementById('mainSection').style.display = 'none';
+    document.getElementById('email').value = '';
+    document.getElementById('password').value = '';
+  }
+
+  async function loadMatches() {
+    const container = document.getElementById('matchesContainer');
+    container.innerHTML = '<div style="text-align:center; padding:40px;">Loading matches...</div>';
+    
+    const { data: matches, error } = await SUPABASE_CLIENT
+      .from('matches')
+      .select('*')
+      .order('kickoff_time', { ascending: true });
+    
+    if (error) {
+      console.error('Error:', error);
+      container.innerHTML = `<div style="text-align:center; padding:40px;">Error: ${error.message}</div>`;
+      return;
+    }
+    
+    if (!matches || matches.length === 0) {
+      container.innerHTML = '<div style="text-align:center; padding:40px;">No matches found. Please run the SQL to add matches.</div>';
+      return;
+    }
+    
+    const { data: predictions } = await SUPABASE_CLIENT
       .from('predictions')
-      .update({ 
-        pred_score_a: scoreA, 
-        pred_score_b: scoreB,
-        updated_at: new Date()
-      })
-      .eq('id', existing[0].id);
-  } else {
-    // Insert
-    result = await supabase
-      .from('predictions')
-      .insert({ 
-        user_id: currentUser.id, 
-        match_id: matchId, 
-        pred_score_a: scoreA, 
-        pred_score_b: scoreB 
+      .select('*')
+      .eq('user_id', currentUser.id);
+    
+    const predMap = {};
+    if (predictions) {
+      predictions.forEach(p => { predMap[p.match_id] = p; });
+    }
+    
+    container.innerHTML = '';
+    
+    for (const match of matches) {
+      const userPred = predMap[match.id];
+      const isFinished = match.finished;
+      const deadlinePassed = new Date(match.kickoff_time) < new Date();
+      
+      const card = document.createElement('div');
+      card.className = 'match-card';
+      
+      let predictionHtml = '';
+      
+      if (isFinished) {
+        predictionHtml = `<div class="result-display">? FINAL: ${match.score_a} - ${match.score_b}</div>`;
+        if (userPred) {
+          predictionHtml += `<div class="your-prediction">Your prediction: ${userPred.pred_score_a} - ${userPred.pred_score_b} ${userPred.points ? `| POINTS: ${userPred.points}` : ''}</div>`;
+        }
+      } else if (deadlinePassed) {
+        predictionHtml = `<div class="deadline-passed">? DEADLINE PASSED</div>`;
+        if (userPred) {
+          predictionHtml += `<div class="your-prediction">Your prediction: ${userPred.pred_score_a} - ${userPred.pred_score_b}</div>`;
+        }
+      } else {
+        predictionHtml = `
+          <div class="prediction-inputs">
+            <input type="number" id="scoreA_${match.id}" min="0" max="10" placeholder="${match.team_a}" value="${userPred ? userPred.pred_score_a : ''}">
+            <span style="font-size:20px;">-</span>
+            <input type="number" id="scoreB_${match.id}" min="0" max="10" placeholder="${match.team_b}" value="${userPred ? userPred.pred_score_b : ''}">
+          </div>
+          <button class="submit-btn" data-match-id="${match.id}">${userPred ? 'UPDATE' : 'SUBMIT'} PREDICTION</button>
+        `;
+      }
+      
+      card.innerHTML = `
+        <div class="match-title">
+          ${match.team_a} vs ${match.team_b}
+          <span class="match-stage">${match.is_knockout ? '?? KNOCKOUT' : '?? GROUP'}</span>
+          ${isFinished ? '<span class="finished-badge">FINISHED</span>' : ''}
+        </div>
+        ${predictionHtml}
+        <div class="deadline">?? ${new Date(match.kickoff_time).toLocaleString()}</div>
+      `;
+      
+      container.appendChild(card);
+    }
+    
+    // Add event listeners to all prediction buttons
+    document.querySelectorAll('.submit-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const matchId = this.getAttribute('data-match-id');
+        savePrediction(matchId);
       });
+    });
   }
-  
-  if (result.error) {
-    alert('Error: ' + result.error.message);
-  } else {
-    alert('Prediction saved!');
-    loadMatches();
+
+  async function savePrediction(matchId) {
+    const scoreA = parseInt(document.getElementById(`scoreA_${matchId}`).value);
+    const scoreB = parseInt(document.getElementById(`scoreB_${matchId}`).value);
+    
+    if (isNaN(scoreA) || isNaN(scoreB)) {
+      alert('Please enter both scores');
+      return;
+    }
+    
+    const { data: existing } = await SUPABASE_CLIENT
+      .from('predictions')
+      .select('id')
+      .eq('user_id', currentUser.id)
+      .eq('match_id', matchId);
+    
+    let result;
+    
+    if (existing && existing.length > 0) {
+      result = await SUPABASE_CLIENT
+        .from('predictions')
+        .update({ pred_score_a: scoreA, pred_score_b: scoreB, updated_at: new Date() })
+        .eq('id', existing[0].id);
+    } else {
+      result = await SUPABASE_CLIENT
+        .from('predictions')
+        .insert({ user_id: currentUser.id, match_id: matchId, pred_score_a: scoreA, pred_score_b: scoreB });
+    }
+    
+    if (result.error) {
+      alert('Error: ' + result.error.message);
+    } else {
+      alert('Prediction saved!');
+      loadMatches();
+    }
   }
-};
 
-// Check session on page load
-async function checkSession() {
-  const { data: { session } } = await supabase.auth.getSession();
-  
-  if (session) {
-    currentUser = session.user;
-    document.getElementById('loginSection').style.display = 'none';
-    document.getElementById('mainSection').style.display = 'block';
-    document.getElementById('userEmail').innerHTML = currentUser.email;
-    loadMatches();
+  async function checkSession() {
+    const { data: { session } } = await SUPABASE_CLIENT.auth.getSession();
+    
+    if (session) {
+      currentUser = session.user;
+      document.getElementById('loginSection').style.display = 'none';
+      document.getElementById('mainSection').style.display = 'block';
+      document.getElementById('userEmail').innerHTML = currentUser.email;
+      loadMatches();
+    }
   }
-}
 
-// Event listeners
-document.getElementById('loginBtn').addEventListener('click', handleLogin);
-document.getElementById('signupBtn').addEventListener('click', handleSignup);
-document.getElementById('logoutBtn').addEventListener('click', handleLogout);
+  document.getElementById('loginBtn').addEventListener('click', handleLogin);
+  document.getElementById('signupBtn').addEventListener('click', handleSignup);
+  document.getElementById('logoutBtn').addEventListener('click', handleLogout);
 
-// Start
-checkSession();
+  checkSession();
+})();
 </script>
 </body>
 </html>
