@@ -37,7 +37,8 @@
     }
     body.theme-orange .match-title, body.theme-orange .match-stage,
     body.theme-orange .result-display, body.theme-orange .deadline,
-    body.theme-orange .stats, body.theme-orange .leaderboard-item {
+    body.theme-orange .stats, body.theme-orange .leaderboard-item,
+    body.theme-orange .match-day-date, body.theme-orange .match-day-count {
       color: black;
     }
 
@@ -61,7 +62,8 @@
     }
     body.theme-green .match-title, body.theme-green .match-stage,
     body.theme-green .result-display, body.theme-green .deadline,
-    body.theme-green .stats, body.theme-green .leaderboard-item {
+    body.theme-green .stats, body.theme-green .leaderboard-item,
+    body.theme-green .match-day-date, body.theme-green .match-day-count {
       color: black;
     }
 
@@ -85,8 +87,9 @@
     }
     body.theme-night .match-title, body.theme-night .match-stage,
     body.theme-night .result-display, body.theme-night .deadline,
-    body.theme-night .stats, body.theme-night .leaderboard-item {
-      color: #ddd;
+    body.theme-night .stats, body.theme-night .leaderboard-item,
+    body.theme-night .match-day-date, body.theme-night .match-day-count {
+      color: #FFD700;
     }
 
     /* Theme 4: Classic Football */
@@ -109,7 +112,8 @@
     }
     body.theme-classic .match-title, body.theme-classic .match-stage,
     body.theme-classic .result-display, body.theme-classic .deadline,
-    body.theme-classic .stats, body.theme-classic .leaderboard-item {
+    body.theme-classic .stats, body.theme-classic .leaderboard-item,
+    body.theme-classic .match-day-date, body.theme-classic .match-day-count {
       color: black;
     }
 
@@ -361,6 +365,15 @@
       font-weight: bold;
     }
 
+    .prediction-inputs input:in-range {
+      border-color: #4CAF50;
+    }
+
+    .prediction-inputs input:out-of-range {
+      border-color: #dc3545;
+      background: #fff3f3;
+    }
+
     .submit-btn {
       width: 100%;
       padding: 12px;
@@ -451,9 +464,25 @@
       border: 2px solid #e0e0e0;
     }
 
+    .admin-result-inputs input:in-range {
+      border-color: #4CAF50;
+    }
+
+    .admin-result-inputs input:out-of-range {
+      border-color: #dc3545;
+      background: #fff3f3;
+    }
+
     .reset-btn {
       background: #dc3545;
       color: white;
+    }
+
+    .goal-warning {
+      font-size: 10px;
+      text-align: center;
+      margin-top: 5px;
+      color: #dc3545;
     }
   </style>
 </head>
@@ -529,6 +558,15 @@
 </div>
 
 <script>
+// Goal validation function
+function validateGoal(value) {
+  const num = parseInt(value);
+  if (isNaN(num)) return 0;
+  if (num < 0) return 0;
+  if (num > 10) return 10;
+  return num;
+}
+
 // Theme switcher
 function setTheme(theme) {
   document.body.className = 'theme-' + theme;
@@ -542,8 +580,30 @@ function loadTheme() {
   }
 }
 
-// Group mapping for each match (to be populated from database)
-const groupMapping = {};
+// Group mapping for each match
+function getGroupLetter(teamA, teamB) {
+  const groupTeams = {
+    'A': ['Mexico', 'South Africa', 'South Korea', 'Czech Republic'],
+    'B': ['Canada', 'Bosnia and Herzegovina', 'Qatar', 'Switzerland'],
+    'C': ['Brazil', 'Morocco', 'Haiti', 'Scotland'],
+    'D': ['USA', 'Paraguay', 'Australia', 'Turkey'],
+    'E': ['Germany', 'Curacao', 'Ivory Coast', 'Ecuador'],
+    'F': ['Netherlands', 'Japan', 'Sweden', 'Tunisia'],
+    'G': ['Belgium', 'Egypt', 'Iran', 'New Zealand'],
+    'H': ['Spain', 'Cape Verde', 'Saudi Arabia', 'Uruguay'],
+    'I': ['France', 'Senegal', 'Iraq', 'Norway'],
+    'J': ['Austria', 'Jordan', 'Argentina', 'Algeria'],
+    'K': ['Portugal', 'DR Congo', 'Uzbekistan', 'Colombia'],
+    'L': ['England', 'Croatia', 'Ghana', 'Panama']
+  };
+  
+  for (const [letter, teams] of Object.entries(groupTeams)) {
+    if (teams.includes(teamA) && teams.includes(teamB)) {
+      return letter;
+    }
+  }
+  return '';
+}
 
 // Country flags mapping
 const countryFlags = {
@@ -570,31 +630,6 @@ function getFlagUrl(country) {
 function getTeamHtml(teamName) {
   const flagUrl = getFlagUrl(teamName);
   return `<span class="team-with-flag"><img class="flag-img" src="${flagUrl}" alt="flag"> ${teamName}</span>`;
-}
-
-// Group determination based on teams
-function getGroupLetter(teamA, teamB) {
-  const groupTeams = {
-    'A': ['Mexico', 'South Africa', 'South Korea', 'Czech Republic'],
-    'B': ['Canada', 'Bosnia and Herzegovina', 'Qatar', 'Switzerland'],
-    'C': ['Brazil', 'Morocco', 'Haiti', 'Scotland'],
-    'D': ['USA', 'Paraguay', 'Australia', 'Turkey'],
-    'E': ['Germany', 'Curacao', 'Ivory Coast', 'Ecuador'],
-    'F': ['Netherlands', 'Japan', 'Sweden', 'Tunisia'],
-    'G': ['Belgium', 'Egypt', 'Iran', 'New Zealand'],
-    'H': ['Spain', 'Cape Verde', 'Saudi Arabia', 'Uruguay'],
-    'I': ['France', 'Senegal', 'Iraq', 'Norway'],
-    'J': ['Austria', 'Jordan', 'Argentina', 'Algeria'],
-    'K': ['Portugal', 'DR Congo', 'Uzbekistan', 'Colombia'],
-    'L': ['England', 'Croatia', 'Ghana', 'Panama']
-  };
-  
-  for (const [letter, teams] of Object.entries(groupTeams)) {
-    if (teams.includes(teamA) && teams.includes(teamB)) {
-      return letter;
-    }
-  }
-  return '';
 }
 
 // Supabase
@@ -726,10 +761,11 @@ async function renderMatchesGroupedByDay(matches) {
         ${match.finished ? `<div class="result-display">FINAL SCORE: ${match.score_a} - ${match.score_b}</div>` : ''}
         ${!deadlinePassed && !match.finished ? `
           <div class="prediction-inputs">
-            <input type="number" id="scoreA_${match.id}" placeholder="${match.team_a}" value="${userPred ? userPred.pred_score_a : ''}">
+            <input type="number" id="scoreA_${match.id}" min="0" max="10" placeholder="${match.team_a}" value="${userPred ? userPred.pred_score_a : ''}" onchange="this.value = validateGoal(this.value)">
             <span style="font-weight:bold;">-</span>
-            <input type="number" id="scoreB_${match.id}" placeholder="${match.team_b}" value="${userPred ? userPred.pred_score_b : ''}">
+            <input type="number" id="scoreB_${match.id}" min="0" max="10" placeholder="${match.team_b}" value="${userPred ? userPred.pred_score_b : ''}" onchange="this.value = validateGoal(this.value)">
           </div>
+          <div class="goal-warning">Goals allowed: 0-10</div>
           <button class="submit-btn" onclick="savePrediction('${match.id}')">${userPred ? 'UPDATE PREDICTION' : 'SUBMIT PREDICTION'}</button>
         ` : match.finished && userPred ? `
           <div style="text-align:center; margin-top:10px; padding:10px; border-radius:10px; background:#f5f5f5;">
@@ -743,10 +779,19 @@ async function renderMatchesGroupedByDay(matches) {
   }
 }
 
+window.validateGoal = function(value) {
+  return validateGoal(value);
+}
+
 window.savePrediction = async function(matchId) {
-  const scoreA = parseInt(document.getElementById(`scoreA_${matchId}`).value);
-  const scoreB = parseInt(document.getElementById(`scoreB_${matchId}`).value);
-  if (isNaN(scoreA) || isNaN(scoreB)) return showMsg('Enter both scores', true);
+  let scoreA = parseInt(document.getElementById(`scoreA_${matchId}`).value);
+  let scoreB = parseInt(document.getElementById(`scoreB_${matchId}`).value);
+  
+  // Validate goals (0-10 range)
+  if (isNaN(scoreA)) scoreA = 0;
+  if (isNaN(scoreB)) scoreB = 0;
+  scoreA = Math.max(0, Math.min(10, scoreA));
+  scoreB = Math.max(0, Math.min(10, scoreB));
   
   const { data: existing } = await _supabase.from('predictions').select('id').eq('user_id', user.id).eq('match_id', matchId).maybeSingle();
   
@@ -835,10 +880,11 @@ function renderAdminMatches(matches) {
         card.innerHTML = `
           <div class="match-title">${getTeamHtml(match.team_a)} VS ${getTeamHtml(match.team_b)} ${groupHtml}</div>
           <div class="admin-result-inputs">
-            <input type="number" id="adminA_${match.id}" placeholder="${match.team_a} score">
+            <input type="number" id="adminA_${match.id}" min="0" max="10" placeholder="${match.team_a} score" onchange="this.value = validateGoal(this.value)">
             <span>-</span>
-            <input type="number" id="adminB_${match.id}" placeholder="${match.team_b} score">
+            <input type="number" id="adminB_${match.id}" min="0" max="10" placeholder="${match.team_b} score" onchange="this.value = validateGoal(this.value)">
           </div>
+          <div class="goal-warning">Goals allowed: 0-10</div>
           ${match.is_knockout ? `<select id="advance_${match.id}" style="width:100%; margin:10px 0; padding:10px; border:2px solid #e0e0e0; border-radius:8px;"><option value="">Who advanced?</option><option value="${match.team_a}">${match.team_a}</option><option value="${match.team_b}">${match.team_b}</option></select>` : ''}
           <button class="submit-btn admin-btn" onclick="setResult('${match.id}', ${match.is_knockout})">SET RESULT AND CALCULATE</button>
         `;
@@ -849,9 +895,14 @@ function renderAdminMatches(matches) {
 }
 
 window.setResult = async function(matchId, isKnockout) {
-  const a = parseInt(document.getElementById(`adminA_${matchId}`).value);
-  const b = parseInt(document.getElementById(`adminB_${matchId}`).value);
-  if (isNaN(a) || isNaN(b)) return showMsg('Enter valid scores', true);
+  let a = parseInt(document.getElementById(`adminA_${matchId}`).value);
+  let b = parseInt(document.getElementById(`adminB_${matchId}`).value);
+  
+  // Validate goals (0-10 range)
+  if (isNaN(a)) a = 0;
+  if (isNaN(b)) b = 0;
+  a = Math.max(0, Math.min(10, a));
+  b = Math.max(0, Math.min(10, b));
   
   let advance = null;
   if (isKnockout) {
