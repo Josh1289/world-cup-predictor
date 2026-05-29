@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
   <title>World Cup Predictor 2026</title>
@@ -17,6 +17,7 @@
       padding: 20px;
     }
 
+    /* Theme 1: World Cup Orange (Default) */
     body.theme-orange {
       background: linear-gradient(135deg, #FF6B35 0%, #F7931E 50%, #FFD700 100%);
     }
@@ -34,7 +35,14 @@
       background: #FF6B35;
       color: white;
     }
+    body.theme-orange .match-title, body.theme-orange .match-stage,
+    body.theme-orange .result-display, body.theme-orange .deadline,
+    body.theme-orange .stats, body.theme-orange .leaderboard-item,
+    body.theme-orange .match-day-date, body.theme-orange .match-day-count {
+      color: black;
+    }
 
+    /* Theme 2: Stadium Green */
     body.theme-green {
       background: linear-gradient(135deg, #0a5c2e 0%, #0a3d1f 50%, #062a15 100%);
     }
@@ -52,7 +60,14 @@
       background: #2E7D32;
       color: white;
     }
+    body.theme-green .match-title, body.theme-green .match-stage,
+    body.theme-green .result-display, body.theme-green .deadline,
+    body.theme-green .stats, body.theme-green .leaderboard-item,
+    body.theme-green .match-day-date, body.theme-green .match-day-count {
+      color: black;
+    }
 
+    /* Theme 3: Night Match */
     body.theme-night {
       background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
     }
@@ -70,7 +85,14 @@
       background: #FFD700;
       color: #1a1a2e;
     }
+    body.theme-night .match-title, body.theme-night .match-stage,
+    body.theme-night .result-display, body.theme-night .deadline,
+    body.theme-night .stats, body.theme-night .leaderboard-item,
+    body.theme-night .match-day-date, body.theme-night .match-day-count {
+      color: #FFD700;
+    }
 
+    /* Theme 4: Classic Football */
     body.theme-classic {
       background: linear-gradient(135deg, #1a472a 0%, #0a2a1a 100%);
     }
@@ -88,7 +110,14 @@
       background: #8B4513;
       color: white;
     }
+    body.theme-classic .match-title, body.theme-classic .match-stage,
+    body.theme-classic .result-display, body.theme-classic .deadline,
+    body.theme-classic .stats, body.theme-classic .leaderboard-item,
+    body.theme-classic .match-day-date, body.theme-classic .match-day-count {
+      color: black;
+    }
 
+    /* Common Styles */
     #loginBox {
       max-width: 450px;
       margin: 100px auto;
@@ -96,11 +125,13 @@
       border-radius: 20px;
       box-shadow: 0 20px 40px rgba(0,0,0,0.2);
     }
+
     #loginBox h2 {
       text-align: center;
       font-size: 32px;
       margin-bottom: 30px;
     }
+
     #loginBox input {
       width: 100%;
       padding: 14px;
@@ -109,6 +140,11 @@
       border: 2px solid #e0e0e0;
       font-size: 16px;
     }
+
+    #loginBox input:focus {
+      outline: none;
+    }
+
     #loginBox button {
       width: 100%;
       padding: 14px;
@@ -121,6 +157,7 @@
       transition: all 0.3s;
       color: white;
     }
+
     #loginBox button:hover {
       transform: translateY(-2px);
     }
@@ -139,15 +176,18 @@
       margin-bottom: 25px;
       box-shadow: 0 5px 20px rgba(0,0,0,0.1);
     }
+
     .header-left {
       display: flex;
       align-items: center;
       gap: 20px;
     }
+
     .theme-selector {
       display: flex;
       gap: 8px;
     }
+
     .theme-btn {
       width: 30px;
       height: 30px;
@@ -156,9 +196,11 @@
       cursor: pointer;
       transition: all 0.3s;
     }
+
     .theme-btn:hover {
       transform: scale(1.1);
     }
+
     .theme-orange-btn { background: #FF6B35; }
     .theme-green-btn { background: #2E7D32; }
     .theme-night-btn { background: #302b63; }
@@ -171,6 +213,7 @@
       font-weight: bold;
       margin-left: 10px;
     }
+
     .logout-btn {
       padding: 10px 25px;
       border: none;
@@ -184,6 +227,7 @@
       gap: 15px;
       margin-bottom: 25px;
     }
+
     .tab {
       padding: 12px 30px;
       border: none;
@@ -193,10 +237,6 @@
       transition: all 0.3s;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
-    .tab.active {
-      background: #FF6B35;
-      color: white;
-    }
 
     .match-day-group {
       margin-bottom: 30px;
@@ -204,32 +244,39 @@
       overflow: hidden;
       box-shadow: 0 5px 15px rgba(0,0,0,0.1);
     }
+
     .match-day-header {
       padding: 15px 25px;
       color: white;
     }
+
     .match-day-date {
       font-size: 22px;
       font-weight: bold;
     }
+
     .match-day-count {
       font-size: 13px;
       opacity: 0.9;
       margin-top: 5px;
     }
+
     .matches-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
       gap: 1px;
       background: #e0e0e0;
     }
+
     .match-card {
       padding: 20px;
       transition: all 0.3s;
     }
+
     .match-card:hover {
       transform: translateX(5px);
     }
+
     .match-title {
       font-size: 18px;
       font-weight: bold;
@@ -243,20 +290,24 @@
       gap: 10px;
       flex-wrap: wrap;
     }
+
     .team-with-flag {
       display: inline-flex;
       align-items: center;
       gap: 8px;
     }
+
     .flag-img {
       width: 24px;
       height: 18px;
       border-radius: 2px;
     }
+
     .vs {
       font-weight: bold;
       font-size: 16px;
     }
+
     .match-stage {
       display: inline-block;
       padding: 3px 10px;
@@ -265,6 +316,7 @@
       font-weight: bold;
       margin-left: 10px;
     }
+
     .group-letter {
       display: inline-block;
       padding: 3px 8px;
@@ -275,6 +327,7 @@
       background: #FF6B35;
       color: white;
     }
+
     .finished-badge {
       display: inline-block;
       padding: 3px 10px;
@@ -285,6 +338,7 @@
       background: #4CAF50;
       color: white;
     }
+
     .result-display {
       text-align: center;
       margin-bottom: 15px;
@@ -293,12 +347,14 @@
       font-weight: bold;
       border-radius: 10px;
     }
+
     .prediction-inputs {
       display: flex;
       gap: 15px;
       justify-content: center;
       margin: 15px 0;
     }
+
     .prediction-inputs input {
       width: 80px;
       padding: 10px;
@@ -308,6 +364,16 @@
       border-radius: 10px;
       font-weight: bold;
     }
+
+    .prediction-inputs input:in-range {
+      border-color: #4CAF50;
+    }
+
+    .prediction-inputs input:out-of-range {
+      border-color: #dc3545;
+      background: #fff3f3;
+    }
+
     .submit-btn {
       width: 100%;
       padding: 12px;
@@ -319,9 +385,11 @@
       transition: all 0.3s;
       color: white;
     }
+
     .submit-btn:hover {
       transform: translateY(-2px);
     }
+
     .deadline {
       font-size: 11px;
       text-align: center;
@@ -333,6 +401,7 @@
       overflow: hidden;
       box-shadow: 0 5px 15px rgba(0,0,0,0.1);
     }
+
     .leaderboard-header {
       display: grid;
       grid-template-columns: 80px 1fr 100px;
@@ -340,6 +409,7 @@
       font-weight: bold;
       color: white;
     }
+
     .leaderboard-item {
       display: grid;
       grid-template-columns: 80px 1fr 100px;
@@ -355,12 +425,15 @@
       padding: 15px 20px;
       border-radius: 12px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      align-items: center;
     }
+
     .filter-group select, .filter-group input {
       padding: 10px 15px;
       border-radius: 10px;
       border: 2px solid #e0e0e0;
     }
+
     .sort-btn {
       padding: 8px 18px;
       border: 2px solid #e0e0e0;
@@ -368,14 +441,12 @@
       cursor: pointer;
       background: white;
     }
-    .sort-btn.active {
-      background: #FF6B35;
-      color: white;
-    }
+
     .stats {
       font-weight: bold;
       margin-left: auto;
     }
+
     .msg {
       margin-top: 20px;
       text-align: center;
@@ -387,19 +458,46 @@
       justify-content: center;
       margin: 10px 0;
     }
+
     .admin-result-inputs input, .admin-result-inputs select {
       padding: 10px;
       border-radius: 8px;
       border: 2px solid #e0e0e0;
     }
+
+    .admin-result-inputs input:in-range {
+      border-color: #4CAF50;
+    }
+
+    .admin-result-inputs input:out-of-range {
+      border-color: #dc3545;
+      background: #fff3f3;
+    }
+
     .reset-btn {
       background: #dc3545;
       color: white;
+    }
+
+    .filter-label {
+      font-weight: bold;
+      margin-right: 5px;
+    }
+
+    .date-range {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .date-range input {
+      width: 130px;
     }
   </style>
 </head>
 <body class="theme-orange">
 
+<!-- LOGIN BOX -->
 <div id="loginBox">
   <h2>WORLD CUP 2026</h2>
   <input type="email" id="email" placeholder="Email">
@@ -409,6 +507,7 @@
   <div id="msg" class="msg"></div>
 </div>
 
+<!-- MAIN PAGE -->
 <div id="mainPage" style="display:none;">
   <div class="header">
     <div class="header-left">
@@ -435,16 +534,44 @@
 
   <div id="predictionsPanel">
     <div class="filter-group">
-      <select id="matchFilter">
-        <option value="all">All Matches</option>
+      <select id="groupFilter">
+        <option value="all">All Groups</option>
+        <option value="A">Group A</option>
+        <option value="B">Group B</option>
+        <option value="C">Group C</option>
+        <option value="D">Group D</option>
+        <option value="E">Group E</option>
+        <option value="F">Group F</option>
+        <option value="G">Group G</option>
+        <option value="H">Group H</option>
+        <option value="I">Group I</option>
+        <option value="J">Group J</option>
+        <option value="K">Group K</option>
+        <option value="L">Group L</option>
+      </select>
+      
+      <select id="stageFilter">
+        <option value="all">All Stages</option>
         <option value="group">Group Stage</option>
         <option value="knockout">Knockout Stage</option>
       </select>
-      <input type="text" id="teamSearch" placeholder="Search teams...">
+      
+      <input type="text" id="teamSearch" placeholder="Search team...">
+      
+      <div class="date-range">
+        <span class="filter-label">From:</span>
+        <input type="date" id="dateFrom">
+        <span class="filter-label">To:</span>
+        <input type="date" id="dateTo">
+      </div>
+      
       <div>
         <button class="sort-btn active" data-sort="date">Sort by Date</button>
         <button class="sort-btn" data-sort="team">Sort by Team</button>
       </div>
+      
+      <button id="clearFilters" class="sort-btn" style="background:#FF6B35; color:white;">Clear Filters</button>
+      
       <span class="stats" id="matchCount"></span>
     </div>
     <div id="matchesList"></div>
@@ -468,28 +595,31 @@
 </div>
 
 <script>
+// Goal validation function
 function validateGoal(value) {
-  var num = parseInt(value);
+  const num = parseInt(value);
   if (isNaN(num)) return 0;
   if (num < 0) return 0;
   if (num > 10) return 10;
   return num;
 }
 
+// Theme switcher
 function setTheme(theme) {
   document.body.className = 'theme-' + theme;
   localStorage.setItem('worldcup-theme', theme);
 }
 
 function loadTheme() {
-  var savedTheme = localStorage.getItem('worldcup-theme');
+  const savedTheme = localStorage.getItem('worldcup-theme');
   if (savedTheme) {
     document.body.className = 'theme-' + savedTheme;
   }
 }
 
+// Group mapping for each match
 function getGroupLetter(teamA, teamB) {
-  var groupTeams = {
+  const groupTeams = {
     'A': ['Mexico', 'South Africa', 'South Korea', 'Czech Republic'],
     'B': ['Canada', 'Bosnia and Herzegovina', 'Qatar', 'Switzerland'],
     'C': ['Brazil', 'Morocco', 'Haiti', 'Scotland'],
@@ -504,16 +634,16 @@ function getGroupLetter(teamA, teamB) {
     'L': ['England', 'Croatia', 'Ghana', 'Panama']
   };
   
-  for (var letter in groupTeams) {
-    var teams = groupTeams[letter];
-    if (teams.indexOf(teamA) !== -1 && teams.indexOf(teamB) !== -1) {
+  for (const [letter, teams] of Object.entries(groupTeams)) {
+    if (teams.includes(teamA) && teams.includes(teamB)) {
       return letter;
     }
   }
   return '';
 }
 
-var countryFlags = {
+// Country flags mapping
+const countryFlags = {
   'Mexico': 'MX', 'South Africa': 'ZA', 'South Korea': 'KR', 'Czech Republic': 'CZ',
   'Canada': 'CA', 'Bosnia and Herzegovina': 'BA', 'Qatar': 'QA', 'Switzerland': 'CH',
   'Brazil': 'BR', 'Morocco': 'MA', 'Haiti': 'HT', 'Scotland': 'GB-SCT',
@@ -529,41 +659,42 @@ var countryFlags = {
 };
 
 function getFlagUrl(country) {
-  var code = countryFlags[country];
+  const code = countryFlags[country];
   if (!code) return '';
-  return 'https://flagcdn.com/w40/' + code.toLowerCase() + '.png';
+  return `https://flagcdn.com/w40/${code.toLowerCase()}.png`;
 }
 
 function getTeamHtml(teamName) {
-  var flagUrl = getFlagUrl(teamName);
-  return '<span class="team-with-flag"><img class="flag-img" src="' + flagUrl + '" alt="flag"> ' + teamName + '</span>';
+  const flagUrl = getFlagUrl(teamName);
+  return `<span class="team-with-flag"><img class="flag-img" src="${flagUrl}" alt="flag"> ${teamName}</span>`;
 }
 
-var _supabase = window.supabase.createClient(
+// Supabase
+const _supabase = window.supabase.createClient(
   "https://igatvhqatxrhgnshmdld.supabase.co",
   "sb_publishable_kZYMgSK-0VcalUaTuo7gfQ_7cMMse21"
 );
 
-var user = null;
-var allMatches = [];
-var currentSort = 'date';
+let user = null;
+let allMatches = [];
+let currentSort = 'date';
 
-function showMsg(text, isError) {
-  var msgDiv = document.getElementById('msg');
+function showMsg(text, isError = false) {
+  const msgDiv = document.getElementById('msg');
   msgDiv.innerHTML = text;
   msgDiv.style.color = isError ? '#dc3545' : '#FF6B35';
-  setTimeout(function() { msgDiv.innerHTML = ''; }, 3000);
+  setTimeout(() => { msgDiv.innerHTML = ''; }, 3000);
 }
 
 async function login() {
-  var email = document.getElementById('email').value;
-  var password = document.getElementById('password').value;
+  const email = document.getElementById('email').value;
+  const password = document.getElementById('password').value;
   if (!email || !password) return showMsg('Enter email and password', true);
   
-  var result = await _supabase.auth.signInWithPassword({ email: email, password: password });
-  if (result.error) return showMsg(result.error.message, true);
+  const { data, error } = await _supabase.auth.signInWithPassword({ email, password });
+  if (error) return showMsg(error.message, true);
   
-  user = result.data.user;
+  user = data.user;
   document.getElementById('loginBox').style.display = 'none';
   document.getElementById('mainPage').style.display = 'block';
   document.getElementById('userEmail').innerHTML = user.email;
@@ -578,14 +709,14 @@ async function login() {
 }
 
 async function signup() {
-  var email = document.getElementById('email').value;
-  var password = document.getElementById('password').value;
+  const email = document.getElementById('email').value;
+  const password = document.getElementById('password').value;
   if (!email || !password) return showMsg('Enter email and password', true);
   if (password.length < 6) return showMsg('Password min 6 characters', true);
   
-  var result = await _supabase.auth.signUp({ email: email, password: password });
-  if (result.error) return showMsg(result.error.message, true);
-  showMsg('Account created! You can now login.', false);
+  const { error } = await _supabase.auth.signUp({ email, password });
+  if (error) return showMsg(error.message, true);
+  showMsg('Account created! You can now login.');
 }
 
 async function logout() {
@@ -596,221 +727,260 @@ async function logout() {
 }
 
 async function loadMatches() {
-  var result = await _supabase.from('matches').select('*').order('kickoff_time');
-  if (result.error) return;
-  allMatches = result.data;
-  document.getElementById('matchCount').textContent = result.data.length + ' matches';
+  const { data, error } = await _supabase.from('matches').select('*').order('kickoff_time');
+  if (error) return;
+  allMatches = data;
   filterAndShowMatches();
 }
 
 function filterAndShowMatches() {
-  var filtered = allMatches.slice();
-  var stage = document.getElementById('matchFilter').value;
-  var search = document.getElementById('teamSearch').value.toLowerCase();
+  let filtered = [...allMatches];
   
-  if (stage === 'group') filtered = filtered.filter(function(m) { return !m.is_knockout; });
-  if (stage === 'knockout') filtered = filtered.filter(function(m) { return m.is_knockout; });
-  if (search) filtered = filtered.filter(function(m) { 
-    return m.team_a.toLowerCase().indexOf(search) !== -1 || m.team_b.toLowerCase().indexOf(search) !== -1;
-  });
-  
-  if (currentSort === 'date') {
-    filtered.sort(function(a,b) { return new Date(a.kickoff_time) - new Date(b.kickoff_time); });
-  } else {
-    filtered.sort(function(a,b) { return a.team_a.localeCompare(b.team_a); });
+  // Filter by group
+  const selectedGroup = document.getElementById('groupFilter').value;
+  if (selectedGroup !== 'all') {
+    filtered = filtered.filter(m => getGroupLetter(m.team_a, m.team_b) === selectedGroup);
   }
   
+  // Filter by stage (group/knockout)
+  const stage = document.getElementById('stageFilter').value;
+  if (stage === 'group') filtered = filtered.filter(m => !m.is_knockout);
+  if (stage === 'knockout') filtered = filtered.filter(m => m.is_knockout);
+  
+  // Filter by team name
+  const search = document.getElementById('teamSearch').value.toLowerCase();
+  if (search) filtered = filtered.filter(m => 
+    m.team_a.toLowerCase().includes(search) || m.team_b.toLowerCase().includes(search)
+  );
+  
+  // Filter by date range
+  const dateFrom = document.getElementById('dateFrom').value;
+  const dateTo = document.getElementById('dateTo').value;
+  if (dateFrom) {
+    const fromDate = new Date(dateFrom);
+    fromDate.setHours(0, 0, 0, 0);
+    filtered = filtered.filter(m => new Date(m.kickoff_time) >= fromDate);
+  }
+  if (dateTo) {
+    const toDate = new Date(dateTo);
+    toDate.setHours(23, 59, 59, 999);
+    filtered = filtered.filter(m => new Date(m.kickoff_time) <= toDate);
+  }
+  
+  // Sort
+  if (currentSort === 'date') {
+    filtered.sort((a,b) => new Date(a.kickoff_time) - new Date(b.kickoff_time));
+  } else {
+    filtered.sort((a,b) => a.team_a.localeCompare(b.team_a));
+  }
+  
+  document.getElementById('matchCount').textContent = filtered.length + ' matches';
   renderMatchesGroupedByDay(filtered);
 }
 
+function clearFilters() {
+  document.getElementById('groupFilter').value = 'all';
+  document.getElementById('stageFilter').value = 'all';
+  document.getElementById('teamSearch').value = '';
+  document.getElementById('dateFrom').value = '';
+  document.getElementById('dateTo').value = '';
+  filterAndShowMatches();
+}
+
 async function renderMatchesGroupedByDay(matches) {
-  var container = document.getElementById('matchesList');
+  const container = document.getElementById('matchesList');
   container.innerHTML = '';
   
-  var predResult = await _supabase.from('predictions').select('*').eq('user_id', user.id);
-  var predMap = {};
-  if (predResult.data) {
-    for (var i = 0; i < predResult.data.length; i++) {
-      predMap[predResult.data[i].match_id] = predResult.data[i];
-    }
-  }
+  const { data: predictions } = await _supabase.from('predictions').select('*').eq('user_id', user.id);
+  const predMap = {};
+  if (predictions) predictions.forEach(p => predMap[p.match_id] = p);
   
-  var grouped = {};
-  for (var i = 0; i < matches.length; i++) {
-    var m = matches[i];
-    var date = new Date(m.kickoff_time).toLocaleDateString('en-US', {
+  const grouped = {};
+  matches.forEach(m => {
+    const date = new Date(m.kickoff_time).toLocaleDateString('en-US', {
       weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
     });
     if (!grouped[date]) grouped[date] = [];
     grouped[date].push(m);
-  }
+  });
   
-  for (var date in grouped) {
-    var dayMatches = grouped[date];
-    var dayGroup = document.createElement('div');
+  for (const [date, dayMatches] of Object.entries(grouped)) {
+    const dayGroup = document.createElement('div');
     dayGroup.className = 'match-day-group';
-    dayGroup.innerHTML = '<div class="match-day-header"><div class="match-day-date">' + date + '</div><div class="match-day-count">' + dayMatches.length + ' matches</div></div><div class="matches-grid"></div>';
+    dayGroup.innerHTML = `<div class="match-day-header"><div class="match-day-date">${date}</div><div class="match-day-count">${dayMatches.length} matches</div></div><div class="matches-grid"></div>`;
     container.appendChild(dayGroup);
     
-    var grid = dayGroup.querySelector('.matches-grid');
+    const grid = dayGroup.querySelector('.matches-grid');
     
-    for (var i = 0; i < dayMatches.length; i++) {
-      var match = dayMatches[i];
-      var deadlinePassed = new Date(match.kickoff_time) < new Date();
-      var userPred = predMap[match.id];
-      var groupLetter = getGroupLetter(match.team_a, match.team_b);
-      var groupHtml = groupLetter ? '<span class="group-letter">Group ' + groupLetter + '</span>' : '';
+    for (const match of dayMatches) {
+      const deadlinePassed = new Date(match.kickoff_time) < new Date();
+      const userPred = predMap[match.id];
+      const groupLetter = getGroupLetter(match.team_a, match.team_b);
+      const groupHtml = groupLetter ? `<span class="group-letter">Group ${groupLetter}</span>` : '';
       
-      var card = document.createElement('div');
+      const card = document.createElement('div');
       card.className = 'match-card';
       
-      var predictionHtml = '';
-      if (!deadlinePassed && !match.finished) {
-        predictionHtml = '<div class="prediction-inputs">' +
-          '<input type="number" id="scoreA_' + match.id + '" min="0" max="10" placeholder="' + match.team_a + '" value="' + (userPred ? userPred.pred_score_a : '') + '">' +
-          '<span style="font-weight:bold;">-</span>' +
-          '<input type="number" id="scoreB_' + match.id + '" min="0" max="10" placeholder="' + match.team_b + '" value="' + (userPred ? userPred.pred_score_b : '') + '">' +
-          '</div>' +
-          '<button class="submit-btn" onclick="savePrediction(\'' + match.id + '\')">' + (userPred ? 'UPDATE PREDICTION' : 'SUBMIT PREDICTION') + '</button>';
-      } else if (match.finished && userPred) {
-        predictionHtml = '<div style="text-align:center; margin-top:10px; padding:10px; border-radius:10px; background:#f5f5f5;">' +
-          'Your prediction: ' + userPred.pred_score_a + ' - ' + userPred.pred_score_b + (userPred.points ? ' | POINTS: ' + userPred.points : '') +
-          '</div>';
-      } else if (deadlinePassed && !match.finished) {
-        predictionHtml = '<div style="text-align:center;">DEADLINE PASSED</div>';
-      }
-      
-      card.innerHTML = '<div class="match-title">' +
-        getTeamHtml(match.team_a) + ' <span class="vs">VS</span> ' + getTeamHtml(match.team_b) +
-        '<span class="match-stage">' + (match.is_knockout ? 'KNOCKOUT' : 'GROUP') + '</span>' +
-        groupHtml +
-        (match.finished ? '<span class="finished-badge">FINISHED</span>' : '') +
-        '</div>' +
-        (match.finished ? '<div class="result-display">FINAL SCORE: ' + match.score_a + ' - ' + match.score_b + '</div>' : '') +
-        predictionHtml +
-        '<div class="deadline">Kickoff: ' + new Date(match.kickoff_time).toLocaleString() + '</div>';
-      
+      card.innerHTML = `
+        <div class="match-title">
+          ${getTeamHtml(match.team_a)} <span class="vs">VS</span> ${getTeamHtml(match.team_b)}
+          <span class="match-stage">${match.is_knockout ? 'KNOCKOUT' : 'GROUP'}</span>
+          ${groupHtml}
+          ${match.finished ? '<span class="finished-badge">FINISHED</span>' : ''}
+        </div>
+        ${match.finished ? `<div class="result-display">FINAL SCORE: ${match.score_a} - ${match.score_b}</div>` : ''}
+        ${!deadlinePassed && !match.finished ? `
+          <div class="prediction-inputs">
+            <input type="number" id="scoreA_${match.id}" min="0" max="10" placeholder="${match.team_a}" value="${userPred ? userPred.pred_score_a : ''}" onchange="this.value = validateGoal(this.value)">
+            <span style="font-weight:bold;">-</span>
+            <input type="number" id="scoreB_${match.id}" min="0" max="10" placeholder="${match.team_b}" value="${userPred ? userPred.pred_score_b : ''}" onchange="this.value = validateGoal(this.value)">
+          </div>
+          <button class="submit-btn" onclick="savePrediction('${match.id}')">${userPred ? 'UPDATE PREDICTION' : 'SUBMIT PREDICTION'}</button>
+        ` : match.finished && userPred ? `
+          <div style="text-align:center; margin-top:10px; padding:10px; border-radius:10px; background:#f5f5f5;">
+            Your prediction: ${userPred.pred_score_a} - ${userPred.pred_score_b} ${userPred.points ? `| POINTS: ${userPred.points}` : ''}
+          </div>
+        ` : deadlinePassed && !match.finished ? `<div style="text-align:center;">DEADLINE PASSED</div>` : ''}
+        <div class="deadline">Kickoff: ${new Date(match.kickoff_time).toLocaleString()}</div>
+      `;
       grid.appendChild(card);
     }
   }
 }
 
+window.validateGoal = function(value) {
+  return validateGoal(value);
+}
+
 window.savePrediction = async function(matchId) {
-  var scoreA = parseInt(document.getElementById('scoreA_' + matchId).value);
-  var scoreB = parseInt(document.getElementById('scoreB_' + matchId).value);
+  let scoreA = parseInt(document.getElementById(`scoreA_${matchId}`).value);
+  let scoreB = parseInt(document.getElementById(`scoreB_${matchId}`).value);
+  
   if (isNaN(scoreA)) scoreA = 0;
   if (isNaN(scoreB)) scoreB = 0;
   scoreA = Math.max(0, Math.min(10, scoreA));
   scoreB = Math.max(0, Math.min(10, scoreB));
   
-  // Use upsert - insert or update based on unique constraint
-  var result = await _supabase
-    .from('predictions')
-    .upsert({ 
-      user_id: user.id, 
-      match_id: matchId, 
-      pred_score_a: scoreA, 
-      pred_score_b: scoreB,
-      updated_at: new Date()
-    }, { onConflict: 'user_id, match_id' });
+  const { data: existing } = await _supabase.from('predictions').select('id').eq('user_id', user.id).eq('match_id', matchId).maybeSingle();
   
-  if (result.error) {
-    showMsg('Error: ' + result.error.message, true);
+  if (existing) {
+    await _supabase.from('predictions').update({ pred_score_a: scoreA, pred_score_b: scoreB }).eq('id', existing.id);
   } else {
-    showMsg('Prediction saved!', false);
-    loadMatches();
-    loadLeaderboard();
+    await _supabase.from('predictions').insert({ user_id: user.id, match_id: matchId, pred_score_a: scoreA, pred_score_b: scoreB });
   }
+  
+  showMsg('Prediction saved!');
+  loadMatches();
+  loadLeaderboard();
 };
 
 async function loadLeaderboard() {
-  var result = await _supabase.from('leaderboard').select('*').limit(50);
-  if (result.error) {
-    console.log('Leaderboard error:', result.error);
-    return;
-  }
+  const { data, error } = await _supabase.from('leaderboard').select('*').limit(50);
+  if (error) return;
   
-  var container = document.getElementById('leaderboardList');
-  if (!result.data || result.data.length === 0) {
+  const container = document.getElementById('leaderboardList');
+  if (!data || data.length === 0) {
     container.innerHTML = '<div style="text-align:center; padding:40px;">No users yet</div>';
     return;
   }
   
-  container.innerHTML = '<div class="leaderboard-container"><div class="leaderboard-header"><div>RANK</div><div>PLAYER</div><div>POINTS</div></div><div id="leaderboardItems"></div></div>';
+  container.innerHTML = `
+    <div class="leaderboard-container">
+      <div class="leaderboard-header"><div>RANK</div><div>PLAYER</div><div>POINTS</div></div>
+      <div id="leaderboardItems"></div>
+    </div>
+  `;
   
-  var itemsDiv = container.querySelector('#leaderboardItems');
-  for (var i = 0; i < result.data.length; i++) {
-    var u = result.data[i];
-    var item = document.createElement('div');
+  const itemsDiv = container.querySelector('#leaderboardItems');
+  data.forEach((u, i) => {
+    const item = document.createElement('div');
     item.className = 'leaderboard-item';
-    item.innerHTML = '<div>' + (i+1) + '</div><div>' + (u.username || 'User') + '</div><div style="font-weight:bold;">' + (u.total_points || 0) + '</div>';
+    item.innerHTML = `<div>${i+1}</div><div>${u.username || 'User'}</div><div style="font-weight:bold;">${u.total_points || 0}</div>`;
     itemsDiv.appendChild(item);
-  }
+  });
 }
 
 async function loadAdminMatches() {
-  var result = await _supabase.from('matches').select('*').order('kickoff_time');
-  if (result.error) return;
-  renderAdminMatches(result.data);
+  const { data, error } = await _supabase.from('matches').select('*').order('kickoff_time');
+  if (error) return;
+  renderAdminMatches(data);
 }
 
 function renderAdminMatches(matches) {
-  var container = document.getElementById('adminMatchesList');
-  var filter = document.getElementById('adminFilter').value;
-  var search = document.getElementById('adminSearch').value.toLowerCase();
+  const container = document.getElementById('adminMatchesList');
+  const filter = document.getElementById('adminFilter').value;
+  const search = document.getElementById('adminSearch').value.toLowerCase();
   
-  var filtered = matches.slice();
-  if (filter === 'pending') filtered = filtered.filter(function(m) { return !m.finished; });
-  if (filter === 'finished') filtered = filtered.filter(function(m) { return m.finished; });
-  if (search) filtered = filtered.filter(function(m) { return m.team_a.toLowerCase().indexOf(search) !== -1 || m.team_b.toLowerCase().indexOf(search) !== -1; });
+  let filtered = matches;
+  if (filter === 'pending') filtered = filtered.filter(m => !m.finished);
+  if (filter === 'finished') filtered = filtered.filter(m => m.finished);
+  if (search) filtered = filtered.filter(m => m.team_a.toLowerCase().includes(search) || m.team_b.toLowerCase().includes(search));
+  
+  const grouped = {};
+  filtered.forEach(m => {
+    const date = new Date(m.kickoff_time).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    if (!grouped[date]) grouped[date] = [];
+    grouped[date].push(m);
+  });
   
   container.innerHTML = '';
-  for (var i = 0; i < filtered.length; i++) {
-    var match = filtered[i];
-    var groupLetter = getGroupLetter(match.team_a, match.team_b);
-    var groupHtml = groupLetter ? '<span class="group-letter">Group ' + groupLetter + '</span>' : '';
+  for (const [date, dayMatches] of Object.entries(grouped)) {
+    const dayGroup = document.createElement('div');
+    dayGroup.className = 'match-day-group';
+    dayGroup.innerHTML = `<div class="match-day-header"><div class="match-day-date">${date}</div><div class="match-day-count">${dayMatches.length} matches</div></div><div class="matches-grid"></div>`;
+    container.appendChild(dayGroup);
     
-    var card = document.createElement('div');
-    card.className = 'match-card';
-    card.style.marginBottom = '20px';
+    const grid = dayGroup.querySelector('.matches-grid');
     
-    if (match.finished) {
-      card.innerHTML = '<div class="match-title">' + getTeamHtml(match.team_a) + ' VS ' + getTeamHtml(match.team_b) + ' ' + groupHtml + '</div>' +
-        '<div class="result-display">RESULT: ' + match.score_a + ' - ' + match.score_b + '</div>' +
-        '<button class="submit-btn reset-btn" onclick="resetMatch(\'' + match.id + '\')">RESET RESULT</button>';
-    } else {
-      card.innerHTML = '<div class="match-title">' + getTeamHtml(match.team_a) + ' VS ' + getTeamHtml(match.team_b) + ' ' + groupHtml + '</div>' +
-        '<div class="admin-result-inputs">' +
-        '<input type="number" id="adminA_' + match.id + '" min="0" max="10" placeholder="' + match.team_a + ' score">' +
-        '<span>-</span>' +
-        '<input type="number" id="adminB_' + match.id + '" min="0" max="10" placeholder="' + match.team_b + ' score">' +
-        '</div>' +
-        (match.is_knockout ? '<select id="advance_' + match.id + '" style="width:100%; margin:10px 0; padding:10px; border:2px solid #e0e0e0; border-radius:8px;"><option value="">Who advanced?</option><option value="' + match.team_a + '">' + match.team_a + '</option><option value="' + match.team_b + '">' + match.team_b + '</option></select>' : '') +
-        '<button class="submit-btn admin-btn" onclick="setResult(\'' + match.id + '\', ' + match.is_knockout + ')">SET RESULT AND CALCULATE</button>';
+    for (const match of dayMatches) {
+      const groupLetter = getGroupLetter(match.team_a, match.team_b);
+      const groupHtml = groupLetter ? `<span class="group-letter">Group ${groupLetter}</span>` : '';
+      
+      const card = document.createElement('div');
+      card.className = 'match-card';
+      if (match.finished) {
+        card.innerHTML = `
+          <div class="match-title">${getTeamHtml(match.team_a)} VS ${getTeamHtml(match.team_b)} ${groupHtml}</div>
+          <div class="result-display">RESULT: ${match.score_a} - ${match.score_b}</div>
+          <button class="submit-btn reset-btn" onclick="resetMatch('${match.id}')">RESET RESULT</button>
+        `;
+      } else {
+        card.innerHTML = `
+          <div class="match-title">${getTeamHtml(match.team_a)} VS ${getTeamHtml(match.team_b)} ${groupHtml}</div>
+          <div class="admin-result-inputs">
+            <input type="number" id="adminA_${match.id}" min="0" max="10" placeholder="${match.team_a} score" onchange="this.value = validateGoal(this.value)">
+            <span>-</span>
+            <input type="number" id="adminB_${match.id}" min="0" max="10" placeholder="${match.team_b} score" onchange="this.value = validateGoal(this.value)">
+          </div>
+          ${match.is_knockout ? `<select id="advance_${match.id}" style="width:100%; margin:10px 0; padding:10px; border:2px solid #e0e0e0; border-radius:8px;"><option value="">Who advanced?</option><option value="${match.team_a}">${match.team_a}</option><option value="${match.team_b}">${match.team_b}</option></select>` : ''}
+          <button class="submit-btn admin-btn" onclick="setResult('${match.id}', ${match.is_knockout})">SET RESULT AND CALCULATE</button>
+        `;
+      }
+      grid.appendChild(card);
     }
-    container.appendChild(card);
   }
 }
 
 window.setResult = async function(matchId, isKnockout) {
-  var a = parseInt(document.getElementById('adminA_' + matchId).value);
-  var b = parseInt(document.getElementById('adminB_' + matchId).value);
+  let a = parseInt(document.getElementById(`adminA_${matchId}`).value);
+  let b = parseInt(document.getElementById(`adminB_${matchId}`).value);
+  
   if (isNaN(a)) a = 0;
   if (isNaN(b)) b = 0;
   a = Math.max(0, Math.min(10, a));
   b = Math.max(0, Math.min(10, b));
   
-  var advance = null;
+  let advance = null;
   if (isKnockout) {
-    advance = document.getElementById('advance_' + matchId).value;
+    advance = document.getElementById(`advance_${matchId}`).value;
     if (!advance) return showMsg('Select advancing team', true);
   }
   
-  var update = { score_a: a, score_b: b, finished: true };
+  const update = { score_a: a, score_b: b, finished: true };
   if (advance) update.advancing_team = advance;
   
   await _supabase.from('matches').update(update).eq('id', matchId);
-  showMsg('Result set! Points calculated!', false);
+  showMsg('Result set! Points calculated!');
   loadMatches();
   loadAdminMatches();
   loadLeaderboard();
@@ -818,69 +988,70 @@ window.setResult = async function(matchId, isKnockout) {
 
 window.resetMatch = async function(matchId) {
   await _supabase.from('matches').update({ score_a: null, score_b: null, finished: false, advancing_team: null }).eq('id', matchId);
-  showMsg('Result reset!', false);
+  showMsg('Result reset!');
   loadMatches();
   loadAdminMatches();
   loadLeaderboard();
 };
 
+// Event listeners
 document.getElementById('loginBtn').onclick = login;
 document.getElementById('signupBtn').onclick = signup;
 document.getElementById('logoutBtn').onclick = logout;
-
-document.getElementById('showPredictions').onclick = function() {
+document.getElementById('showPredictions').onclick = () => {
   document.getElementById('predictionsPanel').style.display = 'block';
   document.getElementById('leaderboardPanel').style.display = 'none';
   document.getElementById('adminPanel').style.display = 'none';
-  var tabs = document.querySelectorAll('.tab');
-  for (var i = 0; i < tabs.length; i++) tabs[i].classList.remove('active');
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.getElementById('showPredictions').classList.add('active');
   loadMatches();
 };
-
-document.getElementById('showLeaderboard').onclick = function() {
+document.getElementById('showLeaderboard').onclick = () => {
   document.getElementById('predictionsPanel').style.display = 'none';
   document.getElementById('leaderboardPanel').style.display = 'block';
   document.getElementById('adminPanel').style.display = 'none';
-  var tabs = document.querySelectorAll('.tab');
-  for (var i = 0; i < tabs.length; i++) tabs[i].classList.remove('active');
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.getElementById('showLeaderboard').classList.add('active');
   loadLeaderboard();
 };
-
-document.getElementById('showAdmin').onclick = function() {
+document.getElementById('showAdmin').onclick = async () => {
   document.getElementById('predictionsPanel').style.display = 'none';
   document.getElementById('leaderboardPanel').style.display = 'none';
   document.getElementById('adminPanel').style.display = 'block';
-  var tabs = document.querySelectorAll('.tab');
-  for (var i = 0; i < tabs.length; i++) tabs[i].classList.remove('active');
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.getElementById('showAdmin').classList.add('active');
-  loadAdminMatches();
+  await loadAdminMatches();
 };
 
-document.getElementById('matchFilter').onchange = filterAndShowMatches;
+// Filter event listeners
+document.getElementById('groupFilter').onchange = filterAndShowMatches;
+document.getElementById('stageFilter').onchange = filterAndShowMatches;
 document.getElementById('teamSearch').onkeyup = filterAndShowMatches;
+document.getElementById('dateFrom').onchange = filterAndShowMatches;
+document.getElementById('dateTo').onchange = filterAndShowMatches;
+document.getElementById('clearFilters').onclick = clearFilters;
 
-var sortBtns = document.querySelectorAll('.sort-btn');
-for (var i = 0; i < sortBtns.length; i++) {
-  sortBtns[i].onclick = function() {
-    currentSort = this.getAttribute('data-sort');
-    var btns = document.querySelectorAll('.sort-btn');
-    for (var j = 0; j < btns.length; j++) btns[j].classList.remove('active');
-    this.classList.add('active');
-    filterAndShowMatches();
+document.querySelectorAll('.sort-btn').forEach(btn => {
+  btn.onclick = () => {
+    if (btn.dataset.sort) {
+      currentSort = btn.dataset.sort;
+      document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      filterAndShowMatches();
+    }
   };
-}
-
+});
 document.getElementById('adminFilter').onchange = loadAdminMatches;
 document.getElementById('adminSearch').onkeyup = loadAdminMatches;
 
+// Load saved theme
 loadTheme();
 
-(async function() {
-  var sessionResult = await _supabase.auth.getSession();
-  if (sessionResult.data.session) {
-    user = sessionResult.data.session.user;
+// Check session
+(async () => {
+  const { data: { session } } = await _supabase.auth.getSession();
+  if (session) {
+    user = session.user;
     document.getElementById('loginBox').style.display = 'none';
     document.getElementById('mainPage').style.display = 'block';
     document.getElementById('userEmail').innerHTML = user.email;
