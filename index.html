@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
   <title>World Cup Predictor 2026</title>
@@ -703,56 +703,23 @@ window.savePrediction = async function(matchId) {
   scoreA = Math.max(0, Math.min(10, scoreA));
   scoreB = Math.max(0, Math.min(10, scoreB));
   
-  try {
-    // First check if prediction exists
-    var existingResult = await _supabase
-      .from('predictions')
-      .select('id')
-      .eq('user_id', user.id)
-      .eq('match_id', matchId)
-      .maybeSingle();
-    
-    if (existingResult.error) {
-      showMsg('Error checking prediction: ' + existingResult.error.message, true);
-      return;
-    }
-    
-    var result;
-    if (existingResult.data) {
-      // Update existing prediction
-      result = await _supabase
-        .from('predictions')
-        .update({ 
-          pred_score_a: scoreA, 
-          pred_score_b: scoreB,
-          updated_at: new Date()
-        })
-        .eq('id', existingResult.data.id);
-    } else {
-      // Insert new prediction
-      result = await _supabase
-        .from('predictions')
-        .insert({ 
-          user_id: user.id, 
-          match_id: matchId, 
-          pred_score_a: scoreA, 
-          pred_score_b: scoreB 
-        });
-    }
-    
-    if (result.error) {
-      if (result.error.code === '409') {
-        showMsg('You already have a prediction for this match. Use UPDATE instead.', true);
-      } else {
-        showMsg('Error: ' + result.error.message, true);
-      }
-    } else {
-      showMsg('Prediction saved!', false);
-      loadMatches();
-      loadLeaderboard();
-    }
-  } catch(err) {
-    showMsg('Error: ' + err.message, true);
+  // Use upsert - insert or update based on unique constraint
+  var result = await _supabase
+    .from('predictions')
+    .upsert({ 
+      user_id: user.id, 
+      match_id: matchId, 
+      pred_score_a: scoreA, 
+      pred_score_b: scoreB,
+      updated_at: new Date()
+    }, { onConflict: 'user_id, match_id' });
+  
+  if (result.error) {
+    showMsg('Error: ' + result.error.message, true);
+  } else {
+    showMsg('Prediction saved!', false);
+    loadMatches();
+    loadLeaderboard();
   }
 };
 
