@@ -23,14 +23,22 @@
     }
     body.theme-orange .header, body.theme-orange .match-day-group, 
     body.theme-orange .leaderboard-container, body.theme-orange .filter-group,
-    body.theme-orange #loginBox {
+    body.theme-orange #loginBox, body.theme-orange .match-card {
       background: white;
+      color: black;
     }
     body.theme-orange .tab.active, body.theme-orange .leaderboard-header {
       background: #FF6B35;
+      color: white;
     }
     body.theme-orange .submit-btn, body.theme-orange .admin-btn {
       background: #FF6B35;
+      color: white;
+    }
+    body.theme-orange .match-title, body.theme-orange .match-stage,
+    body.theme-orange .result-display, body.theme-orange .deadline,
+    body.theme-orange .stats, body.theme-orange .leaderboard-item {
+      color: black;
     }
 
     /* Theme 2: Stadium Green */
@@ -39,14 +47,22 @@
     }
     body.theme-green .header, body.theme-green .match-day-group,
     body.theme-green .leaderboard-container, body.theme-green .filter-group,
-    body.theme-green #loginBox {
-      background: rgba(255,255,255,0.95);
+    body.theme-green #loginBox, body.theme-green .match-card {
+      background: white;
+      color: black;
     }
     body.theme-green .tab.active, body.theme-green .leaderboard-header {
       background: #2E7D32;
+      color: white;
     }
     body.theme-green .submit-btn, body.theme-green .admin-btn {
       background: #2E7D32;
+      color: white;
+    }
+    body.theme-green .match-title, body.theme-green .match-stage,
+    body.theme-green .result-display, body.theme-green .deadline,
+    body.theme-green .stats, body.theme-green .leaderboard-item {
+      color: black;
     }
 
     /* Theme 3: Night Match */
@@ -55,12 +71,9 @@
     }
     body.theme-night .header, body.theme-night .match-day-group,
     body.theme-night .leaderboard-container, body.theme-night .filter-group,
-    body.theme-night #loginBox {
+    body.theme-night #loginBox, body.theme-night .match-card {
       background: rgba(30,30,50,0.95);
       color: white;
-    }
-    body.theme-night .match-card, body.theme-night .leaderboard-item {
-      color: #ddd;
     }
     body.theme-night .tab.active, body.theme-night .leaderboard-header {
       background: #FFD700;
@@ -70,6 +83,11 @@
       background: #FFD700;
       color: #1a1a2e;
     }
+    body.theme-night .match-title, body.theme-night .match-stage,
+    body.theme-night .result-display, body.theme-night .deadline,
+    body.theme-night .stats, body.theme-night .leaderboard-item {
+      color: #ddd;
+    }
 
     /* Theme 4: Classic Football */
     body.theme-classic {
@@ -77,8 +95,9 @@
     }
     body.theme-classic .header, body.theme-classic .match-day-group,
     body.theme-classic .leaderboard-container, body.theme-classic .filter-group,
-    body.theme-classic #loginBox {
+    body.theme-classic #loginBox, body.theme-classic .match-card {
       background: #f5f5dc;
+      color: black;
     }
     body.theme-classic .tab.active, body.theme-classic .leaderboard-header {
       background: #8B4513;
@@ -87,6 +106,11 @@
     body.theme-classic .submit-btn, body.theme-classic .admin-btn {
       background: #8B4513;
       color: white;
+    }
+    body.theme-classic .match-title, body.theme-classic .match-stage,
+    body.theme-classic .result-display, body.theme-classic .deadline,
+    body.theme-classic .stats, body.theme-classic .leaderboard-item {
+      color: black;
     }
 
     /* Common Styles */
@@ -237,7 +261,7 @@
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
       gap: 1px;
-      background: #f0f0f0;
+      background: #e0e0e0;
     }
 
     .match-card {
@@ -269,8 +293,10 @@
       gap: 8px;
     }
 
-    .flag {
-      font-size: 24px;
+    .flag-img {
+      width: 24px;
+      height: 18px;
+      border-radius: 2px;
     }
 
     .vs {
@@ -285,6 +311,17 @@
       font-size: 11px;
       font-weight: bold;
       margin-left: 10px;
+    }
+
+    .group-letter {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: bold;
+      margin-left: 5px;
+      background: #FF6B35;
+      color: white;
     }
 
     .finished-badge {
@@ -344,7 +381,6 @@
       font-size: 11px;
       text-align: center;
       margin-top: 12px;
-      color: #999;
     }
 
     .leaderboard-container {
@@ -506,6 +542,9 @@ function loadTheme() {
   }
 }
 
+// Group mapping for each match (to be populated from database)
+const groupMapping = {};
+
 // Country flags mapping
 const countryFlags = {
   'Mexico': 'MX', 'South Africa': 'ZA', 'South Korea': 'KR', 'Czech Republic': 'CZ',
@@ -530,7 +569,32 @@ function getFlagUrl(country) {
 
 function getTeamHtml(teamName) {
   const flagUrl = getFlagUrl(teamName);
-  return `<span class="team-with-flag"><img src="${flagUrl}" alt="flag" style="width:24px; height:18px; border-radius:2px;"> ${teamName}</span>`;
+  return `<span class="team-with-flag"><img class="flag-img" src="${flagUrl}" alt="flag"> ${teamName}</span>`;
+}
+
+// Group determination based on teams
+function getGroupLetter(teamA, teamB) {
+  const groupTeams = {
+    'A': ['Mexico', 'South Africa', 'South Korea', 'Czech Republic'],
+    'B': ['Canada', 'Bosnia and Herzegovina', 'Qatar', 'Switzerland'],
+    'C': ['Brazil', 'Morocco', 'Haiti', 'Scotland'],
+    'D': ['USA', 'Paraguay', 'Australia', 'Turkey'],
+    'E': ['Germany', 'Curacao', 'Ivory Coast', 'Ecuador'],
+    'F': ['Netherlands', 'Japan', 'Sweden', 'Tunisia'],
+    'G': ['Belgium', 'Egypt', 'Iran', 'New Zealand'],
+    'H': ['Spain', 'Cape Verde', 'Saudi Arabia', 'Uruguay'],
+    'I': ['France', 'Senegal', 'Iraq', 'Norway'],
+    'J': ['Austria', 'Jordan', 'Argentina', 'Algeria'],
+    'K': ['Portugal', 'DR Congo', 'Uzbekistan', 'Colombia'],
+    'L': ['England', 'Croatia', 'Ghana', 'Panama']
+  };
+  
+  for (const [letter, teams] of Object.entries(groupTeams)) {
+    if (teams.includes(teamA) && teams.includes(teamB)) {
+      return letter;
+    }
+  }
+  return '';
 }
 
 // Supabase
@@ -646,6 +710,9 @@ async function renderMatchesGroupedByDay(matches) {
     for (const match of dayMatches) {
       const deadlinePassed = new Date(match.kickoff_time) < new Date();
       const userPred = predMap[match.id];
+      const groupLetter = getGroupLetter(match.team_a, match.team_b);
+      const groupHtml = groupLetter ? `<span class="group-letter">Group ${groupLetter}</span>` : '';
+      
       const card = document.createElement('div');
       card.className = 'match-card';
       
@@ -653,6 +720,7 @@ async function renderMatchesGroupedByDay(matches) {
         <div class="match-title">
           ${getTeamHtml(match.team_a)} <span class="vs">VS</span> ${getTeamHtml(match.team_b)}
           <span class="match-stage">${match.is_knockout ? 'KNOCKOUT' : 'GROUP'}</span>
+          ${groupHtml}
           ${match.finished ? '<span class="finished-badge">FINISHED</span>' : ''}
         </div>
         ${match.finished ? `<div class="result-display">FINAL SCORE: ${match.score_a} - ${match.score_b}</div>` : ''}
@@ -752,17 +820,20 @@ function renderAdminMatches(matches) {
     const grid = dayGroup.querySelector('.matches-grid');
     
     for (const match of dayMatches) {
+      const groupLetter = getGroupLetter(match.team_a, match.team_b);
+      const groupHtml = groupLetter ? `<span class="group-letter">Group ${groupLetter}</span>` : '';
+      
       const card = document.createElement('div');
       card.className = 'match-card';
       if (match.finished) {
         card.innerHTML = `
-          <div class="match-title">${getTeamHtml(match.team_a)} VS ${getTeamHtml(match.team_b)}</div>
+          <div class="match-title">${getTeamHtml(match.team_a)} VS ${getTeamHtml(match.team_b)} ${groupHtml}</div>
           <div class="result-display">RESULT: ${match.score_a} - ${match.score_b}</div>
           <button class="submit-btn reset-btn" onclick="resetMatch('${match.id}')">RESET RESULT</button>
         `;
       } else {
         card.innerHTML = `
-          <div class="match-title">${getTeamHtml(match.team_a)} VS ${getTeamHtml(match.team_b)}</div>
+          <div class="match-title">${getTeamHtml(match.team_a)} VS ${getTeamHtml(match.team_b)} ${groupHtml}</div>
           <div class="admin-result-inputs">
             <input type="number" id="adminA_${match.id}" placeholder="${match.team_a} score">
             <span>-</span>
