@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
   <title>World Cup Predictor 2026</title>
@@ -71,15 +71,6 @@
       margin-bottom: 25px;
     }
 
-    .admin-badge {
-      background: #FF6B35;
-      color: white;
-      padding: 5px 15px;
-      border-radius: 20px;
-      font-size: 12px;
-      margin-left: 10px;
-    }
-
     .logout-btn {
       background: #dc3545;
       color: white;
@@ -87,6 +78,42 @@
       border: none;
       border-radius: 10px;
       cursor: pointer;
+    }
+
+    .filter-group {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 25px;
+      flex-wrap: wrap;
+      background: white;
+      padding: 15px 20px;
+      border-radius: 12px;
+      align-items: center;
+    }
+
+    .filter-group select, .filter-group input {
+      padding: 10px 15px;
+      border-radius: 10px;
+      border: 2px solid #e0e0e0;
+    }
+
+    .sort-btn {
+      padding: 8px 18px;
+      background: white;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .sort-btn.active {
+      background: #FF6B35;
+      color: white;
+    }
+
+    .stats {
+      color: #FF6B35;
+      font-weight: bold;
+      margin-left: auto;
     }
 
     .match-day-group {
@@ -150,6 +177,15 @@
       color: #FF6B35;
     }
 
+    .finished-badge {
+      background: #4CAF50;
+      color: white;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      margin-left: 10px;
+    }
+
     .result-display {
       text-align: center;
       background: #FFF3E0;
@@ -196,42 +232,6 @@
       color: #999;
     }
 
-    .filter-group {
-      display: flex;
-      gap: 15px;
-      margin-bottom: 25px;
-      flex-wrap: wrap;
-      background: white;
-      padding: 15px 20px;
-      border-radius: 12px;
-      align-items: center;
-    }
-
-    .filter-group select, .filter-group input {
-      padding: 10px 15px;
-      border-radius: 10px;
-      border: 2px solid #e0e0e0;
-    }
-
-    .sort-btn {
-      padding: 8px 18px;
-      background: white;
-      border: 2px solid #e0e0e0;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-
-    .sort-btn.active {
-      background: #FF6B35;
-      color: white;
-    }
-
-    .stats {
-      color: #FF6B35;
-      font-weight: bold;
-      margin-left: auto;
-    }
-
     .msg {
       margin-top: 20px;
       text-align: center;
@@ -253,11 +253,7 @@
 <div id="mainPage">
   <div class="header">
     <h2>WORLD CUP 2026 PREDICTOR</h2>
-    <div>
-      <span id="userEmail"></span>
-      <span id="adminBadge" class="admin-badge" style="display:none;">ADMIN</span>
-      <button id="logoutBtn" class="logout-btn">LOGOUT</button>
-    </div>
+    <button id="logoutBtn" class="logout-btn">LOGOUT</button>
   </div>
 
   <div class="filter-group">
@@ -278,70 +274,75 @@
 </div>
 
 <script>
-const supabase = window.supabase.createClient(
+// SINGLE SUPABASE CLIENT - NO DUPLICATES
+const SB = window.supabase.createClient(
   "https://igatvhqatxrhgnshmdld.supabase.co",
   "sb_publishable_kZYMgSK-0VcalUaTuo7gfQ_7cMMse21"
 );
 
-let currentUser = null;
-let allMatches = [];
-let currentSort = 'date';
+let USER = null;
+let ALL_MATCHES = [];
+let SORT_TYPE = 'date';
 
-async function login() {
-  const email = document.getElementById('email').value;
-  const password = document.getElementById('password').value;
-  if (!email || !password) {
-    document.getElementById('msg').innerHTML = 'Enter email and password';
-    return;
-  }
-  
-  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-  if (error) {
-    document.getElementById('msg').innerHTML = error.message;
-    return;
-  }
-  
-  currentUser = data.user;
-  document.getElementById('loginBox').style.display = 'none';
-  document.getElementById('mainPage').style.display = 'block';
-  document.getElementById('userEmail').innerHTML = currentUser.email;
-  
-  if (currentUser.email === 'admin@worldcup.com') {
-    document.getElementById('adminBadge').style.display = 'inline-block';
-  }
-  
-  loadMatches();
+function showMsg(text) {
+  const msgDiv = document.getElementById('msg');
+  msgDiv.innerHTML = text;
+  setTimeout(() => { msgDiv.innerHTML = ''; }, 3000);
 }
 
-async function signup() {
+// LOGIN
+async function doLogin() {
   const email = document.getElementById('email').value;
   const password = document.getElementById('password').value;
   if (!email || !password) {
-    document.getElementById('msg').innerHTML = 'Enter email and password';
+    showMsg('Enter email and password');
+    return;
+  }
+  
+  const { data, error } = await SB.auth.signInWithPassword({ email, password });
+  if (error) {
+    showMsg(error.message);
+    return;
+  }
+  
+  USER = data.user;
+  document.getElementById('loginBox').style.display = 'none';
+  document.getElementById('mainPage').style.display = 'block';
+  loadAllMatches();
+}
+
+// SIGNUP
+async function doSignup() {
+  const email = document.getElementById('email').value;
+  const password = document.getElementById('password').value;
+  if (!email || !password) {
+    showMsg('Enter email and password');
     return;
   }
   if (password.length < 6) {
-    document.getElementById('msg').innerHTML = 'Password must be at least 6 characters';
+    showMsg('Password must be at least 6 characters');
     return;
   }
   
-  const { error } = await supabase.auth.signUp({ email, password });
+  const { error } = await SB.auth.signUp({ email, password });
   if (error) {
-    document.getElementById('msg').innerHTML = error.message;
+    showMsg(error.message);
   } else {
-    document.getElementById('msg').innerHTML = 'Account created! You can now login.';
+    showMsg('Account created! You can now login.');
   }
 }
 
-async function logout() {
-  await supabase.auth.signOut();
-  currentUser = null;
+// LOGOUT
+async function doLogout() {
+  await SB.auth.signOut();
+  USER = null;
   document.getElementById('loginBox').style.display = 'block';
   document.getElementById('mainPage').style.display = 'none';
 }
 
-async function loadMatches() {
-  const { data, error } = await supabase.from('matches').select('*').order('kickoff_time');
+// LOAD MATCHES
+async function loadAllMatches() {
+  const { data, error } = await SB.from('matches').select('*').order('kickoff_time');
   
   if (error) {
     document.getElementById('matchesList').innerHTML = '<div style="text-align:center; padding:40px;">Error loading matches</div>';
@@ -353,13 +354,13 @@ async function loadMatches() {
     return;
   }
   
-  allMatches = data;
+  ALL_MATCHES = data;
   document.getElementById('matchCount').textContent = data.length + ' matches';
-  filterAndShowMatches();
+  filterAndDisplay();
 }
 
-function filterAndShowMatches() {
-  let filtered = [...allMatches];
+function filterAndDisplay() {
+  let filtered = [...ALL_MATCHES];
   const stage = document.getElementById('stageFilter').value;
   const search = document.getElementById('teamSearch').value.toLowerCase();
   
@@ -369,20 +370,20 @@ function filterAndShowMatches() {
     m.team_a.toLowerCase().includes(search) || m.team_b.toLowerCase().includes(search)
   );
   
-  if (currentSort === 'date') {
+  if (SORT_TYPE === 'date') {
     filtered.sort((a,b) => new Date(a.kickoff_time) - new Date(b.kickoff_time));
   } else {
     filtered.sort((a,b) => a.team_a.localeCompare(b.team_a));
   }
   
-  renderMatchesGroupedByDay(filtered);
+  renderMatches(filtered);
 }
 
-async function renderMatchesGroupedByDay(matches) {
+async function renderMatches(matches) {
   const container = document.getElementById('matchesList');
   container.innerHTML = '';
   
-  const { data: predictions } = await supabase.from('predictions').select('*').eq('user_id', currentUser?.id);
+  const { data: predictions } = await SB.from('predictions').select('*').eq('user_id', USER?.id);
   const predMap = {};
   if (predictions) predictions.forEach(p => predMap[p.match_id] = p);
   
@@ -420,7 +421,7 @@ async function renderMatchesGroupedByDay(matches) {
         <div class="match-title">
           ${match.team_a} vs ${match.team_b}
           <span class="match-stage">${match.is_knockout ? 'KNOCKOUT' : 'GROUP'}</span>
-          ${match.finished ? '<span class="match-stage" style="background:#4CAF50; color:white;">FINISHED</span>' : ''}
+          ${match.finished ? '<span class="finished-badge">FINISHED</span>' : ''}
         </div>
         ${match.finished ? `<div class="result-display">FINAL: ${match.score_a} - ${match.score_b}</div>` : ''}
         ${!deadlinePassed && !match.finished ? `
@@ -450,47 +451,42 @@ window.savePrediction = async function(matchId) {
   scoreA = Math.max(0, Math.min(10, scoreA));
   scoreB = Math.max(0, Math.min(10, scoreB));
   
-  const { data: existing } = await supabase.from('predictions').select('id').eq('user_id', currentUser.id).eq('match_id', matchId).maybeSingle();
+  const { data: existing } = await SB.from('predictions').select('id').eq('user_id', USER.id).eq('match_id', matchId).maybeSingle();
   
   if (existing) {
-    await supabase.from('predictions').update({ pred_score_a: scoreA, pred_score_b: scoreB }).eq('id', existing.id);
+    await SB.from('predictions').update({ pred_score_a: scoreA, pred_score_b: scoreB }).eq('id', existing.id);
   } else {
-    await supabase.from('predictions').insert({ user_id: currentUser.id, match_id: matchId, pred_score_a: scoreA, pred_score_b: scoreB });
+    await SB.from('predictions').insert({ user_id: USER.id, match_id: matchId, pred_score_a: scoreA, pred_score_b: scoreB });
   }
   
-  document.getElementById('msg').innerHTML = 'Prediction saved!';
-  setTimeout(() => { document.getElementById('msg').innerHTML = ''; }, 3000);
-  loadMatches();
+  showMsg('Prediction saved!');
+  loadAllMatches();
 };
 
-// Event listeners
-document.getElementById('loginBtn').onclick = login;
-document.getElementById('signupBtn').onclick = signup;
-document.getElementById('logoutBtn').onclick = logout;
-document.getElementById('stageFilter').onchange = filterAndShowMatches;
-document.getElementById('teamSearch').onkeyup = filterAndShowMatches;
+// EVENT LISTENERS
+document.getElementById('loginBtn').onclick = doLogin;
+document.getElementById('signupBtn').onclick = doSignup;
+document.getElementById('logoutBtn').onclick = doLogout;
+document.getElementById('stageFilter').onchange = filterAndDisplay;
+document.getElementById('teamSearch').onkeyup = filterAndDisplay;
 
 document.querySelectorAll('.sort-btn').forEach(btn => {
   btn.onclick = () => {
-    currentSort = btn.dataset.sort;
+    SORT_TYPE = btn.dataset.sort;
     document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-    filterAndShowMatches();
+    filterAndDisplay();
   };
 });
 
-// Check session
+// CHECK SESSION
 (async () => {
-  const { data: { session } } = await supabase.auth.getSession();
+  const { data: { session } } = await SB.auth.getSession();
   if (session) {
-    currentUser = session.user;
+    USER = session.user;
     document.getElementById('loginBox').style.display = 'none';
     document.getElementById('mainPage').style.display = 'block';
-    document.getElementById('userEmail').innerHTML = currentUser.email;
-    if (currentUser.email === 'admin@worldcup.com') {
-      document.getElementById('adminBadge').style.display = 'inline-block';
-    }
-    loadMatches();
+    loadAllMatches();
   }
 })();
 </script>
