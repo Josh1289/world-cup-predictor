@@ -12,9 +12,9 @@
 
     body {
       font-family: 'Segoe UI', Arial, sans-serif;
-      background: linear-gradient(135deg, #1a472a 0%, #0a2a1a 100%);
+      background: linear-gradient(135deg, #20331B 0%, #354C2B 100%);
       min-height: 100vh;
-      color: white;
+      color: #C3CA92;
       padding: 20px;
     }
 
@@ -22,10 +22,17 @@
     #loginBox {
       max-width: 400px;
       margin: 100px auto;
-      background: rgba(0,0,0,0.85);
+      background: #20331B;
       padding: 30px;
       border-radius: 16px;
-      border: 1px solid #ffd700;
+      border: 1px solid #A4B17B;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    }
+
+    #loginBox h2 {
+      color: #C3CA92;
+      text-align: center;
+      margin-bottom: 20px;
     }
 
     #loginBox input {
@@ -33,27 +40,42 @@
       padding: 12px;
       margin: 10px 0;
       border-radius: 8px;
-      border: 1px solid #ffd700;
-      background: rgba(255,255,255,0.1);
-      color: white;
+      border: 1px solid #697E50;
+      background: #354C2B;
+      color: #C3CA92;
       font-size: 16px;
+    }
+
+    #loginBox input:focus {
+      outline: none;
+      border-color: #A4B17B;
+    }
+
+    #loginBox input::placeholder {
+      color: #859864;
     }
 
     #loginBox button {
       width: 100%;
       padding: 12px;
       margin: 10px 0;
-      background: #ffd700;
-      color: #1a472a;
+      background: #697E50;
+      color: #C3CA92;
       border: none;
       border-radius: 8px;
       cursor: pointer;
       font-weight: bold;
       font-size: 16px;
+      transition: all 0.3s;
     }
 
     #loginBox button:hover {
-      background: #ffed4a;
+      background: #859864;
+      transform: translateY(-2px);
+    }
+
+    #loginBox button:last-of-type {
+      background: #4E653D;
     }
 
     /* Main Page */
@@ -66,16 +88,21 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: rgba(0,0,0,0.8);
+      background: #20331B;
       padding: 20px;
       border-radius: 12px;
       margin-bottom: 20px;
-      border-bottom: 3px solid #ffd700;
+      border-bottom: 3px solid #A4B17B;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    .header h2 {
+      color: #C3CA92;
     }
 
     .admin-badge {
-      background: #ffd700;
-      color: #1a472a;
+      background: #697E50;
+      color: #C3CA92;
       padding: 4px 12px;
       border-radius: 20px;
       font-size: 12px;
@@ -84,13 +111,19 @@
     }
 
     .logout-btn {
-      background: #dc3545;
-      color: white;
+      background: #4E653D;
+      color: #C3CA92;
       padding: 10px 20px;
       border: none;
       border-radius: 8px;
       cursor: pointer;
       font-weight: bold;
+      transition: all 0.3s;
+    }
+
+    .logout-btn:hover {
+      background: #697E50;
+      transform: translateY(-2px);
     }
 
     .tabs {
@@ -101,42 +134,50 @@
 
     .tab {
       padding: 10px 25px;
-      background: rgba(0,0,0,0.6);
-      border: none;
-      color: white;
+      background: #20331B;
+      border: 1px solid #697E50;
+      color: #859864;
       cursor: pointer;
       border-radius: 8px;
       font-weight: bold;
+      transition: all 0.3s;
     }
 
     .tab.active {
-      background: #ffd700;
-      color: #1a472a;
+      background: #697E50;
+      color: #C3CA92;
+      border-color: #A4B17B;
+    }
+
+    .tab:hover:not(.active) {
+      background: #354C2B;
+      color: #A4B17B;
     }
 
     /* Match Day Groups */
     .match-day-group {
       margin-bottom: 30px;
-      background: rgba(0,0,0,0.4);
+      background: #20331B;
       border-radius: 12px;
       overflow: hidden;
+      border: 1px solid #354C2B;
     }
 
     .match-day-header {
-      background: linear-gradient(135deg, #1a472a 0%, #0d2a1a 100%);
+      background: linear-gradient(135deg, #20331B 0%, #354C2B 100%);
       padding: 15px 20px;
-      border-left: 4px solid #ffd700;
+      border-left: 4px solid #A4B17B;
     }
 
     .match-day-date {
-      color: #ffd700;
+      color: #C3CA92;
       font-size: 20px;
       font-weight: bold;
     }
 
     .match-day-count {
       font-size: 14px;
-      color: rgba(255,255,255,0.6);
+      color: #859864;
       margin-top: 5px;
     }
 
@@ -144,17 +185,17 @@
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
       gap: 1px;
-      background: rgba(255,255,255,0.05);
+      background: #354C2B;
     }
 
     .match-card {
-      background: rgba(0,0,0,0.6);
+      background: #20331B;
       padding: 20px;
       transition: all 0.3s;
     }
 
     .match-card:hover {
-      background: rgba(0,0,0,0.8);
+      background: #354C2B;
       transform: translateX(5px);
     }
 
@@ -164,22 +205,24 @@
       text-align: center;
       padding-bottom: 10px;
       margin-bottom: 10px;
-      border-bottom: 1px solid rgba(255,215,0,0.3);
+      border-bottom: 1px solid #697E50;
+      color: #C3CA92;
     }
 
     .match-stage {
       display: inline-block;
       padding: 3px 8px;
-      background: rgba(255,215,0,0.2);
+      background: #354C2B;
       border-radius: 4px;
       font-size: 11px;
       margin-left: 10px;
+      color: #A4B17B;
     }
 
     .finished-badge {
       display: inline-block;
-      background: #ffd700;
-      color: #1a472a;
+      background: #697E50;
+      color: #C3CA92;
       padding: 2px 8px;
       border-radius: 4px;
       font-size: 11px;
@@ -188,7 +231,7 @@
 
     .result-display {
       text-align: center;
-      color: #ffd700;
+      color: #A4B17B;
       margin-bottom: 15px;
       font-size: 20px;
       font-weight: bold;
@@ -206,62 +249,76 @@
       padding: 10px;
       text-align: center;
       font-size: 18px;
-      border: 2px solid rgba(255,255,255,0.2);
-      background: rgba(0,0,0,0.6);
-      color: white;
+      border: 2px solid #697E50;
+      background: #354C2B;
+      color: #C3CA92;
       border-radius: 8px;
+    }
+
+    .prediction-inputs input:focus {
+      outline: none;
+      border-color: #A4B17B;
     }
 
     .submit-btn {
       width: 100%;
       padding: 10px;
-      background: #ffd700;
-      color: #1a472a;
+      background: #697E50;
+      color: #C3CA92;
       border: none;
       border-radius: 8px;
       cursor: pointer;
       font-weight: bold;
       margin-top: 10px;
+      transition: all 0.3s;
+    }
+
+    .submit-btn:hover {
+      background: #859864;
+      transform: translateY(-2px);
     }
 
     .deadline {
       font-size: 11px;
       text-align: center;
       margin-top: 10px;
-      color: rgba(255,255,255,0.5);
+      color: #859864;
     }
 
     /* Leaderboard */
     .leaderboard-container {
-      background: rgba(0,0,0,0.6);
+      background: #20331B;
       border-radius: 12px;
       overflow: hidden;
+      border: 1px solid #354C2B;
     }
 
     .leaderboard-header {
       display: grid;
       grid-template-columns: 80px 1fr 100px;
-      background: #ffd700;
-      color: #1a472a;
+      background: #354C2B;
+      color: #C3CA92;
       padding: 15px 20px;
       font-weight: bold;
+      border-bottom: 1px solid #697E50;
     }
 
     .leaderboard-item {
       display: grid;
       grid-template-columns: 80px 1fr 100px;
       padding: 12px 20px;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
+      border-bottom: 1px solid #354C2B;
+      color: #A4B17B;
     }
 
     .leaderboard-rank {
       font-weight: bold;
-      color: #ffd700;
+      color: #C3CA92;
     }
 
     .leaderboard-points {
       font-weight: bold;
-      color: #ffd700;
+      color: #C3CA92;
       text-align: right;
     }
 
@@ -276,17 +333,26 @@
     .admin-result-inputs input, .admin-result-inputs select {
       padding: 8px 12px;
       border-radius: 6px;
-      border: 1px solid rgba(255,255,255,0.2);
-      background: rgba(0,0,0,0.6);
-      color: white;
+      border: 1px solid #697E50;
+      background: #354C2B;
+      color: #C3CA92;
     }
 
     .admin-btn {
-      background: #ff8c00;
+      background: #4E653D;
+    }
+
+    .admin-btn:hover {
+      background: #697E50;
     }
 
     .reset-btn {
-      background: #dc3545;
+      background: #20331B;
+      border: 1px solid #697E50;
+    }
+
+    .reset-btn:hover {
+      background: #354C2B;
     }
 
     .filter-group {
@@ -294,41 +360,55 @@
       gap: 15px;
       margin-bottom: 20px;
       flex-wrap: wrap;
-      background: rgba(0,0,0,0.5);
+      background: #20331B;
       padding: 15px;
       border-radius: 12px;
+      border: 1px solid #354C2B;
     }
 
     .filter-group select, .filter-group input {
       padding: 10px 15px;
       border-radius: 8px;
-      border: 1px solid rgba(255,255,255,0.2);
-      background: rgba(0,0,0,0.6);
-      color: white;
+      border: 1px solid #697E50;
+      background: #354C2B;
+      color: #C3CA92;
+    }
+
+    .filter-group select:focus, .filter-group input:focus {
+      outline: none;
+      border-color: #A4B17B;
     }
 
     .sort-btn {
       padding: 8px 15px;
-      background: rgba(0,0,0,0.6);
-      border: 1px solid rgba(255,255,255,0.2);
+      background: #354C2B;
+      border: 1px solid #697E50;
       border-radius: 8px;
-      color: white;
+      color: #859864;
       cursor: pointer;
+      transition: all 0.3s;
     }
 
     .sort-btn.active {
-      background: #ffd700;
-      color: #1a472a;
+      background: #697E50;
+      color: #C3CA92;
+      border-color: #A4B17B;
+    }
+
+    .sort-btn:hover {
+      background: #4E653D;
+      color: #A4B17B;
     }
 
     .stats {
-      color: #ffd700;
+      color: #A4B17B;
       margin-left: auto;
     }
 
     .msg {
       margin-top: 20px;
       text-align: center;
+      color: #C3CA92;
     }
   </style>
 </head>
@@ -336,11 +416,11 @@
 
 <!-- LOGIN BOX -->
 <div id="loginBox">
-  <h2 style="text-align:center;">WORLD CUP 2026</h2>
+  <h2>WORLD CUP 2026</h2>
   <input type="email" id="email" placeholder="Email">
   <input type="password" id="password" placeholder="Password">
   <button id="loginBtn">LOGIN</button>
-  <button id="signupBtn" style="background:#666; color:white;">CREATE ACCOUNT</button>
+  <button id="signupBtn">CREATE ACCOUNT</button>
   <div id="msg" class="msg"></div>
 </div>
 
@@ -412,7 +492,7 @@ let currentSort = 'date';
 function showMsg(text, isError = false) {
   const msgDiv = document.getElementById('msg');
   msgDiv.innerHTML = text;
-  msgDiv.style.color = isError ? '#ff6b6b' : '#ffd700';
+  msgDiv.style.color = isError ? '#859864' : '#C3CA92';
   setTimeout(() => { msgDiv.innerHTML = ''; }, 3000);
 }
 
@@ -441,7 +521,6 @@ async function login() {
     document.getElementById('mainPage').style.display = 'block';
     document.getElementById('userEmail').innerHTML = user.email;
     
-    // Check if admin
     if (user.email === 'admin@worldcup.com') {
       document.getElementById('adminBadge').style.display = 'inline-block';
       document.getElementById('showAdmin').style.display = 'inline-block';
@@ -535,7 +614,6 @@ async function renderMatchesGroupedByDay(matches) {
   const predMap = {};
   if (predictions) predictions.forEach(p => predMap[p.match_id] = p);
   
-  // Group by date
   const grouped = {};
   matches.forEach(m => {
     const date = new Date(m.kickoff_time).toLocaleDateString('en-US', {
@@ -582,10 +660,10 @@ async function renderMatchesGroupedByDay(matches) {
           </div>
           <button class="submit-btn" onclick="savePrediction('${match.id}')">${userPred ? 'UPDATE' : 'SUBMIT'}</button>
         ` : match.finished && userPred ? `
-          <div style="text-align:center; margin-top:10px; padding:8px; background:rgba(0,0,0,0.5); border-radius:6px;">
+          <div style="text-align:center; margin-top:10px; padding:8px; background:#354C2B; border-radius:6px;">
             Your pick: ${userPred.pred_score_a} - ${userPred.pred_score_b} ${userPred.points ? `| POINTS: ${userPred.points}` : ''}
           </div>
-        ` : deadlinePassed && !match.finished ? `<div style="text-align:center; color:#ffd700;">DEADLINE PASSED</div>` : ''}
+        ` : deadlinePassed && !match.finished ? `<div style="text-align:center; color:#A4B17B;">DEADLINE PASSED</div>` : ''}
         <div class="deadline">KICKOFF: ${new Date(match.kickoff_time).toLocaleString()}</div>
       `;
       grid.appendChild(card);
@@ -638,7 +716,7 @@ async function loadLeaderboard() {
   
   const container = document.getElementById('leaderboardList');
   if (!data || data.length === 0) {
-    container.innerHTML = '<div style="text-align:center; padding:40px;">No users yet</div>';
+    container.innerHTML = '<div style="text-align:center; padding:40px; color:#859864;">No users yet</div>';
     return;
   }
   
@@ -722,7 +800,7 @@ function renderAdminMatches(matches) {
             <span>-</span>
             <input type="number" id="adminB_${match.id}" placeholder="${match.team_b}">
           </div>
-          ${match.is_knockout ? `<select id="advance_${match.id}" style="width:100%; margin:10px 0; padding:8px;"><option value="">Who advanced?</option><option value="${match.team_a}">${match.team_a}</option><option value="${match.team_b}">${match.team_b}</option></select>` : ''}
+          ${match.is_knockout ? `<select id="advance_${match.id}" style="width:100%; margin:10px 0; padding:8px; background:#354C2B; color:#C3CA92; border:1px solid #697E50; border-radius:6px;"><option value="">Who advanced?</option><option value="${match.team_a}">${match.team_a}</option><option value="${match.team_b}">${match.team_b}</option></select>` : ''}
           <button class="submit-btn admin-btn" onclick="setResult('${match.id}', ${match.is_knockout})">SET RESULT & CALCULATE</button>
           <div class="deadline">${new Date(match.kickoff_time).toLocaleString()}</div>
         `;
