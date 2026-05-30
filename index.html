@@ -544,7 +544,6 @@
 </head>
 <body class="theme-orange">
 
-<!-- LOGIN BOX -->
 <div id="loginBox">
   <h2>WORLD CUP 2026</h2>
   <input type="email" id="email" placeholder="Email">
@@ -554,7 +553,6 @@
   <div id="msg" class="msg"></div>
 </div>
 
-<!-- MAIN PAGE -->
 <div id="mainPage" style="display:none;">
   <div class="header">
     <div class="header-left">
@@ -596,29 +594,23 @@
         <option value="K">Group K</option>
         <option value="L">Group L</option>
       </select>
-      
       <select id="stageFilter">
         <option value="all">All Stages</option>
         <option value="group">Group Stage</option>
         <option value="knockout">Knockout Stage</option>
       </select>
-      
       <input type="text" id="teamSearch" placeholder="Search team...">
-      
       <div class="date-range">
         <span class="filter-label">From:</span>
         <input type="date" id="dateFrom">
         <span class="filter-label">To:</span>
         <input type="date" id="dateTo">
       </div>
-      
       <div>
         <button class="sort-btn active" data-sort="date">Sort by Date</button>
         <button class="sort-btn" data-sort="team">Sort by Team</button>
       </div>
-      
       <button id="clearFilters" class="sort-btn" style="background:#FF6B35; color:white;">Clear Filters</button>
-      
       <span class="stats" id="matchCount"></span>
     </div>
     <div id="matchesList"></div>
@@ -686,7 +678,6 @@ function getGroupLetter(teamA, teamB) {
     'K': ['Portugal', 'DR Congo', 'Uzbekistan', 'Colombia'],
     'L': ['England', 'Croatia', 'Ghana', 'Panama']
   };
-  
   for (const [letter, teams] of Object.entries(groupTeams)) {
     if (teams.includes(teamA) && teams.includes(teamB)) {
       return letter;
@@ -752,15 +743,12 @@ async function login() {
   const email = document.getElementById('email').value;
   const password = document.getElementById('password').value;
   if (!email || !password) return showMsg('Enter email and password', true);
-  
   const { data, error } = await _supabase.auth.signInWithPassword({ email, password });
   if (error) return showMsg(error.message, true);
-  
   user = data.user;
   document.getElementById('loginBox').style.display = 'none';
   document.getElementById('mainPage').style.display = 'block';
   document.getElementById('userEmail').innerHTML = user.email;
-  
   if (user.email === 'admin@worldcup.com') {
     document.getElementById('adminBadge').style.display = 'inline-block';
     document.getElementById('showAdmin').style.display = 'inline-block';
@@ -780,7 +768,6 @@ async function login() {
     document.getElementById('showPredictions').classList.add('active');
     await loadMatches();
   }
-  
   await loadLeagues();
   await loadLeaderboard();
 }
@@ -790,7 +777,6 @@ async function signup() {
   const password = document.getElementById('password').value;
   if (!email || !password) return showMsg('Enter email and password', true);
   if (password.length < 6) return showMsg('Password min 6 characters', true);
-  
   const { error } = await _supabase.auth.signUp({ email, password });
   if (error) return showMsg(error.message, true);
   showMsg('Account created! You can now login.');
@@ -815,21 +801,17 @@ async function loadMatches() {
 
 function filterAndShowMatches() {
   let filtered = [...allMatches];
-  
   const selectedGroup = document.getElementById('groupFilter').value;
   if (selectedGroup !== 'all') {
     filtered = filtered.filter(m => getGroupLetter(m.team_a, m.team_b) === selectedGroup);
   }
-  
   const stage = document.getElementById('stageFilter').value;
   if (stage === 'group') filtered = filtered.filter(m => !m.is_knockout);
   if (stage === 'knockout') filtered = filtered.filter(m => m.is_knockout);
-  
   const search = document.getElementById('teamSearch').value.toLowerCase();
   if (search) filtered = filtered.filter(m => 
     m.team_a.toLowerCase().includes(search) || m.team_b.toLowerCase().includes(search)
   );
-  
   const dateFrom = document.getElementById('dateFrom').value;
   const dateTo = document.getElementById('dateTo').value;
   if (dateFrom) {
@@ -842,13 +824,11 @@ function filterAndShowMatches() {
     toDate.setHours(23, 59, 59, 999);
     filtered = filtered.filter(m => new Date(m.kickoff_time) <= toDate);
   }
-  
   if (currentSort === 'date') {
     filtered.sort((a,b) => new Date(a.kickoff_time) - new Date(b.kickoff_time));
   } else {
     filtered.sort((a,b) => a.team_a.localeCompare(b.team_a));
   }
-  
   document.getElementById('matchCount').textContent = filtered.length + ' matches';
   renderMatchesGroupedByDay(filtered);
 }
@@ -865,13 +845,11 @@ function clearFilters() {
 async function renderMatchesGroupedByDay(matches) {
   const container = document.getElementById('matchesList');
   container.innerHTML = '';
-  
   let predMap = {};
   if (user) {
     const { data: predictions } = await _supabase.from('predictions').select('*').eq('user_id', user.id);
     if (predictions) predictions.forEach(p => predMap[p.match_id] = p);
   }
-  
   const grouped = {};
   matches.forEach(m => {
     const date = new Date(m.kickoff_time).toLocaleDateString('en-US', {
@@ -880,24 +858,19 @@ async function renderMatchesGroupedByDay(matches) {
     if (!grouped[date]) grouped[date] = [];
     grouped[date].push(m);
   });
-  
   for (const [date, dayMatches] of Object.entries(grouped)) {
     const dayGroup = document.createElement('div');
     dayGroup.className = 'match-day-group';
     dayGroup.innerHTML = `<div class="match-day-header"><div class="match-day-date">${date}</div><div class="match-day-count">${dayMatches.length} matches</div></div><div class="matches-grid"></div>`;
     container.appendChild(dayGroup);
-    
     const grid = dayGroup.querySelector('.matches-grid');
-    
     for (const match of dayMatches) {
       const deadlinePassed = new Date(match.kickoff_time) < new Date();
       const userPred = predMap[match.id];
       const groupLetter = getGroupLetter(match.team_a, match.team_b);
       const groupHtml = groupLetter ? `<span class="group-letter">Group ${groupLetter}</span>` : '';
-      
       const card = document.createElement('div');
       card.className = 'match-card';
-      
       card.innerHTML = `
         <div class="match-title">
           ${getTeamHtml(match.team_a)} <span class="vs">VS</span> ${getTeamHtml(match.team_b)}
@@ -933,31 +906,25 @@ window.validateGoal = function(value) {
 window.savePrediction = async function(matchId, isKnockout) {
   let scoreA = parseInt(document.getElementById(`scoreA_${matchId}`).value);
   let scoreB = parseInt(document.getElementById(`scoreB_${matchId}`).value);
-  
   if (isNaN(scoreA)) scoreA = 0;
   if (isNaN(scoreB)) scoreB = 0;
   scoreA = Math.max(0, Math.min(10, scoreA));
   scoreB = Math.max(0, Math.min(10, scoreB));
-  
   let advancingTeam = null;
   if (isKnockout) {
     const advSelect = document.getElementById(`advance_${matchId}`);
     if (advSelect) advancingTeam = advSelect.value;
   }
-  
   const predictionData = { 
     user_id: user.id, 
     match_id: matchId, 
     pred_score_a: scoreA, 
     pred_score_b: scoreB 
   };
-  
   if (isKnockout && advancingTeam) {
     predictionData.pred_advancing_team = advancingTeam;
   }
-  
   const { data: existing } = await _supabase.from('predictions').select('id').eq('user_id', user.id).eq('match_id', matchId).maybeSingle();
-  
   if (existing) {
     const { error } = await _supabase.from('predictions').update(predictionData).eq('id', existing.id);
     if (error) return showMsg(error.message, true);
@@ -965,7 +932,6 @@ window.savePrediction = async function(matchId, isKnockout) {
     const { error } = await _supabase.from('predictions').insert(predictionData);
     if (error) return showMsg(error.message, true);
   }
-  
   showMsg('Prediction saved!');
   await loadMatches();
   await loadLeaderboard();
@@ -973,13 +939,10 @@ window.savePrediction = async function(matchId, isKnockout) {
 
 async function loadLeagues() {
   if (!user) return;
-  
   const { data: leagues } = await _supabase.from('leaderboards').select('*');
   const { data: memberships } = await _supabase.from('leaderboard_members').select('*').eq('user_id', user.id);
-  
   const select = document.getElementById('leagueSelect');
   select.innerHTML = '<option value="global">Global Leaderboard</option>';
-  
   if (leagues) {
     leagues.forEach(l => {
       const isMember = memberships?.some(m => m.leaderboard_id === l.id);
@@ -991,14 +954,11 @@ async function loadLeagues() {
       }
     });
   }
-  
   const savedLeague = localStorage.getItem('selectedLeague');
   if (savedLeague && select.querySelector(`option[value="${savedLeague}"]`)) {
     select.value = savedLeague;
   }
   currentLeagueId = select.value;
-  
-  // Only show create button for admin
   if (user.email === 'admin@worldcup.com') {
     document.getElementById('createLeagueBtn').style.display = 'inline-block';
   } else {
@@ -1009,22 +969,18 @@ async function loadLeagues() {
 document.getElementById('createLeagueBtn').onclick = async () => {
   const name = prompt('Enter league name:');
   if (!name) return;
-  
   const { data, error } = await _supabase.from('leaderboards').insert({
     name,
     created_by: user.id
   }).select().single();
-  
   if (error) {
     console.error('Create league error:', error);
     return showLeagueMsg('Error creating league: ' + error.message, true);
   }
-  
   await _supabase.from('leaderboard_members').insert({
     leaderboard_id: data.id,
     user_id: user.id
   });
-  
   showLeagueMsg('League created! Code: ' + data.join_code + ' (Share this!)');
   await loadLeagues();
   await loadLeaderboard();
@@ -1033,25 +989,20 @@ document.getElementById('createLeagueBtn').onclick = async () => {
 document.getElementById('joinLeagueBtn').onclick = async () => {
   const code = prompt('Enter league join code:');
   if (!code) return;
-  
   const { data: league } = await _supabase.from('leaderboards').select('*').eq('join_code', code.toUpperCase()).maybeSingle();
-  
   if (!league) {
     return showLeagueMsg('League not found!', true);
   }
-  
   const { error } = await _supabase.from('leaderboard_members').insert({
     leaderboard_id: league.id,
     user_id: user.id
   });
-  
   if (error) {
     if (error.message.includes('duplicate')) {
       return showLeagueMsg('You are already in this league!', true);
     }
     return showLeagueMsg('Error joining league', true);
   }
-  
   showLeagueMsg('Joined ' + league.name + '!');
   await loadLeagues();
   await loadLeaderboard();
@@ -1065,9 +1016,7 @@ document.getElementById('leagueSelect').onchange = (e) => {
 
 async function loadLeaderboard() {
   if (!user) return;
-  
   let data;
-  
   if (currentLeagueId === 'global') {
     const { data: globalData } = await _supabase.from('global_leaderboard').select('*').limit(50);
     data = globalData;
@@ -1075,21 +1024,17 @@ async function loadLeaderboard() {
     const { data: leagueData } = await _supabase.rpc('get_league_leaderboard', { league_id: currentLeagueId });
     data = leagueData;
   }
-  
   const container = document.getElementById('leaderboardList');
-  
   if (!data || data.length === 0) {
     container.innerHTML = '<div style="text-align:center; padding:40px;">No users in this league yet</div>';
     return;
   }
-  
   container.innerHTML = `
     <div class="leaderboard-container">
       <div class="leaderboard-header"><div>RANK</div><div>PLAYER</div><div>POINTS</div></div>
       <div id="leaderboardItems"></div>
     </div>
   `;
-  
   const itemsDiv = container.querySelector('#leaderboardItems');
   data.forEach((u, i) => {
     const item = document.createElement('div');
@@ -1098,7 +1043,9 @@ async function loadLeaderboard() {
     if (i === 0) rankDisplay = '1st';
     else if (i === 1) rankDisplay = '2nd';
     else if (i === 2) rankDisplay = '3rd';
-    item.innerHTML = `<div>${rankDisplay}</div><div>${u.username || 'User'}</div><div style="font-weight:bold;">${u.total_points || 0}</div>`;
+    const username = u.uname || u.username || 'User';
+    const points = u.pts || u.total_points || 0;
+    item.innerHTML = `<div>${rankDisplay}</div><div>${username}</div><div style="font-weight:bold;">${points}</div>`;
     itemsDiv.appendChild(item);
   });
 }
@@ -1113,32 +1060,26 @@ function renderAdminMatches(matches) {
   const container = document.getElementById('adminMatchesList');
   const filter = document.getElementById('adminFilter').value;
   const search = document.getElementById('adminSearch').value.toLowerCase();
-  
   let filtered = matches;
   if (filter === 'pending') filtered = filtered.filter(m => !m.finished);
   if (filter === 'finished') filtered = filtered.filter(m => m.finished);
   if (search) filtered = filtered.filter(m => m.team_a.toLowerCase().includes(search) || m.team_b.toLowerCase().includes(search));
-  
   const grouped = {};
   filtered.forEach(m => {
     const date = new Date(m.kickoff_time).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
     if (!grouped[date]) grouped[date] = [];
     grouped[date].push(m);
   });
-  
   container.innerHTML = '';
   for (const [date, dayMatches] of Object.entries(grouped)) {
     const dayGroup = document.createElement('div');
     dayGroup.className = 'match-day-group';
     dayGroup.innerHTML = `<div class="match-day-header"><div class="match-day-date">${date}</div><div class="match-day-count">${dayMatches.length} matches</div></div><div class="matches-grid"></div>`;
     container.appendChild(dayGroup);
-    
     const grid = dayGroup.querySelector('.matches-grid');
-    
     for (const match of dayMatches) {
       const groupLetter = getGroupLetter(match.team_a, match.team_b);
       const groupHtml = groupLetter ? `<span class="group-letter">Group ${groupLetter}</span>` : '';
-      
       const card = document.createElement('div');
       card.className = 'match-card';
       if (match.finished) {
@@ -1167,24 +1108,19 @@ function renderAdminMatches(matches) {
 window.setResult = async function(matchId, isKnockout) {
   let a = parseInt(document.getElementById(`adminA_${matchId}`).value);
   let b = parseInt(document.getElementById(`adminB_${matchId}`).value);
-  
   if (isNaN(a)) a = 0;
   if (isNaN(b)) b = 0;
   a = Math.max(0, Math.min(10, a));
   b = Math.max(0, Math.min(10, b));
-  
   let advance = null;
   if (isKnockout) {
     advance = document.getElementById(`adminAdv_${matchId}`).value;
     if (!advance) return showMsg('Select advancing team for knockout match', true);
   }
-  
   const update = { score_a: a, score_b: b, finished: true };
   if (advance) update.advancing_team = advance;
-  
   const { error } = await _supabase.from('matches').update(update).eq('id', matchId);
   if (error) return showMsg(error.message, true);
-  
   showMsg('Result set! Points calculated!');
   await loadMatches();
   await loadAdminMatches();
@@ -1198,9 +1134,7 @@ window.resetMatch = async function(matchId) {
     finished: false, 
     advancing_team: null 
   }).eq('id', matchId);
-  
   if (error) return showMsg(error.message, true);
-  
   showMsg('Result reset!');
   await loadMatches();
   await loadAdminMatches();
@@ -1269,7 +1203,6 @@ loadTheme();
     document.getElementById('loginBox').style.display = 'none';
     document.getElementById('mainPage').style.display = 'block';
     document.getElementById('userEmail').innerHTML = user.email;
-    
     if (user.email === 'admin@worldcup.com') {
       document.getElementById('adminBadge').style.display = 'inline-block';
       document.getElementById('showAdmin').style.display = 'inline-block';
@@ -1287,7 +1220,6 @@ loadTheme();
       document.getElementById('showPredictions').classList.add('active');
       await loadMatches();
     }
-    
     await loadLeagues();
     await loadLeaderboard();
   }
