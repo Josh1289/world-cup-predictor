@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
   <title>World Cup Predictor 2026</title>
@@ -1123,11 +1123,10 @@ window.setResult = async function(matchId, isKnockout) {
   };
   if (advance) updateData.advancing_team = advance;
   
-  const { data, error } = await _supabase
+  const { error } = await _supabase
     .from('matches')
     .update(updateData)
-    .match({ id: matchId })
-    .select();
+    .eq('id', matchId);
   
   if (error) {
     console.error('Set result error:', error);
@@ -1135,14 +1134,13 @@ window.setResult = async function(matchId, isKnockout) {
     return;
   }
   
-  console.log('Update successful:', data);
   showMsg('Result set! Points calculated!');
   await loadAdminMatches();
   await loadLeaderboard();
 };
 
 window.resetMatch = async function(matchId) {
-  const { data, error } = await _supabase
+  const { error } = await _supabase
     .from('matches')
     .update({ 
       score_a: null, 
@@ -1150,8 +1148,7 @@ window.resetMatch = async function(matchId) {
       finished: false, 
       advancing_team: null 
     })
-    .match({ id: matchId })
-    .select();
+    .eq('id', matchId);
     
   if (error) {
     console.error('Reset error:', error);
@@ -1159,7 +1156,6 @@ window.resetMatch = async function(matchId) {
     return;
   }
   
-  console.log('Reset successful:', data);
   showMsg('Result reset!');
   await loadAdminMatches();
   await loadLeaderboard();
