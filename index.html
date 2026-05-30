@@ -1077,7 +1077,7 @@ function renderAdminMatches(matches) {
         card.innerHTML = `
           <div class="match-title">${getTeamHtml(match.team_a)} VS ${getTeamHtml(match.team_b)} ${groupHtml}</div>
           <div class="result-display">RESULT: ${match.score_a} - ${match.score_b}${match.advancing_team ? ' | Advanced: ' + match.advancing_team : ''}</div>
-          <button class="submit-btn reset-btn" onclick="resetMatch('${match.id}')">RESET RESULT</button>
+          <button class="submit-btn reset-btn" onclick="window.resetMatch('${match.id}')">RESET RESULT</button>
         `;
       } else {
         card.innerHTML = `
@@ -1088,32 +1088,60 @@ function renderAdminMatches(matches) {
             <input type="number" id="adminB_${match.id}" min="0" max="10" placeholder="${match.team_b} score">
           </div>
           ${match.is_knockout ? `<select id="adminAdv_${match.id}" style="width:100%; margin:10px 0; padding:10px; border:2px solid #e0e0e0; border-radius:8px;"><option value="">Who advanced?</option><option value="${match.team_a}">${match.team_a}</option><option value="${match.team_b}">${match.team_b}</option></select>` : ''}
-          <button class="submit-btn admin-btn" onclick="setResult('${match.id}', ${match.is_knockout})">SET RESULT AND CALCULATE</button>
+          <button class="submit-btn admin-btn" id="setResultBtn_${match.id}">SET RESULT AND CALCULATE</button>
         `;
       }
       grid.appendChild(card);
     }
   }
+  
+  // Add event listeners after DOM is updated
+  setTimeout(() => {
+    filtered.forEach(match => {
+      if (!match.finished) {
+        const btn = document.getElementById('setResultBtn_' + match.id);
+        if (btn) {
+          btn.onclick = function() {
+            window.setResult(match.id, match.is_knockout);
+          };
+        }
+      }
+      const resetBtn = document.querySelector(`[onclick="window.resetMatch('${match.id}')"]`);
+    });
+  }, 100);
 }
 
 window.setResult = async function(matchId, isKnockout) {
-  let a = parseInt(document.getElementById(`adminA_${matchId}`).value);
-  let b = parseInt(document.getElementById(`adminB_${matchId}`).value);
+  let a = parseInt(document.getElementById('adminA_' + matchId).value);
+  let b = parseInt(document.getElementById('adminB_' + matchId).value);
   if (isNaN(a)) a = 0;
   if (isNaN(b)) b = 0;
   a = Math.max(0, Math.min(10, a));
   b = Math.max(0, Math.min(10, b));
+  
   let advance = null;
   if (isKnockout) {
-    advance = document.getElementById(`adminAdv_${matchId}`).value;
-    if (!advance) return showMsg('Select advancing team for knockout match', true);
+    const advSelect = document.getElementById('adminAdv_' + matchId);
+    if (advSelect) {
+      advance = advSelect.value;
+      if (!advance) {
+        alert('Please select which team advanced');
+        return;
+      }
+    }
   }
+  
   const update = { score_a: a, score_b: b, finished: true };
   if (advance) update.advancing_team = advance;
+  
   const { error } = await _supabase.from('matches').update(update).eq('id', matchId);
-  if (error) return showMsg(error.message, true);
+  if (error) {
+    console.error('Set result error:', error);
+    alert('Error: ' + error.message);
+    return;
+  }
+  
   showMsg('Result set! Points calculated!');
-  await loadMatches();
   await loadAdminMatches();
   await loadLeaderboard();
 };
@@ -1125,9 +1153,12 @@ window.resetMatch = async function(matchId) {
     finished: false, 
     advancing_team: null 
   }).eq('id', matchId);
-  if (error) return showMsg(error.message, true);
+  if (error) {
+    console.error('Reset error:', error);
+    alert('Error: ' + error.message);
+    return;
+  }
   showMsg('Result reset!');
-  await loadMatches();
   await loadAdminMatches();
   await loadLeaderboard();
 };
