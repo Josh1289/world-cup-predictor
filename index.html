@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
   <title>World Cup Predictor 2026</title>
@@ -764,9 +764,23 @@ async function login() {
   if (user.email === 'admin@worldcup.com') {
     document.getElementById('adminBadge').style.display = 'inline-block';
     document.getElementById('showAdmin').style.display = 'inline-block';
+    document.getElementById('showPredictions').style.display = 'none';
+    document.getElementById('predictionsPanel').style.display = 'none';
+    document.getElementById('leaderboardPanel').style.display = 'none';
+    document.getElementById('adminPanel').style.display = 'block';
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('showAdmin').classList.add('active');
+    await loadAdminMatches();
+  } else {
+    document.getElementById('showPredictions').style.display = 'inline-block';
+    document.getElementById('predictionsPanel').style.display = 'block';
+    document.getElementById('leaderboardPanel').style.display = 'none';
+    document.getElementById('adminPanel').style.display = 'none';
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('showPredictions').classList.add('active');
+    await loadMatches();
   }
   
-  await loadMatches();
   await loadLeagues();
   await loadLeaderboard();
 }
@@ -787,6 +801,9 @@ async function logout() {
   user = null;
   document.getElementById('loginBox').style.display = 'block';
   document.getElementById('mainPage').style.display = 'none';
+  document.getElementById('showPredictions').style.display = 'inline-block';
+  document.getElementById('showAdmin').style.display = 'none';
+  document.getElementById('adminBadge').style.display = 'none';
 }
 
 async function loadMatches() {
@@ -980,6 +997,13 @@ async function loadLeagues() {
     select.value = savedLeague;
   }
   currentLeagueId = select.value;
+  
+  // Only show create button for admin
+  if (user.email === 'admin@worldcup.com') {
+    document.getElementById('createLeagueBtn').style.display = 'inline-block';
+  } else {
+    document.getElementById('createLeagueBtn').style.display = 'none';
+  }
 }
 
 document.getElementById('createLeagueBtn').onclick = async () => {
@@ -992,7 +1016,8 @@ document.getElementById('createLeagueBtn').onclick = async () => {
   }).select().single();
   
   if (error) {
-    return showLeagueMsg('Error creating league. Only admin can create leagues.', true);
+    console.error('Create league error:', error);
+    return showLeagueMsg('Error creating league: ' + error.message, true);
   }
   
   await _supabase.from('leaderboard_members').insert({
@@ -1244,11 +1269,25 @@ loadTheme();
     document.getElementById('loginBox').style.display = 'none';
     document.getElementById('mainPage').style.display = 'block';
     document.getElementById('userEmail').innerHTML = user.email;
+    
     if (user.email === 'admin@worldcup.com') {
       document.getElementById('adminBadge').style.display = 'inline-block';
       document.getElementById('showAdmin').style.display = 'inline-block';
+      document.getElementById('showPredictions').style.display = 'none';
+      document.getElementById('predictionsPanel').style.display = 'none';
+      document.getElementById('leaderboardPanel').style.display = 'none';
+      document.getElementById('adminPanel').style.display = 'block';
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.getElementById('showAdmin').classList.add('active');
+      await loadAdminMatches();
+    } else {
+      document.getElementById('showPredictions').style.display = 'inline-block';
+      document.getElementById('predictionsPanel').style.display = 'block';
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.getElementById('showPredictions').classList.add('active');
+      await loadMatches();
     }
-    await loadMatches();
+    
     await loadLeagues();
     await loadLeaderboard();
   }
