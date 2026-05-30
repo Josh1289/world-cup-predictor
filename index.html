@@ -1123,10 +1123,11 @@ window.setResult = async function(matchId, isKnockout) {
   };
   if (advance) updateData.advancing_team = advance;
   
-  const { error } = await _supabase
+  const { data, error } = await _supabase
     .from('matches')
     .update(updateData)
-    .filter('id', 'eq', matchId);
+    .match({ id: matchId })
+    .select();
   
   if (error) {
     console.error('Set result error:', error);
@@ -1134,13 +1135,14 @@ window.setResult = async function(matchId, isKnockout) {
     return;
   }
   
+  console.log('Update successful:', data);
   showMsg('Result set! Points calculated!');
   await loadAdminMatches();
   await loadLeaderboard();
 };
 
 window.resetMatch = async function(matchId) {
-  const { error } = await _supabase
+  const { data, error } = await _supabase
     .from('matches')
     .update({ 
       score_a: null, 
@@ -1148,13 +1150,16 @@ window.resetMatch = async function(matchId) {
       finished: false, 
       advancing_team: null 
     })
-    .filter('id', 'eq', matchId);
+    .match({ id: matchId })
+    .select();
     
   if (error) {
     console.error('Reset error:', error);
     alert('Error: ' + error.message);
     return;
   }
+  
+  console.log('Reset successful:', data);
   showMsg('Result reset!');
   await loadAdminMatches();
   await loadLeaderboard();
