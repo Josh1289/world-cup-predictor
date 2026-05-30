@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
   <title>World Cup Predictor 2026</title>
@@ -546,7 +546,7 @@
 
 <!-- LOGIN BOX -->
 <div id="loginBox">
-  <h2>?? WORLD CUP 2026</h2>
+  <h2>WORLD CUP 2026</h2>
   <input type="email" id="email" placeholder="Email">
   <input type="password" id="password" placeholder="Password">
   <button id="loginBtn">SIGN IN</button>
@@ -558,7 +558,7 @@
 <div id="mainPage" style="display:none;">
   <div class="header">
     <div class="header-left">
-      <h2>? WORLD CUP 2026 PREDICTOR</h2>
+      <h2>WORLD CUP 2026 PREDICTOR</h2>
       <div class="theme-selector">
         <div class="theme-btn theme-orange-btn" onclick="setTheme('orange')" title="World Cup Orange"></div>
         <div class="theme-btn theme-green-btn" onclick="setTheme('green')" title="Stadium Green"></div>
@@ -626,12 +626,12 @@
 
   <div id="leaderboardPanel" style="display:none;">
     <div class="leagues-bar">
-      <span style="font-weight:bold;">?? League:</span>
+      <span style="font-weight:bold;">League:</span>
       <select id="leagueSelect">
-        <option value="global">?? Global Leaderboard</option>
+        <option value="global">Global Leaderboard</option>
       </select>
-      <button id="createLeagueBtn" style="padding:10px 20px; border-radius:8px; font-weight:bold;">? Create League</button>
-      <button id="joinLeagueBtn" style="padding:10px 20px; border-radius:8px; font-weight:bold;">? Join League</button>
+      <button id="createLeagueBtn" style="padding:10px 20px; border-radius:8px; font-weight:bold;">Create League</button>
+      <button id="joinLeagueBtn" style="padding:10px 20px; border-radius:8px; font-weight:bold;">Join League</button>
       <div id="leagueMsg" style="font-size:14px;"></div>
     </div>
     <div id="leaderboardList"></div>
@@ -651,7 +651,6 @@
 </div>
 
 <script>
-// Goal validation function
 function validateGoal(value) {
   const num = parseInt(value);
   if (isNaN(num)) return 0;
@@ -660,7 +659,6 @@ function validateGoal(value) {
   return num;
 }
 
-// Theme switcher
 function setTheme(theme) {
   document.body.className = 'theme-' + theme;
   localStorage.setItem('worldcup-theme', theme);
@@ -673,7 +671,6 @@ function loadTheme() {
   }
 }
 
-// Group mapping for each match
 function getGroupLetter(teamA, teamB) {
   const groupTeams = {
     'A': ['Mexico', 'South Africa', 'South Korea', 'Czech Republic'],
@@ -698,7 +695,6 @@ function getGroupLetter(teamA, teamB) {
   return '';
 }
 
-// Country flags mapping
 const countryFlags = {
   'Mexico': 'MX', 'South Africa': 'ZA', 'South Korea': 'KR', 'Czech Republic': 'CZ',
   'Canada': 'CA', 'Bosnia and Herzegovina': 'BA', 'Qatar': 'QA', 'Switzerland': 'CH',
@@ -728,7 +724,6 @@ function getTeamHtml(teamName) {
   return `<span>${teamName}</span>`;
 }
 
-// Supabase
 const _supabase = window.supabase.createClient(
   "https://igatvhqatxrhgnshmdld.supabase.co",
   "sb_publishable_kZYMgSK-0VcalUaTuo7gfQ_7cMMse21"
@@ -872,7 +867,7 @@ async function renderMatchesGroupedByDay(matches) {
   for (const [date, dayMatches] of Object.entries(grouped)) {
     const dayGroup = document.createElement('div');
     dayGroup.className = 'match-day-group';
-    dayGroup.innerHTML = `<div class="match-day-header"><div class="match-day-date">?? ${date}</div><div class="match-day-count">${dayMatches.length} matches</div></div><div class="matches-grid"></div>`;
+    dayGroup.innerHTML = `<div class="match-day-header"><div class="match-day-date">${date}</div><div class="match-day-count">${dayMatches.length} matches</div></div><div class="matches-grid"></div>`;
     container.appendChild(dayGroup);
     
     const grid = dayGroup.querySelector('.matches-grid');
@@ -889,11 +884,11 @@ async function renderMatchesGroupedByDay(matches) {
       card.innerHTML = `
         <div class="match-title">
           ${getTeamHtml(match.team_a)} <span class="vs">VS</span> ${getTeamHtml(match.team_b)}
-          <span class="match-stage">${match.is_knockout ? '?? KNOCKOUT' : '?? GROUP'}</span>
+          <span class="match-stage">${match.is_knockout ? 'KNOCKOUT' : 'GROUP'}</span>
           ${groupHtml}
-          ${match.finished ? '<span class="finished-badge">? FINISHED</span>' : ''}
+          ${match.finished ? '<span class="finished-badge">FINISHED</span>' : ''}
         </div>
-        ${match.finished ? `<div class="result-display">FINAL SCORE: ${match.score_a} - ${match.score_b}${match.advancing_team ? ` | Advanced: ${match.advancing_team}` : ''}</div>` : ''}
+        ${match.finished ? `<div class="result-display">FINAL SCORE: ${match.score_a} - ${match.score_b}${match.advancing_team ? ' | Advanced: ' + match.advancing_team : ''}</div>` : ''}
         ${!deadlinePassed && !match.finished ? `
           <div class="prediction-inputs">
             <input type="number" id="scoreA_${match.id}" min="0" max="10" placeholder="${match.team_a}" value="${userPred ? userPred.pred_score_a : ''}" onchange="this.value = validateGoal(this.value)">
@@ -901,13 +896,13 @@ async function renderMatchesGroupedByDay(matches) {
             <input type="number" id="scoreB_${match.id}" min="0" max="10" placeholder="${match.team_b}" value="${userPred ? userPred.pred_score_b : ''}" onchange="this.value = validateGoal(this.value)">
           </div>
           ${match.is_knockout ? `<select id="advance_${match.id}" style="width:100%; margin:10px 0; padding:10px; border:2px solid #e0e0e0; border-radius:8px;"><option value="">Who advances? (if penalties)</option><option value="${match.team_a}" ${userPred && userPred.pred_advancing_team === match.team_a ? 'selected' : ''}>${match.team_a}</option><option value="${match.team_b}" ${userPred && userPred.pred_advancing_team === match.team_b ? 'selected' : ''}>${match.team_b}</option></select>` : ''}
-          <button class="submit-btn" onclick="savePrediction('${match.id}', ${match.is_knockout})">${userPred ? '?? UPDATE PREDICTION' : '? SUBMIT PREDICTION'}</button>
+          <button class="submit-btn" onclick="savePrediction('${match.id}', ${match.is_knockout})">${userPred ? 'UPDATE PREDICTION' : 'SUBMIT PREDICTION'}</button>
         ` : match.finished && userPred ? `
           <div style="text-align:center; margin-top:10px; padding:10px; border-radius:10px; background:#f5f5f5;">
-            Your prediction: ${userPred.pred_score_a} - ${userPred.pred_score_b}${userPred.pred_advancing_team ? ' | Advancing: ' + userPred.pred_advancing_team : ''} ${userPred.points !== null ? '| ? POINTS: ' + userPred.points : ''}
+            Your prediction: ${userPred.pred_score_a} - ${userPred.pred_score_b}${userPred.pred_advancing_team ? ' | Advancing: ' + userPred.pred_advancing_team : ''} ${userPred.points !== null ? '| POINTS: ' + userPred.points : ''}
           </div>
-        ` : deadlinePassed && !match.finished ? `<div style="text-align:center; color:#dc3545;">?? DEADLINE PASSED</div>` : ''}
-        <div class="deadline">?? Kickoff: ${new Date(match.kickoff_time).toLocaleString()}</div>
+        ` : deadlinePassed && !match.finished ? `<div style="text-align:center; color:#dc3545;">DEADLINE PASSED</div>` : ''}
+        <div class="deadline">Kickoff: ${new Date(match.kickoff_time).toLocaleString()}</div>
       `;
       grid.appendChild(card);
     }
@@ -954,12 +949,11 @@ window.savePrediction = async function(matchId, isKnockout) {
     if (error) return showMsg(error.message, true);
   }
   
-  showMsg('? Prediction saved!');
+  showMsg('Prediction saved!');
   await loadMatches();
   await loadLeaderboard();
 };
 
-// LEAGUE FUNCTIONS
 async function loadLeagues() {
   if (!user) return;
   
@@ -967,7 +961,7 @@ async function loadLeagues() {
   const { data: memberships } = await _supabase.from('leaderboard_members').select('*').eq('user_id', user.id);
   
   const select = document.getElementById('leagueSelect');
-  select.innerHTML = '<option value="global">?? Global Leaderboard</option>';
+  select.innerHTML = '<option value="global">Global Leaderboard</option>';
   
   if (leagues) {
     leagues.forEach(l => {
@@ -975,7 +969,7 @@ async function loadLeagues() {
       if (isMember) {
         const opt = document.createElement('option');
         opt.value = l.id;
-        opt.textContent = `??? ${l.name} (Code: ${l.join_code})`;
+        opt.textContent = l.name + ' (Code: ' + l.join_code + ')';
         select.appendChild(opt);
       }
     });
@@ -1001,13 +995,12 @@ document.getElementById('createLeagueBtn').onclick = async () => {
     return showLeagueMsg('Error creating league. Only admin can create leagues.', true);
   }
   
-  // Auto-join creator
   await _supabase.from('leaderboard_members').insert({
     leaderboard_id: data.id,
     user_id: user.id
   });
   
-  showLeagueMsg(`? League created! Code: ${data.join_code} (Share this!)`);
+  showLeagueMsg('League created! Code: ' + data.join_code + ' (Share this!)');
   await loadLeagues();
   await loadLeaderboard();
 };
@@ -1019,7 +1012,7 @@ document.getElementById('joinLeagueBtn').onclick = async () => {
   const { data: league } = await _supabase.from('leaderboards').select('*').eq('join_code', code.toUpperCase()).maybeSingle();
   
   if (!league) {
-    return showLeagueMsg('? League not found!', true);
+    return showLeagueMsg('League not found!', true);
   }
   
   const { error } = await _supabase.from('leaderboard_members').insert({
@@ -1034,7 +1027,7 @@ document.getElementById('joinLeagueBtn').onclick = async () => {
     return showLeagueMsg('Error joining league', true);
   }
   
-  showLeagueMsg(`? Joined ${league.name}!`);
+  showLeagueMsg('Joined ' + league.name + '!');
   await loadLeagues();
   await loadLeaderboard();
 };
@@ -1067,7 +1060,7 @@ async function loadLeaderboard() {
   
   container.innerHTML = `
     <div class="leaderboard-container">
-      <div class="leaderboard-header"><div>RANK</div><div>PLAYER</div><div>? POINTS</div></div>
+      <div class="leaderboard-header"><div>RANK</div><div>PLAYER</div><div>POINTS</div></div>
       <div id="leaderboardItems"></div>
     </div>
   `;
@@ -1077,9 +1070,9 @@ async function loadLeaderboard() {
     const item = document.createElement('div');
     item.className = 'leaderboard-item';
     let rankDisplay = i + 1;
-    if (i === 0) rankDisplay = '??';
-    else if (i === 1) rankDisplay = '??';
-    else if (i === 2) rankDisplay = '??';
+    if (i === 0) rankDisplay = '1st';
+    else if (i === 1) rankDisplay = '2nd';
+    else if (i === 2) rankDisplay = '3rd';
     item.innerHTML = `<div>${rankDisplay}</div><div>${u.username || 'User'}</div><div style="font-weight:bold;">${u.total_points || 0}</div>`;
     itemsDiv.appendChild(item);
   });
@@ -1112,7 +1105,7 @@ function renderAdminMatches(matches) {
   for (const [date, dayMatches] of Object.entries(grouped)) {
     const dayGroup = document.createElement('div');
     dayGroup.className = 'match-day-group';
-    dayGroup.innerHTML = `<div class="match-day-header"><div class="match-day-date">?? ${date}</div><div class="match-day-count">${dayMatches.length} matches</div></div><div class="matches-grid"></div>`;
+    dayGroup.innerHTML = `<div class="match-day-header"><div class="match-day-date">${date}</div><div class="match-day-count">${dayMatches.length} matches</div></div><div class="matches-grid"></div>`;
     container.appendChild(dayGroup);
     
     const grid = dayGroup.querySelector('.matches-grid');
@@ -1127,7 +1120,7 @@ function renderAdminMatches(matches) {
         card.innerHTML = `
           <div class="match-title">${getTeamHtml(match.team_a)} VS ${getTeamHtml(match.team_b)} ${groupHtml}</div>
           <div class="result-display">RESULT: ${match.score_a} - ${match.score_b}${match.advancing_team ? ' | Advanced: ' + match.advancing_team : ''}</div>
-          <button class="submit-btn reset-btn" onclick="resetMatch('${match.id}')">?? RESET RESULT</button>
+          <button class="submit-btn reset-btn" onclick="resetMatch('${match.id}')">RESET RESULT</button>
         `;
       } else {
         card.innerHTML = `
@@ -1138,7 +1131,7 @@ function renderAdminMatches(matches) {
             <input type="number" id="adminB_${match.id}" min="0" max="10" placeholder="${match.team_b} score" onchange="this.value = validateGoal(this.value)">
           </div>
           ${match.is_knockout ? `<select id="adminAdv_${match.id}" style="width:100%; margin:10px 0; padding:10px; border:2px solid #e0e0e0; border-radius:8px;"><option value="">Who advanced?</option><option value="${match.team_a}">${match.team_a}</option><option value="${match.team_b}">${match.team_b}</option></select>` : ''}
-          <button class="submit-btn admin-btn" onclick="setResult('${match.id}', ${match.is_knockout})">? SET RESULT & CALCULATE</button>
+          <button class="submit-btn admin-btn" onclick="setResult('${match.id}', ${match.is_knockout})">SET RESULT AND CALCULATE</button>
         `;
       }
       grid.appendChild(card);
@@ -1167,7 +1160,7 @@ window.setResult = async function(matchId, isKnockout) {
   const { error } = await _supabase.from('matches').update(update).eq('id', matchId);
   if (error) return showMsg(error.message, true);
   
-  showMsg('? Result set! Points calculated!');
+  showMsg('Result set! Points calculated!');
   await loadMatches();
   await loadAdminMatches();
   await loadLeaderboard();
@@ -1183,13 +1176,12 @@ window.resetMatch = async function(matchId) {
   
   if (error) return showMsg(error.message, true);
   
-  showMsg('?? Result reset!');
+  showMsg('Result reset!');
   await loadMatches();
   await loadAdminMatches();
   await loadLeaderboard();
 };
 
-// Event listeners
 document.getElementById('loginBtn').onclick = login;
 document.getElementById('signupBtn').onclick = signup;
 document.getElementById('logoutBtn').onclick = logout;
@@ -1222,7 +1214,6 @@ document.getElementById('showAdmin').onclick = async () => {
   await loadAdminMatches();
 };
 
-// Filter event listeners
 document.getElementById('groupFilter').onchange = filterAndShowMatches;
 document.getElementById('stageFilter').onchange = filterAndShowMatches;
 document.getElementById('teamSearch').onkeyup = filterAndShowMatches;
@@ -1244,10 +1235,8 @@ document.querySelectorAll('.sort-btn').forEach(btn => {
 document.getElementById('adminFilter').onchange = loadAdminMatches;
 document.getElementById('adminSearch').onkeyup = loadAdminMatches;
 
-// Load saved theme
 loadTheme();
 
-// Check session
 (async () => {
   const { data: { session } } = await _supabase.auth.getSession();
   if (session) {
