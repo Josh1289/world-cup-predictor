@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
   <title>World Cup Predictor 2026</title>
@@ -506,15 +506,6 @@
       padding: 10px;
       border-radius: 8px;
       border: 2px solid #e0e0e0;
-    }
-
-    .admin-result-inputs input:in-range {
-      border-color: #4CAF50;
-    }
-
-    .admin-result-inputs input:out-of-range {
-      border-color: #dc3545;
-      background: #fff3f3;
     }
 
     .reset-btn {
@@ -1092,9 +1083,9 @@ function renderAdminMatches(matches) {
         card.innerHTML = `
           <div class="match-title">${getTeamHtml(match.team_a)} VS ${getTeamHtml(match.team_b)} ${groupHtml}</div>
           <div class="admin-result-inputs">
-            <input type="number" id="adminA_${match.id}" min="0" max="10" placeholder="${match.team_a} score" onchange="this.value = validateGoal(this.value)">
+            <input type="number" id="adminA_${match.id}" min="0" max="10" placeholder="${match.team_a} score">
             <span>-</span>
-            <input type="number" id="adminB_${match.id}" min="0" max="10" placeholder="${match.team_b} score" onchange="this.value = validateGoal(this.value)">
+            <input type="number" id="adminB_${match.id}" min="0" max="10" placeholder="${match.team_b} score">
           </div>
           ${match.is_knockout ? `<select id="adminAdv_${match.id}" style="width:100%; margin:10px 0; padding:10px; border:2px solid #e0e0e0; border-radius:8px;"><option value="">Who advanced?</option><option value="${match.team_a}">${match.team_a}</option><option value="${match.team_b}">${match.team_b}</option></select>` : ''}
           <button class="submit-btn admin-btn" onclick="setResult('${match.id}', ${match.is_knockout})">SET RESULT AND CALCULATE</button>
