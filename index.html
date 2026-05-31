@@ -437,21 +437,29 @@
       border-radius: 16px;
       overflow: hidden;
       box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      overflow-x: auto;
     }
 
     .leaderboard-header {
       display: grid;
-      grid-template-columns: 80px 1fr 100px;
-      padding: 15px 25px;
+      grid-template-columns: 45px 1fr 55px 40px 40px 40px 50px 50px;
+      padding: 15px 15px;
       font-weight: bold;
       color: white;
+      min-width: 500px;
+      font-size: 13px;
+      gap: 5px;
     }
 
     .leaderboard-item {
       display: grid;
-      grid-template-columns: 80px 1fr 100px;
-      padding: 14px 25px;
+      grid-template-columns: 45px 1fr 55px 40px 40px 40px 50px 50px;
+      padding: 14px 15px;
       border-bottom: 1px solid #f0f0f0;
+      min-width: 500px;
+      font-size: 13px;
+      gap: 5px;
+      align-items: center;
     }
 
     .filter-group {
@@ -1022,7 +1030,9 @@ async function loadLeaderboard() {
   }
   container.innerHTML = `
     <div class="leaderboard-container">
-      <div class="leaderboard-header"><div>RANK</div><div>PLAYER</div><div>POINTS</div></div>
+      <div class="leaderboard-header">
+        <div>#</div><div>PLAYER</div><div>PTS</div><div>W</div><div>D</div><div>L</div><div>EXACT</div><div>BONUS</div>
+      </div>
       <div id="leaderboardItems"></div>
     </div>
   `;
@@ -1036,7 +1046,12 @@ async function loadLeaderboard() {
     else if (i === 2) rankDisplay = '3rd';
     const username = u.uname || u.username || 'User';
     const points = u.pts || u.total_points || 0;
-    item.innerHTML = `<div>${rankDisplay}</div><div>${username}</div><div style="font-weight:bold;">${points}</div>`;
+    const wins = u.wins || 0;
+    const draws = u.draws || 0;
+    const losses = u.losses || 0;
+    const exact = u.exact || u.exact_scores || 0;
+    const bonus = u.bonus || u.bonus_points || 0;
+    item.innerHTML = `<div>${rankDisplay}</div><div>${username}</div><div style="font-weight:bold;">${points}</div><div>${wins}</div><div>${draws}</div><div>${losses}</div><div style="color:#FF6B35;font-weight:bold;">${exact}</div><div style="color:#FFD700;font-weight:bold;">${bonus}</div>`;
     itemsDiv.appendChild(item);
   });
 }
