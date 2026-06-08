@@ -1,122 +1,1264 @@
-.side-images {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 0;
+<!DOCTYPE html>
+<html>
+<head>
+  <title>World Cup Predictor 2026</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', 'Poppins', 'Arial', sans-serif;
+      transition: all 0.3s ease;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    body.theme-orange {
+      background: linear-gradient(135deg, #FF6B35 0%, #F7931E 50%, #FFD700 100%);
+    }
+    body.theme-orange .header, body.theme-orange .match-day-group, 
+    body.theme-orange .leaderboard-container, body.theme-orange .filter-group,
+    body.theme-orange #loginBox, body.theme-orange .match-card,
+    body.theme-orange .leagues-bar {
+      background: white;
+      color: black;
+    }
+    body.theme-orange .tab.active, body.theme-orange .leaderboard-header {
+      background: #FF6B35;
+      color: white;
+    }
+    body.theme-orange .submit-btn, body.theme-orange .admin-btn,
+    body.theme-orange #createLeagueBtn, body.theme-orange #joinLeagueBtn {
+      background: #FF6B35;
+      color: white;
+      border: none;
+    }
+    body.theme-orange .match-title, body.theme-orange .match-stage,
+    body.theme-orange .result-display, body.theme-orange .deadline,
+    body.theme-orange .stats, body.theme-orange .leaderboard-item,
+    body.theme-orange .match-day-date, body.theme-orange .match-day-count {
+      color: black;
+    }
+
+    body.theme-green {
+      background: linear-gradient(135deg, #0a5c2e 0%, #0a3d1f 50%, #062a15 100%);
+    }
+    body.theme-green .header, body.theme-green .match-day-group,
+    body.theme-green .leaderboard-container, body.theme-green .filter-group,
+    body.theme-green #loginBox, body.theme-green .match-card,
+    body.theme-green .leagues-bar {
+      background: white;
+      color: black;
+    }
+    body.theme-green .tab.active, body.theme-green .leaderboard-header {
+      background: #2E7D32;
+      color: white;
+    }
+    body.theme-green .submit-btn, body.theme-green .admin-btn,
+    body.theme-green #createLeagueBtn, body.theme-green #joinLeagueBtn {
+      background: #2E7D32;
+      color: white;
+      border: none;
+    }
+    body.theme-green .match-title, body.theme-green .match-stage,
+    body.theme-green .result-display, body.theme-green .deadline,
+    body.theme-green .stats, body.theme-green .leaderboard-item,
+    body.theme-green .match-day-date, body.theme-green .match-day-count {
+      color: black;
+    }
+
+    body.theme-night {
+      background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+    }
+    body.theme-night .header, body.theme-night .match-day-group,
+    body.theme-night .leaderboard-container, body.theme-night .filter-group,
+    body.theme-night #loginBox, body.theme-night .match-card,
+    body.theme-night .leagues-bar {
+      background: rgba(30,30,50,0.95);
+      color: white;
+    }
+    body.theme-night .tab.active, body.theme-night .leaderboard-header {
+      background: #FFD700;
+      color: #1a1a2e;
+    }
+    body.theme-night .submit-btn, body.theme-night .admin-btn,
+    body.theme-night #createLeagueBtn, body.theme-night #joinLeagueBtn {
+      background: #FFD700;
+      color: #1a1a2e;
+      border: none;
+    }
+    body.theme-night .match-title, body.theme-night .match-stage,
+    body.theme-night .result-display, body.theme-night .deadline,
+    body.theme-night .stats, body.theme-night .leaderboard-item,
+    body.theme-night .match-day-date, body.theme-night .match-day-count {
+      color: #FFD700;
+    }
+
+    body.theme-classic {
+      background: linear-gradient(135deg, #1a472a 0%, #0a2a1a 100%);
+    }
+    body.theme-classic .header, body.theme-classic .match-day-group,
+    body.theme-classic .leaderboard-container, body.theme-classic .filter-group,
+    body.theme-classic #loginBox, body.theme-classic .match-card,
+    body.theme-classic .leagues-bar {
+      background: #f5f5dc;
+      color: black;
+    }
+    body.theme-classic .tab.active, body.theme-classic .leaderboard-header {
+      background: #8B4513;
+      color: white;
+    }
+    body.theme-classic .submit-btn, body.theme-classic .admin-btn,
+    body.theme-classic #createLeagueBtn, body.theme-classic #joinLeagueBtn {
+      background: #8B4513;
+      color: white;
+      border: none;
+    }
+    body.theme-classic .match-title, body.theme-classic .match-stage,
+    body.theme-classic .result-display, body.theme-classic .deadline,
+    body.theme-classic .stats, body.theme-classic .leaderboard-item,
+    body.theme-classic .match-day-date, body.theme-classic .match-day-count {
+      color: black;
+    }
+
+    #loginBox {
+      max-width: 450px;
+      margin: 100px auto;
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    }
+
+    #loginBox h2 {
+      text-align: center;
+      font-size: 32px;
+      margin-bottom: 30px;
+    }
+
+    #loginBox input {
+      width: 100%;
+      padding: 14px;
+      margin: 12px 0;
+      border-radius: 12px;
+      border: 2px solid #e0e0e0;
+      font-size: 16px;
+    }
+
+    #loginBox input:focus {
+      outline: none;
+    }
+
+    #loginBox button {
+      width: 100%;
+      padding: 14px;
+      margin: 12px 0;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 16px;
+      transition: all 0.3s;
+      color: white;
+      background: #FF6B35;
+    }
+
+    #loginBox button:hover {
+      transform: translateY(-2px);
+    }
+
+    #mainPage {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 30px;
+      border-radius: 16px;
+      margin-bottom: 25px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .theme-selector {
+      display: flex;
+      gap: 8px;
+    }
+
+    .theme-btn {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      border: 2px solid white;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .theme-btn:hover {
+      transform: scale(1.1);
+    }
+
+    .theme-orange-btn { background: #FF6B35; }
+    .theme-green-btn { background: #2E7D32; }
+    .theme-night-btn { background: #302b63; }
+    .theme-classic-btn { background: #8B4513; }
+
+    .admin-badge {
+      padding: 5px 15px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: bold;
+      margin-left: 10px;
+      background: #FFD700;
+      color: #1a1a2e;
+    }
+
+    .logout-btn {
+      padding: 10px 25px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s;
+      background: #dc3545;
+      color: white;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    .tab {
+      padding: 12px 30px;
+      border: none;
+      cursor: pointer;
+      border-radius: 12px;
+      font-weight: bold;
+      transition: all 0.3s;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      background: white;
+      color: black;
+    }
+
+    .leagues-bar {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+      margin-bottom: 25px;
+      flex-wrap: wrap;
+      padding: 15px 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .leagues-bar select {
+      padding: 10px 15px;
+      border-radius: 10px;
+      border: 2px solid #e0e0e0;
+      font-size: 14px;
+    }
+
+    .match-day-group {
+      margin-bottom: 30px;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    .match-day-header {
+      padding: 15px 25px;
+      color: white;
+      background: #FF6B35;
+    }
+
+    .match-day-date {
+      font-size: 22px;
+      font-weight: bold;
+    }
+
+    .match-day-count {
+      font-size: 13px;
+      opacity: 0.9;
+      margin-top: 5px;
+    }
+
+    .matches-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+      gap: 1px;
+      background: #e0e0e0;
+    }
+
+    .match-card {
+      padding: 20px;
+      transition: all 0.3s;
+    }
+
+    .match-card:hover {
+      transform: translateX(5px);
+    }
+
+    .match-title {
+      font-size: 18px;
+      font-weight: bold;
+      text-align: center;
+      padding-bottom: 10px;
+      margin-bottom: 12px;
+      border-bottom: 2px solid;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .team-with-flag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .flag-img {
+      width: 24px;
+      height: 18px;
+      border-radius: 2px;
+    }
+
+    .vs {
+      font-weight: bold;
+      font-size: 16px;
+    }
+
+    .match-stage {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: bold;
+      margin-left: 10px;
+      background: #FF6B35;
+      color: white;
+    }
+
+    .group-letter {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: bold;
+      margin-left: 5px;
+      background: #FF6B35;
+      color: white;
+    }
+
+    .finished-badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: bold;
+      margin-left: 10px;
+      background: #4CAF50;
+      color: white;
+    }
+
+    .result-display {
+      text-align: center;
+      margin-bottom: 15px;
+      padding: 10px;
+      font-size: 20px;
+      font-weight: bold;
+      border-radius: 10px;
+      background: #f5f5f5;
+    }
+
+    .prediction-inputs {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      margin: 15px 0;
+    }
+
+    .prediction-inputs input {
+      width: 80px;
+      padding: 10px;
+      text-align: center;
+      font-size: 18px;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      font-weight: bold;
+    }
+
+    .prediction-inputs input:in-range {
+      border-color: #4CAF50;
+    }
+
+    .prediction-inputs input:out-of-range {
+      border-color: #dc3545;
+      background: #fff3f3;
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: bold;
+      margin-top: 10px;
+      transition: all 0.3s;
+      color: white;
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .deadline {
+      font-size: 11px;
+      text-align: center;
+      margin-top: 12px;
+      opacity: 0.7;
+    }
+
+    .leaderboard-container {
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      overflow-x: auto;
+    }
+
+    .leaderboard-header {
+      display: grid;
+      grid-template-columns: 45px 1fr 55px 40px 40px 40px 50px 50px;
+      padding: 15px 15px;
+      font-weight: bold;
+      color: white;
+      min-width: 500px;
+      font-size: 13px;
+      gap: 5px;
+    }
+
+    .leaderboard-item {
+      display: grid;
+      grid-template-columns: 45px 1fr 55px 40px 40px 40px 50px 50px;
+      padding: 14px 15px;
+      border-bottom: 1px solid #f0f0f0;
+      min-width: 500px;
+      font-size: 13px;
+      gap: 5px;
+      align-items: center;
+    }
+
+    .filter-group {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 25px;
+      flex-wrap: wrap;
+      padding: 15px 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      align-items: center;
+    }
+
+    .filter-group select, .filter-group input {
+      padding: 10px 15px;
+      border-radius: 10px;
+      border: 2px solid #e0e0e0;
+    }
+
+    .sort-btn {
+      padding: 8px 18px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      cursor: pointer;
+      background: white;
+    }
+
+    .sort-btn.active {
+      background: #FF6B35;
+      color: white;
+      border-color: #FF6B35;
+    }
+
+    .stats {
+      font-weight: bold;
+      margin-left: auto;
+    }
+
+    .msg {
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    .admin-result-inputs {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin: 10px 0;
+    }
+
+    .admin-result-inputs input, .admin-result-inputs select {
+      padding: 10px;
+      border-radius: 8px;
+      border: 2px solid #e0e0e0;
+    }
+
+    .reset-btn {
+      background: #dc3545;
+      color: white;
+    }
+
+    .filter-label {
+      font-weight: bold;
+      margin-right: 5px;
+    }
+
+    .date-range {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .date-range input {
+      width: 130px;
+    }
+
+    button {
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body class="theme-orange">
+
+<div id="loginBox">
+  <h2>WORLD CUP 2026</h2>
+  <input type="email" id="email" placeholder="Email">
+  <input type="password" id="password" placeholder="Password">
+  <button id="loginBtn">SIGN IN</button>
+  <button id="signupBtn">CREATE ACCOUNT</button>
+  <div id="msg" class="msg"></div>
+</div>
+
+<div id="mainPage" style="display:none;">
+  <div class="header">
+    <div class="header-left">
+      <h2>WORLD CUP 2026 PREDICTOR</h2>
+      <div class="theme-selector">
+        <div class="theme-btn theme-orange-btn" onclick="setTheme('orange')" title="World Cup Orange"></div>
+        <div class="theme-btn theme-green-btn" onclick="setTheme('green')" title="Stadium Green"></div>
+        <div class="theme-btn theme-night-btn" onclick="setTheme('night')" title="Night Match"></div>
+        <div class="theme-btn theme-classic-btn" onclick="setTheme('classic')" title="Classic Football"></div>
+      </div>
+    </div>
+    <div>
+      <span id="userEmail"></span>
+      <span id="adminBadge" class="admin-badge" style="display:none;">ADMIN</span>
+      <button id="logoutBtn" class="logout-btn">LOGOUT</button>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" id="showPredictions">MATCH PREDICTIONS</button>
+    <button class="tab" id="showLeaderboard">LEADERBOARD</button>
+    <button class="tab" id="showAdmin" style="display:none;">ADMIN CONTROL</button>
+  </div>
+
+  <div id="predictionsPanel">
+    <div class="filter-group">
+      <select id="groupFilter">
+        <option value="all">All Groups</option>
+        <option value="A">Group A</option>
+        <option value="B">Group B</option>
+        <option value="C">Group C</option>
+        <option value="D">Group D</option>
+        <option value="E">Group E</option>
+        <option value="F">Group F</option>
+        <option value="G">Group G</option>
+        <option value="H">Group H</option>
+        <option value="I">Group I</option>
+        <option value="J">Group J</option>
+        <option value="K">Group K</option>
+        <option value="L">Group L</option>
+      </select>
+      <select id="stageFilter">
+        <option value="all">All Stages</option>
+        <option value="group">Group Stage</option>
+        <option value="knockout">Knockout Stage</option>
+      </select>
+      <input type="text" id="teamSearch" placeholder="Search team...">
+      <div class="date-range">
+        <span class="filter-label">From:</span>
+        <input type="date" id="dateFrom">
+        <span class="filter-label">To:</span>
+        <input type="date" id="dateTo">
+      </div>
+      <div>
+        <button class="sort-btn active" data-sort="date">Sort by Date</button>
+        <button class="sort-btn" data-sort="team">Sort by Team</button>
+      </div>
+      <button id="clearFilters" class="sort-btn" style="background:#FF6B35; color:white;">Clear Filters</button>
+      <span class="stats" id="matchCount"></span>
+    </div>
+    <div id="matchesList"></div>
+  </div>
+
+  <div id="leaderboardPanel" style="display:none;">
+    <div class="leagues-bar">
+      <span style="font-weight:bold;">League:</span>
+      <select id="leagueSelect">
+        <option value="global">Global Leaderboard</option>
+      </select>
+      <button id="createLeagueBtn" style="padding:10px 20px; border-radius:8px; font-weight:bold;">Create League</button>
+      <button id="joinLeagueBtn" style="padding:10px 20px; border-radius:8px; font-weight:bold;">Join League</button>
+      <div id="leagueMsg" style="font-size:14px;"></div>
+    </div>
+    <div id="leaderboardList"></div>
+  </div>
+
+  <div id="adminPanel" style="display:none;">
+    <div class="filter-group">
+      <select id="adminFilter">
+        <option value="all">All Matches</option>
+        <option value="pending">Pending Results</option>
+        <option value="finished">Finished</option>
+      </select>
+      <input type="text" id="adminSearch" placeholder="Search teams...">
+    </div>
+    <div id="adminMatchesList"></div>
+  </div>
+</div>
+
+<script>
+function validateGoal(value) {
+  const num = parseInt(value);
+  if (isNaN(num)) return 0;
+  if (num < 0) return 0;
+  if (num > 10) return 10;
+  return num;
 }
 
-.side-image-left {
-  position: absolute;
-  left: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 180px;
-  height: 280px;
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-  opacity: 0.3;
-  transition: all 0.5s ease;
+function setTheme(theme) {
+  document.body.className = 'theme-' + theme;
+  localStorage.setItem('worldcup-theme', theme);
 }
 
-.side-image-right {
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 180px;
-  height: 280px;
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-  opacity: 0.3;
-  transition: all 0.5s ease;
-}
-
-#loginBox, #mainPage {
-  position: relative;
-  z-index: 1;
-}
-
-/* Theme Orange - World Cup Trophy & Ball */
-body.theme-orange .side-image-left {
-  background-image: url('https://i.ibb.co/Y7qPcNx/world-cup-trophy.png');
-  opacity: 0.25;
-}
-body.theme-orange .side-image-right {
-  background-image: url('https://i.ibb.co/0jKxG5L/world-cup-ball.png');
-  opacity: 0.25;
-}
-
-/* Theme Green - Stadium & Crowd */
-body.theme-green .side-image-left {
-  background-image: url('https://i.ibb.co/wM8LpVn/stadium-night.png');
-  opacity: 0.2;
-}
-body.theme-green .side-image-right {
-  background-image: url('https://i.ibb.co/CnPxRh3/crowd-fans.png');
-  opacity: 0.2;
-}
-
-/* Theme Night -> Argentina Light Blue (NEW) */
-body.theme-night {
-  background: linear-gradient(135deg, #75AADB 0%, #FFFFFF 50%, #75AADB 100%) !important;
-}
-body.theme-night .header, body.theme-night .match-day-group,
-body.theme-night .leaderboard-container, body.theme-night .filter-group,
-body.theme-night #loginBox, body.theme-night .match-card,
-body.theme-night .leagues-bar {
-  background: rgba(255,255,255,0.95);
-  color: #1a1a2e;
-}
-body.theme-night .tab.active, body.theme-night .leaderboard-header {
-  background: #75AADB;
-  color: #1a1a2e;
-}
-body.theme-night .submit-btn, body.theme-night .admin-btn,
-body.theme-night #createLeagueBtn, body.theme-night #joinLeagueBtn {
-  background: #75AADB;
-  color: #1a1a2e;
-  border: none;
-}
-body.theme-night .match-title, body.theme-night .match-stage,
-body.theme-night .result-display, body.theme-night .deadline,
-body.theme-night .stats, body.theme-night .leaderboard-item,
-body.theme-night .match-day-date, body.theme-night .match-day-count {
-  color: #1a1a2e;
-}
-body.theme-night .side-image-left {
-  background-image: url('https://i.ibb.co/vQKmNc5/maradona.png');
-  opacity: 0.2;
-}
-body.theme-night .side-image-right {
-  background-image: url('https://i.ibb.co/gPyBPmG/messi-world-cup.png');
-  opacity: 0.2;
-}
-
-/* Theme Classic - Pele & Maradona */
-body.theme-classic .side-image-left {
-  background-image: url('https://i.ibb.co/mD4kp3P/pele.png');
-  opacity: 0.2;
-}
-body.theme-classic .side-image-right {
-  background-image: url('https://i.ibb.co/vQKmNc5/maradona.png');
-  opacity: 0.2;
-}
-
-@media (max-width: 900px) {
-  .side-image-left, .side-image-right {
-    width: 100px;
-    height: 160px;
-    opacity: 0.15 !important;
+function loadTheme() {
+  const savedTheme = localStorage.getItem('worldcup-theme');
+  if (savedTheme) {
+    document.body.className = 'theme-' + savedTheme;
   }
 }
 
-@media (max-width: 600px) {
-  .side-images {
-    display: none;
+function getGroupLetter(teamA, teamB) {
+  const groupTeams = {
+    'A': ['Mexico', 'South Africa', 'South Korea', 'Czech Republic'],
+    'B': ['Canada', 'Bosnia and Herzegovina', 'Qatar', 'Switzerland'],
+    'C': ['Brazil', 'Morocco', 'Haiti', 'Scotland'],
+    'D': ['USA', 'Paraguay', 'Australia', 'Turkey'],
+    'E': ['Germany', 'Curacao', 'Ivory Coast', 'Ecuador'],
+    'F': ['Netherlands', 'Japan', 'Sweden', 'Tunisia'],
+    'G': ['Belgium', 'Egypt', 'Iran', 'New Zealand'],
+    'H': ['Spain', 'Cape Verde', 'Saudi Arabia', 'Uruguay'],
+    'I': ['France', 'Senegal', 'Iraq', 'Norway'],
+    'J': ['Austria', 'Jordan', 'Argentina', 'Algeria'],
+    'K': ['Portugal', 'DR Congo', 'Uzbekistan', 'Colombia'],
+    'L': ['England', 'Croatia', 'Ghana', 'Panama']
+  };
+  for (const [letter, teams] of Object.entries(groupTeams)) {
+    if (teams.includes(teamA) && teams.includes(teamB)) {
+      return letter;
+    }
+  }
+  return '';
+}
+
+const countryFlags = {
+  'Mexico': 'MX', 'South Africa': 'ZA', 'South Korea': 'KR', 'Czech Republic': 'CZ',
+  'Canada': 'CA', 'Bosnia and Herzegovina': 'BA', 'Qatar': 'QA', 'Switzerland': 'CH',
+  'Brazil': 'BR', 'Morocco': 'MA', 'Haiti': 'HT', 'Scotland': 'GB-SCT',
+  'USA': 'US', 'Paraguay': 'PY', 'Australia': 'AU', 'Turkey': 'TR',
+  'Germany': 'DE', 'Curacao': 'CW', 'Ivory Coast': 'CI', 'Ecuador': 'EC',
+  'Netherlands': 'NL', 'Japan': 'JP', 'Sweden': 'SE', 'Tunisia': 'TN',
+  'Belgium': 'BE', 'Egypt': 'EG', 'Iran': 'IR', 'New Zealand': 'NZ',
+  'Spain': 'ES', 'Cape Verde': 'CV', 'Saudi Arabia': 'SA', 'Uruguay': 'UY',
+  'France': 'FR', 'Senegal': 'SN', 'Iraq': 'IQ', 'Norway': 'NO',
+  'Austria': 'AT', 'Jordan': 'JO', 'Argentina': 'AR', 'Algeria': 'DZ',
+  'Portugal': 'PT', 'DR Congo': 'CD', 'Uzbekistan': 'UZ', 'Colombia': 'CO',
+  'England': 'GB-ENG', 'Croatia': 'HR', 'Ghana': 'GH', 'Panama': 'PA'
+};
+
+function getFlagUrl(country) {
+  const code = countryFlags[country];
+  if (!code) return '';
+  return `https://flagcdn.com/w40/${code.toLowerCase()}.png`;
+}
+
+function getTeamHtml(teamName) {
+  const flagUrl = getFlagUrl(teamName);
+  if (flagUrl) {
+    return `<span class="team-with-flag"><img class="flag-img" src="${flagUrl}" alt="flag"> ${teamName}</span>`;
+  }
+  return `<span>${teamName}</span>`;
+}
+
+const _supabase = window.supabase.createClient(
+  "https://igatvhqatxrhgnshmdld.supabase.co",
+  "sb_publishable_kZYMgSK-0VcalUaTuo7gfQ_7cMMse21"
+);
+
+let user = null;
+let allMatches = [];
+let currentSort = 'date';
+let currentLeagueId = 'global';
+
+function showMsg(text, isError = false) {
+  const msgDiv = document.getElementById('msg');
+  msgDiv.innerHTML = text;
+  msgDiv.style.color = isError ? '#dc3545' : '#4CAF50';
+  setTimeout(() => { msgDiv.innerHTML = ''; }, 4000);
+}
+
+function showLeagueMsg(text, isError = false) {
+  const msgDiv = document.getElementById('leagueMsg');
+  msgDiv.innerHTML = text;
+  msgDiv.style.color = isError ? '#dc3545' : '#4CAF50';
+  setTimeout(() => { msgDiv.innerHTML = ''; }, 4000);
+}
+
+async function login() {
+  const email = document.getElementById('email').value;
+  const password = document.getElementById('password').value;
+  if (!email || !password) return showMsg('Enter email and password', true);
+  const { data, error } = await _supabase.auth.signInWithPassword({ email, password });
+  if (error) return showMsg(error.message, true);
+  user = data.user;
+  document.getElementById('loginBox').style.display = 'none';
+  document.getElementById('mainPage').style.display = 'block';
+  document.getElementById('userEmail').innerHTML = user.email;
+  if (user.email === 'admin@worldcup.com') {
+    document.getElementById('adminBadge').style.display = 'inline-block';
+    document.getElementById('showAdmin').style.display = 'inline-block';
+    document.getElementById('showPredictions').style.display = 'none';
+    document.getElementById('predictionsPanel').style.display = 'none';
+    document.getElementById('leaderboardPanel').style.display = 'none';
+    document.getElementById('adminPanel').style.display = 'block';
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('showAdmin').classList.add('active');
+    await loadAdminMatches();
+  } else {
+    document.getElementById('showPredictions').style.display = 'inline-block';
+    document.getElementById('predictionsPanel').style.display = 'block';
+    document.getElementById('leaderboardPanel').style.display = 'none';
+    document.getElementById('adminPanel').style.display = 'none';
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('showPredictions').classList.add('active');
+    await loadMatches();
+  }
+  await loadLeagues();
+  await loadLeaderboard();
+}
+
+async function signup() {
+  const email = document.getElementById('email').value;
+  const password = document.getElementById('password').value;
+  if (!email || !password) return showMsg('Enter email and password', true);
+  if (password.length < 6) return showMsg('Password min 6 characters', true);
+  const { error } = await _supabase.auth.signUp({ email, password });
+  if (error) return showMsg(error.message, true);
+  showMsg('Account created! You can now login.');
+}
+
+async function logout() {
+  await _supabase.auth.signOut();
+  user = null;
+  document.getElementById('loginBox').style.display = 'block';
+  document.getElementById('mainPage').style.display = 'none';
+  document.getElementById('showPredictions').style.display = 'inline-block';
+  document.getElementById('showAdmin').style.display = 'none';
+  document.getElementById('adminBadge').style.display = 'none';
+}
+
+async function loadMatches() {
+  const { data, error } = await _supabase.from('matches').select('*').order('kickoff_time');
+  if (error) return;
+  allMatches = data;
+  filterAndShowMatches();
+}
+
+function filterAndShowMatches() {
+  let filtered = [...allMatches];
+  const selectedGroup = document.getElementById('groupFilter').value;
+  if (selectedGroup !== 'all') {
+    filtered = filtered.filter(m => getGroupLetter(m.team_a, m.team_b) === selectedGroup);
+  }
+  const stage = document.getElementById('stageFilter').value;
+  if (stage === 'group') filtered = filtered.filter(m => !m.is_knockout);
+  if (stage === 'knockout') filtered = filtered.filter(m => m.is_knockout);
+  const search = document.getElementById('teamSearch').value.toLowerCase();
+  if (search) filtered = filtered.filter(m => 
+    m.team_a.toLowerCase().includes(search) || m.team_b.toLowerCase().includes(search)
+  );
+  const dateFrom = document.getElementById('dateFrom').value;
+  const dateTo = document.getElementById('dateTo').value;
+  if (dateFrom) {
+    const fromDate = new Date(dateFrom);
+    fromDate.setHours(0, 0, 0, 0);
+    filtered = filtered.filter(m => new Date(m.kickoff_time) >= fromDate);
+  }
+  if (dateTo) {
+    const toDate = new Date(dateTo);
+    toDate.setHours(23, 59, 59, 999);
+    filtered = filtered.filter(m => new Date(m.kickoff_time) <= toDate);
+  }
+  if (currentSort === 'date') {
+    filtered.sort((a,b) => new Date(a.kickoff_time) - new Date(b.kickoff_time));
+  } else {
+    filtered.sort((a,b) => a.team_a.localeCompare(b.team_a));
+  }
+  document.getElementById('matchCount').textContent = filtered.length + ' matches';
+  renderMatchesGroupedByDay(filtered);
+}
+
+function clearFilters() {
+  document.getElementById('groupFilter').value = 'all';
+  document.getElementById('stageFilter').value = 'all';
+  document.getElementById('teamSearch').value = '';
+  document.getElementById('dateFrom').value = '';
+  document.getElementById('dateTo').value = '';
+  filterAndShowMatches();
+}
+
+async function renderMatchesGroupedByDay(matches) {
+  const container = document.getElementById('matchesList');
+  container.innerHTML = '';
+  let predMap = {};
+  if (user) {
+    const { data: predictions } = await _supabase.from('predictions').select('*').eq('user_id', user.id);
+    if (predictions) predictions.forEach(p => predMap[p.match_id] = p);
+  }
+  const grouped = {};
+  matches.forEach(m => {
+    const date = new Date(m.kickoff_time).toLocaleDateString('en-US', {
+      weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+    });
+    if (!grouped[date]) grouped[date] = [];
+    grouped[date].push(m);
+  });
+  for (const [date, dayMatches] of Object.entries(grouped)) {
+    const dayGroup = document.createElement('div');
+    dayGroup.className = 'match-day-group';
+    dayGroup.innerHTML = `<div class="match-day-header"><div class="match-day-date">${date}</div><div class="match-day-count">${dayMatches.length} matches</div></div><div class="matches-grid"></div>`;
+    container.appendChild(dayGroup);
+    const grid = dayGroup.querySelector('.matches-grid');
+    for (const match of dayMatches) {
+      const deadlinePassed = new Date(match.kickoff_time) < new Date();
+      const userPred = predMap[match.id];
+      const groupLetter = getGroupLetter(match.team_a, match.team_b);
+      const groupHtml = groupLetter ? `<span class="group-letter">Group ${groupLetter}</span>` : '';
+      const card = document.createElement('div');
+      card.className = 'match-card';
+      card.innerHTML = `
+        <div class="match-title">
+          ${getTeamHtml(match.team_a)} <span class="vs">VS</span> ${getTeamHtml(match.team_b)}
+          <span class="match-stage">${match.is_knockout ? 'KNOCKOUT' : 'GROUP'}</span>
+          ${groupHtml}
+          ${match.finished ? '<span class="finished-badge">FINISHED</span>' : ''}
+        </div>
+        ${match.finished ? `<div class="result-display">FINAL SCORE: ${match.score_a} - ${match.score_b}${match.advancing_team ? ' | Advanced: ' + match.advancing_team : ''}</div>` : ''}
+        ${!deadlinePassed && !match.finished ? `
+          <div class="prediction-inputs">
+            <input type="number" id="scoreA_${match.id}" min="0" max="10" placeholder="${match.team_a}" value="${userPred ? userPred.pred_score_a : ''}" onchange="this.value = validateGoal(this.value)">
+            <span style="font-weight:bold;">-</span>
+            <input type="number" id="scoreB_${match.id}" min="0" max="10" placeholder="${match.team_b}" value="${userPred ? userPred.pred_score_b : ''}" onchange="this.value = validateGoal(this.value)">
+          </div>
+          ${match.is_knockout ? `<select id="advance_${match.id}" style="width:100%; margin:10px 0; padding:10px; border:2px solid #e0e0e0; border-radius:8px;"><option value="">Who advances? (if penalties)</option><option value="${match.team_a}" ${userPred && userPred.pred_advancing_team === match.team_a ? 'selected' : ''}>${match.team_a}</option><option value="${match.team_b}" ${userPred && userPred.pred_advancing_team === match.team_b ? 'selected' : ''}>${match.team_b}</option></select>` : ''}
+          <button class="submit-btn" onclick="savePrediction('${match.id}', ${match.is_knockout})">${userPred ? 'UPDATE PREDICTION' : 'SUBMIT PREDICTION'}</button>
+        ` : match.finished && userPred ? `
+          <div style="text-align:center; margin-top:10px; padding:10px; border-radius:10px; background:#f5f5f5;">
+            Your prediction: ${userPred.pred_score_a} - ${userPred.pred_score_b}${userPred.pred_advancing_team ? ' | Advancing: ' + userPred.pred_advancing_team : ''} ${userPred.points !== null ? '| POINTS: ' + userPred.points : ''}
+          </div>
+        ` : deadlinePassed && !match.finished ? `<div style="text-align:center; color:#dc3545;">DEADLINE PASSED</div>` : ''}
+        <div class="deadline">Kickoff: ${new Date(match.kickoff_time).toLocaleString()}</div>
+      `;
+      grid.appendChild(card);
+    }
   }
 }
+
+window.validateGoal = function(value) {
+  return validateGoal(value);
+}
+
+window.savePrediction = async function(matchId, isKnockout) {
+  let scoreA = parseInt(document.getElementById(`scoreA_${matchId}`).value);
+  let scoreB = parseInt(document.getElementById(`scoreB_${matchId}`).value);
+  if (isNaN(scoreA)) scoreA = 0;
+  if (isNaN(scoreB)) scoreB = 0;
+  scoreA = Math.max(0, Math.min(10, scoreA));
+  scoreB = Math.max(0, Math.min(10, scoreB));
+  let advancingTeam = null;
+  if (isKnockout) {
+    const advSelect = document.getElementById(`advance_${matchId}`);
+    if (advSelect) advancingTeam = advSelect.value;
+  }
+  const predictionData = { 
+    user_id: user.id, 
+    match_id: matchId, 
+    pred_score_a: scoreA, 
+    pred_score_b: scoreB 
+  };
+  if (isKnockout && advancingTeam) {
+    predictionData.pred_advancing_team = advancingTeam;
+  }
+  const { data: existing } = await _supabase.from('predictions').select('id').eq('user_id', user.id).eq('match_id', matchId).maybeSingle();
+  if (existing) {
+    const { error } = await _supabase.from('predictions').update(predictionData).eq('id', existing.id);
+    if (error) return showMsg(error.message, true);
+  } else {
+    const { error } = await _supabase.from('predictions').insert(predictionData);
+    if (error) return showMsg(error.message, true);
+  }
+  showMsg('Prediction saved!');
+  await loadMatches();
+  await loadLeaderboard();
+};
+
+async function loadLeagues() {
+  if (!user) return;
+  const { data: leagues } = await _supabase.from('leaderboards').select('*');
+  const { data: memberships } = await _supabase.from('leaderboard_members').select('*').eq('user_id', user.id);
+  const select = document.getElementById('leagueSelect');
+  select.innerHTML = '<option value="global">Global Leaderboard</option>';
+  if (leagues) {
+    leagues.forEach(l => {
+      const isMember = memberships?.some(m => m.leaderboard_id === l.id);
+      if (isMember) {
+        const opt = document.createElement('option');
+        opt.value = l.id;
+        opt.textContent = l.name + ' (Code: ' + l.join_code + ')';
+        select.appendChild(opt);
+      }
+    });
+  }
+  const savedLeague = localStorage.getItem('selectedLeague');
+  if (savedLeague && select.querySelector(`option[value="${savedLeague}"]`)) {
+    select.value = savedLeague;
+  }
+  currentLeagueId = select.value;
+  if (user.email === 'admin@worldcup.com') {
+    document.getElementById('createLeagueBtn').style.display = 'inline-block';
+  } else {
+    document.getElementById('createLeagueBtn').style.display = 'none';
+  }
+}
+
+document.getElementById('createLeagueBtn').onclick = async () => {
+  const name = prompt('Enter league name:');
+  if (!name) return;
+  const { data, error } = await _supabase.from('leaderboards').insert({
+    name,
+    created_by: user.id
+  }).select().single();
+  if (error) {
+    console.error('Create league error:', error);
+    return showLeagueMsg('Error creating league: ' + error.message, true);
+  }
+  await _supabase.from('leaderboard_members').insert({
+    leaderboard_id: data.id,
+    user_id: user.id
+  });
+  showLeagueMsg('League created! Code: ' + data.join_code + ' (Share this!)');
+  await loadLeagues();
+  await loadLeaderboard();
+};
+
+document.getElementById('joinLeagueBtn').onclick = async () => {
+  const code = prompt('Enter league join code:');
+  if (!code) return;
+  const { data: league } = await _supabase.from('leaderboards').select('*').eq('join_code', code.toUpperCase()).maybeSingle();
+  if (!league) {
+    return showLeagueMsg('League not found!', true);
+  }
+  const { error } = await _supabase.from('leaderboard_members').insert({
+    leaderboard_id: league.id,
+    user_id: user.id
+  });
+  if (error) {
+    if (error.message.includes('duplicate')) {
+      return showLeagueMsg('You are already in this league!', true);
+    }
+    return showLeagueMsg('Error joining league', true);
+  }
+  showLeagueMsg('Joined ' + league.name + '!');
+  await loadLeagues();
+  await loadLeaderboard();
+};
+
+document.getElementById('leagueSelect').onchange = (e) => {
+  currentLeagueId = e.target.value;
+  localStorage.setItem('selectedLeague', currentLeagueId);
+  loadLeaderboard();
+};
+
+async function loadLeaderboard() {
+  if (!user) return;
+  let data;
+  if (currentLeagueId === 'global') {
+    const { data: globalData } = await _supabase.from('global_leaderboard').select('*').limit(50);
+    data = globalData;
+  } else {
+    const { data: leagueData } = await _supabase.rpc('get_league_leaderboard', { league_id: currentLeagueId });
+    data = leagueData;
+  }
+  const container = document.getElementById('leaderboardList');
+  if (!data || data.length === 0) {
+    container.innerHTML = '<div style="text-align:center; padding:40px;">No users in this league yet</div>';
+    return;
+  }
+  container.innerHTML = `
+    <div class="leaderboard-container">
+      <div class="leaderboard-header">
+        <div>#</div><div>PLAYER</div><div>PTS</div><div>W</div><div>D</div><div>L</div><div>EXACT</div><div>BONUS</div>
+      </div>
+      <div id="leaderboardItems"></div>
+    </div>
+  `;
+  const itemsDiv = container.querySelector('#leaderboardItems');
+  data.forEach((u, i) => {
+    const item = document.createElement('div');
+    item.className = 'leaderboard-item';
+    let rankDisplay = i + 1;
+    if (i === 0) rankDisplay = '1st';
+    else if (i === 1) rankDisplay = '2nd';
+    else if (i === 2) rankDisplay = '3rd';
+    const username = u.uname || u.username || 'User';
+    const points = u.pts || u.total_points || 0;
+    const wins = u.wins || 0;
+    const draws = u.draws || 0;
+    const losses = u.losses || 0;
+    const exact = u.exact || u.exact_scores || 0;
+    const bonus = u.bonus || u.bonus_points || 0;
+    item.innerHTML = `<div>${rankDisplay}</div><div>${username}</div><div style="font-weight:bold;">${points}</div><div>${wins}</div><div>${draws}</div><div>${losses}</div><div style="color:#FF6B35;font-weight:bold;">${exact}</div><div style="color:#FFD700;font-weight:bold;">${bonus}</div>`;
+    itemsDiv.appendChild(item);
+  });
+}
+
+async function loadAdminMatches() {
+  const { data, error } = await _supabase.from('matches').select('*').order('kickoff_time');
+  if (error) return;
+  renderAdminMatches(data);
+}
+
+function renderAdminMatches(matches) {
+  const container = document.getElementById('adminMatchesList');
+  const filter = document.getElementById('adminFilter').value;
+  const search = document.getElementById('adminSearch').value.toLowerCase();
+  let filtered = matches;
+  if (filter === 'pending') filtered = filtered.filter(m => !m.finished);
+  if (filter === 'finished') filtered = filtered.filter(m => m.finished);
+  if (search) filtered = filtered.filter(m => m.team_a.toLowerCase().includes(search) || m.team_b.toLowerCase().includes(search));
+  const grouped = {};
+  filtered.forEach(m => {
+    const date = new Date(m.kickoff_time).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    if (!grouped[date]) grouped[date] = [];
+    grouped[date].push(m);
+  });
+  container.innerHTML = '';
+  for (const [date, dayMatches] of Object.entries(grouped)) {
+    const dayGroup = document.createElement('div');
+    dayGroup.className = 'match-day-group';
+    dayGroup.innerHTML = `<div class="match-day-header"><div class="match-day-date">${date}</div><div class="match-day-count">${dayMatches.length} matches</div></div><div class="matches-grid"></div>`;
+    container.appendChild(dayGroup);
+    const grid = dayGroup.querySelector('.matches-grid');
+    for (const match of dayMatches) {
+      const groupLetter = getGroupLetter(match.team_a, match.team_b);
+      const groupHtml = groupLetter ? `<span class="group-letter">Group ${groupLetter}</span>` : '';
+      const card = document.createElement('div');
+      card.className = 'match-card';
+      if (match.finished) {
+        card.innerHTML = `
+          <div class="match-title">${getTeamHtml(match.team_a)} VS ${getTeamHtml(match.team_b)} ${groupHtml}</div>
+          <div class="result-display">RESULT: ${match.score_a} - ${match.score_b}${match.advancing_team ? ' | Advanced: ' + match.advancing_team : ''}</div>
+          <button class="submit-btn reset-btn" onclick="resetMatch('${match.id}')">RESET RESULT</button>
+        `;
+      } else {
+        card.innerHTML = `
+          <div class="match-title">${getTeamHtml(match.team_a)} VS ${getTeamHtml(match.team_b)} ${groupHtml}</div>
+          <div class="admin-result-inputs">
+            <input type="number" id="adminA_${match.id}" min="0" max="10" placeholder="${match.team_a} score">
+            <span>-</span>
+            <input type="number" id="adminB_${match.id}" min="0" max="10" placeholder="${match.team_b} score">
+          </div>
+          ${match.is_knockout ? `<select id="adminAdv_${match.id}" style="width:100%; margin:10px 0; padding:10px; border:2px solid #e0e0e0; border-radius:8px;"><option value="">Who advanced?</option><option value="${match.team_a}">${match.team_a}</option><option value="${match.team_b}">${match.team_b}</option></select>` : ''}
+          <button class="submit-btn admin-btn" onclick="setResult('${match.id}', ${match.is_knockout})">SET RESULT AND CALCULATE</button>
+        `;
+      }
+      grid.appendChild(card);
+    }
+  }
+}
+
+window.setResult = async function(matchId, isKnockout) {
+  let a = parseInt(document.getElementById('adminA_' + matchId).value);
+  let b = parseInt(document.getElementById('adminB_' + matchId).value);
+  if (isNaN(a)) a = 0;
+  if (isNaN(b)) b = 0;
+  a = Math.max(0, Math.min(10, a));
+  b = Math.max(0, Math.min(10, b));
+  
+  let advance = null;
+  if (isKnockout) {
+    const advSelect = document.getElementById('adminAdv_' + matchId);
+    if (advSelect) {
+      advance = advSelect.value;
+      if (!advance) {
+        alert('Please select which team advanced');
+        return;
+      }
+    }
+  }
+  
+  const updateData = { 
+    score_a: a, 
+    score_b: b, 
+    finished: true 
+  };
+  if (advance) updateData.advancing_team = advance;
+  
+  const { error } = await _supabase
+    .from('matches')
+    .update(updateData)
+    .eq('id', matchId);
+  
+  if (error) {
+    console.error('Set result error:', error);
+    alert('Error: ' + error.message);
+    return;
+  }
+  
+  showMsg('Result set! Points calculated!');
+  await loadAdminMatches();
+  await loadLeaderboard();
+};
+
+window.resetMatch = async function(matchId) {
+  const { error } = await _supabase
+    .from('matches')
+    .update({ 
+      score_a: null, 
+      score_b: null, 
+      finished: false, 
+      advancing_team: null 
+    })
+    .eq('id', matchId);
+    
+  if (error) {
+    console.error('Reset error:', error);
+    alert('Error: ' + error.message);
+    return;
+  }
+  
+  showMsg('Result reset!');
+  await loadAdminMatches();
+  await loadLeaderboard();
+};
+
+document.getElementById('loginBtn').onclick = login;
+document.getElementById('signupBtn').onclick = signup;
+document.getElementById('logoutBtn').onclick = logout;
+
+document.getElementById('showPredictions').onclick = () => {
+  document.getElementById('predictionsPanel').style.display = 'block';
+  document.getElementById('leaderboardPanel').style.display = 'none';
+  document.getElementById('adminPanel').style.display = 'none';
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('showPredictions').classList.add('active');
+  loadMatches();
+};
+
+document.getElementById('showLeaderboard').onclick = () => {
+  document.getElementById('predictionsPanel').style.display = 'none';
+  document.getElementById('leaderboardPanel').style.display = 'block';
+  document.getElementById('adminPanel').style.display = 'none';
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('showLeaderboard').classList.add('active');
+  loadLeagues();
+  loadLeaderboard();
+};
+
+document.getElementById('showAdmin').onclick = async () => {
+  document.getElementById('predictionsPanel').style.display = 'none';
+  document.getElementById('leaderboardPanel').style.display = 'none';
+  document.getElementById('adminPanel').style.display = 'block';
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('showAdmin').classList.add('active');
+  await loadAdminMatches();
+};
+
+document.getElementById('groupFilter').onchange = filterAndShowMatches;
+document.getElementById('stageFilter').onchange = filterAndShowMatches;
+document.getElementById('teamSearch').onkeyup = filterAndShowMatches;
+document.getElementById('dateFrom').onchange = filterAndShowMatches;
+document.getElementById('dateTo').onchange = filterAndShowMatches;
+document.getElementById('clearFilters').onclick = clearFilters;
+
+document.querySelectorAll('.sort-btn').forEach(btn => {
+  btn.onclick = () => {
+    if (btn.dataset.sort) {
+      currentSort = btn.dataset.sort;
+      document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      filterAndShowMatches();
+    }
+  };
+});
+
+document.getElementById('adminFilter').onchange = loadAdminMatches;
+document.getElementById('adminSearch').onkeyup = loadAdminMatches;
+
+loadTheme();
+
+(async () => {
+  const { data: { session } } = await _supabase.auth.getSession();
+  if (session) {
+    user = session.user;
+    document.getElementById('loginBox').style.display = 'none';
+    document.getElementById('mainPage').style.display = 'block';
+    document.getElementById('userEmail').innerHTML = user.email;
+    if (user.email === 'admin@worldcup.com') {
+      document.getElementById('adminBadge').style.display = 'inline-block';
+      document.getElementById('showAdmin').style.display = 'inline-block';
+      document.getElementById('showPredictions').style.display = 'none';
+      document.getElementById('predictionsPanel').style.display = 'none';
+      document.getElementById('leaderboardPanel').style.display = 'none';
+      document.getElementById('adminPanel').style.display = 'block';
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.getElementById('showAdmin').classList.add('active');
+      await loadAdminMatches();
+    } else {
+      document.getElementById('showPredictions').style.display = 'inline-block';
+      document.getElementById('predictionsPanel').style.display = 'block';
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.getElementById('showPredictions').classList.add('active');
+      await loadMatches();
+    }
+    await loadLeagues();
+    await loadLeaderboard();
+  }
+})();
+</script>
+</body>
+</html>
