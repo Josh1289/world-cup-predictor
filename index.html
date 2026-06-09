@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
   <title>World Cup Predictor 2026</title>
@@ -714,6 +714,19 @@ function getTeamHtml(teamName) {
   return `<span>${teamName}</span>`;
 }
 
+function formatEgyptTime(dateStr) {
+  const date = new Date(dateStr);
+  return date.toLocaleString('en-US', {
+    timeZone: 'Africa/Cairo',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false
+  });
+}
+
 const _supabase = window.supabase.createClient(
   "https://igatvhqatxrhgnshmdld.supabase.co",
   "sb_publishable_kZYMgSK-0VcalUaTuo7gfQ_7cMMse21"
@@ -852,7 +865,7 @@ async function renderMatchesGroupedByDay(matches) {
   const grouped = {};
   matches.forEach(m => {
     const date = new Date(m.kickoff_time).toLocaleDateString('en-US', {
-      weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+      weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'Africa/Cairo'
     });
     if (!grouped[date]) grouped[date] = [];
     grouped[date].push(m);
@@ -891,7 +904,7 @@ async function renderMatchesGroupedByDay(matches) {
             Your prediction: ${userPred.pred_score_a} - ${userPred.pred_score_b}${userPred.pred_advancing_team ? ' | Advancing: ' + userPred.pred_advancing_team : ''} ${userPred.points !== null ? '| POINTS: ' + userPred.points : ''}
           </div>
         ` : deadlinePassed && !match.finished ? `<div style="text-align:center; color:#dc3545;">DEADLINE PASSED</div>` : ''}
-        <div class="deadline">Kickoff: ${new Date(match.kickoff_time).toLocaleString()}</div>
+        <div class="deadline">Kickoff: ${formatEgyptTime(match.kickoff_time)}</div>
       `;
       grid.appendChild(card);
     }
@@ -1072,7 +1085,9 @@ function renderAdminMatches(matches) {
   if (search) filtered = filtered.filter(m => m.team_a.toLowerCase().includes(search) || m.team_b.toLowerCase().includes(search));
   const grouped = {};
   filtered.forEach(m => {
-    const date = new Date(m.kickoff_time).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    const date = new Date(m.kickoff_time).toLocaleDateString('en-US', {
+      weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'Africa/Cairo'
+    });
     if (!grouped[date]) grouped[date] = [];
     grouped[date].push(m);
   });
