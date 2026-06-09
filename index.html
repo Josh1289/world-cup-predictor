@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
   <title>World Cup Predictor 2026</title>
@@ -15,82 +15,6 @@
       transition: all 0.3s ease;
       min-height: 100vh;
       padding: 20px;
-      position: relative;
-    }
-
-    .side-images {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    .side-image-left {
-      position: absolute;
-      left: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 180px;
-      height: 280px;
-      background-size: contain;
-      background-repeat: no-repeat;
-      background-position: center;
-      opacity: 0.25;
-      transition: all 0.5s ease;
-    }
-
-    .side-image-right {
-      position: absolute;
-      right: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 180px;
-      height: 280px;
-      background-size: contain;
-      background-repeat: no-repeat;
-      background-position: center;
-      opacity: 0.25;
-      transition: all 0.5s ease;
-    }
-
-    body.theme-orange .side-image-left {
-      background-image: url('https://i.ibb.co/Y7qPcNx/world-cup-trophy.png');
-    }
-    body.theme-orange .side-image-right {
-      background-image: url('https://i.ibb.co/0jKxG5L/world-cup-ball.png');
-    }
-
-    body.theme-green .side-image-left {
-      background-image: url('https://i.ibb.co/wM8LpVn/stadium-night.png');
-    }
-    body.theme-green .side-image-right {
-      background-image: url('https://i.ibb.co/CnPxRh3/crowd-fans.png');
-    }
-
-    body.theme-night .side-image-left {
-      background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Maradona_1986_World_Cup.jpg/330px-Maradona_1986_World_Cup.jpg');
-      opacity: 0.15;
-    }
-    body.theme-night .side-image-right {
-      background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/f/f0/Lionel_Messi_2018.jpg/330px-Lionel_Messi_2018.jpg');
-      opacity: 0.15;
-    }
-
-    body.theme-classic .side-image-left {
-      background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Pele_1970.jpg/330px-Pele_1970.jpg');
-      opacity: 0.18;
-    }
-    body.theme-classic .side-image-right {
-      background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Maradona_1986_World_Cup.jpg/330px-Maradona_1986_World_Cup.jpg');
-      opacity: 0.18;
-    }
-
-    #loginBox, #mainPage {
-      position: relative;
-      z-index: 1;
     }
 
     body.theme-orange {
@@ -148,22 +72,22 @@
     }
 
     body.theme-night {
-      background: linear-gradient(135deg, #75AADB 0%, #FFFFFF 50%, #75AADB 100%);
+      background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
     }
     body.theme-night .header, body.theme-night .match-day-group,
     body.theme-night .leaderboard-container, body.theme-night .filter-group,
     body.theme-night #loginBox, body.theme-night .match-card,
     body.theme-night .leagues-bar {
-      background: rgba(255,255,255,0.95);
-      color: #1a1a2e;
+      background: rgba(30,30,50,0.95);
+      color: white;
     }
     body.theme-night .tab.active, body.theme-night .leaderboard-header {
-      background: #75AADB;
+      background: #FFD700;
       color: #1a1a2e;
     }
     body.theme-night .submit-btn, body.theme-night .admin-btn,
     body.theme-night #createLeagueBtn, body.theme-night #joinLeagueBtn {
-      background: #75AADB;
+      background: #FFD700;
       color: #1a1a2e;
       border: none;
     }
@@ -171,7 +95,7 @@
     body.theme-night .result-display, body.theme-night .deadline,
     body.theme-night .stats, body.theme-night .leaderboard-item,
     body.theme-night .match-day-date, body.theme-night .match-day-count {
-      color: #1a1a2e;
+      color: #FFD700;
     }
 
     body.theme-classic {
@@ -287,7 +211,7 @@
 
     .theme-orange-btn { background: #FF6B35; }
     .theme-green-btn { background: #2E7D32; }
-    .theme-night-btn { background: #75AADB; }
+    .theme-night-btn { background: #302b63; }
     .theme-classic-btn { background: #8B4513; }
 
     .admin-badge {
@@ -615,28 +539,9 @@
     button {
       cursor: pointer;
     }
-
-    @media (max-width: 900px) {
-      .side-image-left, .side-image-right {
-        width: 100px;
-        height: 160px;
-        opacity: 0.12 !important;
-      }
-    }
-
-    @media (max-width: 600px) {
-      .side-images {
-        display: none;
-      }
-    }
   </style>
 </head>
 <body class="theme-orange">
-
-<div class="side-images">
-  <div class="side-image-left"></div>
-  <div class="side-image-right"></div>
-</div>
 
 <div id="loginBox">
   <h2>WORLD CUP 2026</h2>
@@ -654,7 +559,7 @@
       <div class="theme-selector">
         <div class="theme-btn theme-orange-btn" onclick="setTheme('orange')" title="World Cup Orange"></div>
         <div class="theme-btn theme-green-btn" onclick="setTheme('green')" title="Stadium Green"></div>
-        <div class="theme-btn theme-night-btn" onclick="setTheme('night')" title="Argentina"></div>
+        <div class="theme-btn theme-night-btn" onclick="setTheme('night')" title="Night Match"></div>
         <div class="theme-btn theme-classic-btn" onclick="setTheme('classic')" title="Classic Football"></div>
       </div>
     </div>
@@ -809,15 +714,19 @@ function getTeamHtml(teamName) {
   return `<span>${teamName}</span>`;
 }
 
-function formatEgyptTime(dateStr) {
-  const date = new Date(dateStr + 'Z');
-  const egyptTime = new Date(date.getTime() + (3 * 60 * 60 * 1000));
-  const year = egyptTime.getUTCFullYear();
-  const month = String(egyptTime.getUTCMonth() + 1).padStart(2, '0');
-  const day = String(egyptTime.getUTCDate()).padStart(2, '0');
-  const hours = String(egyptTime.getUTCHours()).padStart(2, '0');
-  const minutes = String(egyptTime.getUTCMinutes()).padStart(2, '0');
-  return `${month}/${day}/${year}, ${hours}:${minutes}`;
+function formatEgyptTime(dateStr) 
+{
+  const date = new Date(dateStr);
+  return date.toLocaleString('en-US', 
+{
+    timeZone: 'Africa/Cairo',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false
+  });
 }
 
 const _supabase = window.supabase.createClient(
@@ -1370,3 +1279,27 @@ loadTheme();
 </script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
