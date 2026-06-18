@@ -61,6 +61,32 @@
       background: var(--bg-gradient);
     }
 
+    .toast-notification {
+      visibility: hidden;
+      min-width: 300px;
+      background-color: #2E7D32;
+      color: #fff;
+      text-align: center;
+      border-radius: 10px;
+      padding: 20px;
+      position: fixed;
+      z-index: 9999;
+      left: 50%;
+      bottom: 30px;
+      transform: translateX(-50%);
+      font-size: 18px;
+      font-weight: bold;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
+      opacity: 0;
+      transition: opacity 0.5s, bottom 0.5s, visibility 0.5s;
+    }
+
+    .toast-notification.show {
+      visibility: visible;
+      opacity: 1;
+      bottom: 60px;
+    }
+
     .header,
     .match-day-group,
     .leaderboard-container,
@@ -725,7 +751,56 @@
     ⬇️ <span style="font-size:24px;">LATEST MATCHES</span>
   </div>
 
+  <div id="toastNotification" class="toast-notification"></div>
+
   <script>
+    window.showToast = function (msg) {
+      const toast = document.getElementById("toastNotification");
+      toast.innerHTML = msg;
+      toast.className = "toast-notification show";
+      setTimeout(function () { toast.className = toast.className.replace("show", ""); }, 5000);
+    }
+
+    window.triggerCelebration = function (points, teamA, teamB) {
+      if (!window.confetti) return;
+
+      // Force a custom canvas to guarantee visibility
+      let customCanvas = document.getElementById('confetti-canvas');
+      if (!customCanvas) {
+        customCanvas = document.createElement('canvas');
+        customCanvas.id = 'confetti-canvas';
+        customCanvas.style.position = 'fixed';
+        customCanvas.style.top = '0';
+        customCanvas.style.left = '0';
+        customCanvas.style.width = '100vw';
+        customCanvas.style.height = '100vh';
+        customCanvas.style.pointerEvents = 'none';
+        customCanvas.style.zIndex = '999999';
+        document.body.appendChild(customCanvas);
+      }
+
+      var myConfetti = confetti.create(customCanvas, {
+        resize: true,
+        useWorker: true
+      });
+
+      let msg = "";
+      if (points >= 3) {
+        msg = `🎯 SPOT ON! Exact prediction for ${teamA} vs ${teamB}!`;
+        var duration = 3 * 1000;
+        var end = Date.now() + duration;
+        (function frame() {
+          myConfetti({ particleCount: 5, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#FFD700', '#FF6B35', '#ffffff'] });
+          myConfetti({ particleCount: 5, angle: 120, spread: 55, origin: { x: 1 }, colors: ['#FFD700', '#FF6B35', '#ffffff'] });
+          if (Date.now() < end) { requestAnimationFrame(frame); }
+        }());
+      } else {
+        msg = `✅ CORRECT! You predicted the winning result for ${teamA} vs ${teamB}!`;
+        myConfetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
+      }
+      showToast(msg);
+    }
+
     window.syncScoresFromAPI = async function (btnElement) {
       const originalText = btnElement.innerHTML;
       btnElement.innerHTML = '⏳ SYNCING...';
@@ -1069,6 +1144,17 @@
         for (const match of dayMatches) {
           const deadlinePassed = new Date(match.kickoff_time) < new Date();
           const userPred = predMap[match.id];
+
+          if (match.finished && userPred && userPred.points > 0) {
+            const celebrationKey = 'celebrated_' + match.id;
+            if (!localStorage.getItem(celebrationKey)) {
+              localStorage.setItem(celebrationKey, 'true');
+              setTimeout(() => {
+                triggerCelebration(userPred.points, match.team_a, match.team_b);
+              }, 1000);
+            }
+          }
+
           const groupLetter = getGroupLetter(match.team_a, match.team_b);
           const groupHtml = groupLetter ? `<span class="group-letter">Group ${groupLetter}</span>` : '';
           const card = document.createElement('div');
