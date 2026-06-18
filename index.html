@@ -721,8 +721,9 @@
   </div>
 
   <div id="scrollToLiveBtn" onclick="scrollToNextMatch()"
-    style="display:none; position:fixed; bottom:30px; right:30px; background:var(--primary); color:var(--btn-text); width:80px; height:80px; border-radius:50%; box-shadow:0 4px 15px rgba(0,0,0,0.2); z-index:1000; cursor:pointer; align-items:center; justify-content:center; font-size:36px; opacity:0.6; transition:all 0.3s;">
-    ⬇️</div>
+    style="display:none; position:fixed; bottom:30px; right:30px; background:var(--primary); color:var(--btn-text); width:auto; height:auto; padding:20px 35px; border-radius:50px; box-shadow:0 4px 15px rgba(0,0,0,0.2); z-index:1000; cursor:pointer; align-items:center; justify-content:center; opacity:0.6; transition:all 0.3s; font-weight:bold; font-size:26px; gap:15px;">
+    ⬇️ <span style="font-size:24px;">LATEST MATCHES</span>
+  </div>
 
   <script>
     window.syncScoresFromAPI = async function (btnElement) {
@@ -1110,6 +1111,9 @@
           <div style="text-align:center; margin-top:10px; padding:10px; border-radius:10px; background:#fff3cd; color:#856404; font-weight:bold; border:1px solid #ffeeba;">
             <div style="margin-bottom:5px;">LIVE / DEADLINE PASSED</div>
             ${userPred ? `Your prediction: ${userPred.pred_score_a} - ${userPred.pred_score_b}${userPred.pred_advancing_team ? ' | Advancing: ' + userPred.pred_advancing_team : ''}` : `You did not predict this match.`}
+            <a href="https://syrLive.com" target="_blank" class="submit-btn" style="display:block; text-decoration:none; text-align:center; margin-top:10px; background:#e74c3c; border-color:#c0392b; color:white;">
+              📺 Watch Match Live
+            </a>
           </div>
         ` : ''}
         <div class="deadline">Kickoff: ${formatEgyptTime(match.kickoff_time)}</div>
