@@ -635,6 +635,135 @@
     button {
       cursor: pointer;
     }
+
+    .podium-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      gap: 15px;
+      margin-bottom: 30px;
+      padding-top: 20px;
+    }
+
+    .podium-step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      border-radius: 12px 12px 0 0;
+      color: #000;
+      box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s;
+      width: 120px;
+      padding-top: 15px;
+      position: relative;
+    }
+
+    .podium-step:hover {
+      transform: translateY(-5px);
+    }
+
+    .podium-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      margin-bottom: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      border: 3px solid;
+    }
+
+    .podium-name {
+      font-weight: bold;
+      font-size: 16px;
+      text-align: center;
+      margin-bottom: 5px;
+      word-break: break-word;
+      padding: 0 5px;
+    }
+
+    .podium-pts {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+
+    .podium-stats {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 4px;
+      margin-top: 8px;
+      font-size: 11px;
+      opacity: 0.9;
+      max-width: 100px;
+    }
+
+    .podium-stat {
+      background: rgba(0, 0, 0, 0.15);
+      padding: 2px 5px;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+
+    .podium-1 {
+      height: 220px;
+      background: linear-gradient(135deg, #FFD700 0%, #FDB931 100%);
+      z-index: 3;
+    }
+
+    .podium-1 .podium-avatar {
+      border-color: #FFD700;
+    }
+
+    .podium-2 {
+      height: 180px;
+      background: linear-gradient(135deg, #E0E0E0 0%, #BDBDBD 100%);
+      z-index: 2;
+    }
+
+    .podium-2 .podium-avatar {
+      border-color: #E0E0E0;
+    }
+
+    .podium-3 {
+      height: 150px;
+      background: linear-gradient(135deg, #CD7F32 0%, #A0522D 100%);
+      z-index: 1;
+    }
+
+    .podium-3 .podium-avatar {
+      border-color: #CD7F32;
+    }
+
+    @media (max-width: 600px) {
+      .podium-wrapper {
+        gap: 5px;
+      }
+
+      .podium-step {
+        width: 100px;
+      }
+
+      .podium-name {
+        font-size: 14px;
+      }
+
+      .podium-1 {
+        height: 200px;
+      }
+
+      .podium-2 {
+        height: 160px;
+      }
+
+      .podium-3 {
+        height: 130px;
+      }
+    }
   </style>
 </head>
 
@@ -762,7 +891,7 @@
     }
 
     window.triggerCelebration = function (points, teamA, teamB) {
-      if (!window.confetti) return;
+      if (!window.confetti || points <= 1) return;
 
       // Force a custom canvas to guarantee visibility
       let customCanvas = document.getElementById('confetti-canvas');
@@ -1145,7 +1274,7 @@
           const deadlinePassed = new Date(match.kickoff_time) < new Date();
           const userPred = predMap[match.id];
 
-          if (match.finished && userPred && userPred.points > 0) {
+          if (match.finished && userPred && userPred.points > 1) {
             const celebrationKey = 'celebrated_' + match.id;
             if (!localStorage.getItem(celebrationKey)) {
               localStorage.setItem(celebrationKey, 'true');
@@ -1369,32 +1498,75 @@
         container.innerHTML = '<div style="text-align:center; padding:40px;">No users in this league yet</div>';
         return;
       }
-      container.innerHTML = `
-    <div class="leaderboard-container">
-      <div class="leaderboard-header">
-        <div>#</div><div>PLAYER</div><div>PTS</div><div>W</div><div>D</div><div>L</div><div>EXACT</div><div>BONUS</div>
-      </div>
-      <div id="leaderboardItems"></div>
-    </div>
-  `;
-      const itemsDiv = container.querySelector('#leaderboardItems');
-      data.forEach((u, i) => {
-        const item = document.createElement('div');
-        item.className = 'leaderboard-item';
-        let rankDisplay = i + 1;
-        if (i === 0) rankDisplay = '1st';
-        else if (i === 1) rankDisplay = '2nd';
-        else if (i === 2) rankDisplay = '3rd';
-        const username = u.uname || u.username || 'User';
-        const points = u.pts || u.total_points || 0;
-        const wins = u.wins || 0;
-        const draws = u.draws || 0;
-        const losses = u.losses || 0;
-        const exact = u.exact || u.exact_scores || 0;
-        const bonus = u.bonus || u.bonus_points || 0;
-        item.innerHTML = `<div>${rankDisplay}</div><div>${username}</div><div style="font-weight:bold;">${points}</div><div>${wins}</div><div>${draws}</div><div>${losses}</div><div style="color:#FF6B35;font-weight:bold;">${exact}</div><div style="color:#FFD700;font-weight:bold;">${bonus}</div>`;
-        itemsDiv.appendChild(item);
+      const top3 = data.slice(0, 3);
+      const rest = data.slice(3);
+
+      let podiumHtml = '<div class="podium-wrapper">';
+      const podiumOrder = [1, 0, 2]; // Render 2nd, 1st, 3rd
+      podiumOrder.forEach(idx => {
+        if (top3[idx]) {
+          const p = top3[idx];
+          const rank = idx + 1;
+          const uname = p.uname || p.username || 'User';
+          const pts = p.pts || p.total_points || 0;
+          const wins = p.wins || 0;
+          const draws = p.draws || 0;
+          const losses = p.losses || 0;
+          const exact = p.exact || p.exact_scores || 0;
+          const bonus = p.bonus || p.bonus_points || 0;
+          const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : '🥉';
+
+          podiumHtml += `
+            <div class="podium-step podium-${rank}">
+              <div class="podium-avatar">${medal}</div>
+              <div class="podium-name">${uname}</div>
+              <div class="podium-pts">${pts} pts</div>
+              <div class="podium-stats">
+                <span class="podium-stat" title="Wins">W:${wins}</span>
+                <span class="podium-stat" title="Draws">D:${draws}</span>
+                <span class="podium-stat" title="Losses">L:${losses}</span>
+                <span class="podium-stat" title="Exact Scores" style="color:#FF6B35;">E:${exact}</span>
+                <span class="podium-stat" title="Bonus Points" style="color:#FFD700; background:rgba(0,0,0,0.5);">B:${bonus}</span>
+              </div>
+            </div>
+          `;
+        } else {
+          podiumHtml += `<div class="podium-step" style="background:transparent; box-shadow:none; border:none; z-index:0;"></div>`;
+        }
       });
+      podiumHtml += '</div>';
+
+      let listHtml = '';
+      if (rest.length > 0) {
+        listHtml = `
+          <div class="leaderboard-container">
+            <div class="leaderboard-header">
+              <div>#</div><div>PLAYER</div><div>PTS</div><div>W</div><div>D</div><div>L</div><div>EXACT</div><div>BONUS</div>
+            </div>
+            <div id="leaderboardItems"></div>
+          </div>
+        `;
+      }
+
+      container.innerHTML = podiumHtml + listHtml;
+
+      if (rest.length > 0) {
+        const itemsDiv = container.querySelector('#leaderboardItems');
+        rest.forEach((u, i) => {
+          const item = document.createElement('div');
+          item.className = 'leaderboard-item';
+          let rankDisplay = i + 4;
+          const username = u.uname || u.username || 'User';
+          const points = u.pts || u.total_points || 0;
+          const wins = u.wins || 0;
+          const draws = u.draws || 0;
+          const losses = u.losses || 0;
+          const exact = u.exact || u.exact_scores || 0;
+          const bonus = u.bonus || u.bonus_points || 0;
+          item.innerHTML = `<div>${rankDisplay}</div><div>${username}</div><div style="font-weight:bold;">${points}</div><div>${wins}</div><div>${draws}</div><div>${losses}</div><div style="color:#FF6B35;font-weight:bold;">${exact}</div><div style="color:#FFD700;font-weight:bold;">${bonus}</div>`;
+          itemsDiv.appendChild(item);
+        });
+      }
     }
 
     async function loadAdminMatches() {
