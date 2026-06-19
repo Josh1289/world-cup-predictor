@@ -1393,6 +1393,12 @@
             </a>
           </div>
         ` : ''}
+        ${deadlinePassed || match.finished ? `
+          <button class="submit-btn" style="margin-top:10px; background:#1a472a; border-color:#2E7D32; color:#FFD700; display:flex; align-items:center; justify-content:center; gap:5px;" onclick="viewMatchPredictions('${match.id}', ${match.finished})">
+            👁️ VIEW ALL PREDICTIONS
+          </button>
+          <div id="allPredictions_${match.id}" style="display:none; margin-top:10px; padding:10px; background:#eef2f5; border-radius:8px; border:1px solid #cdd4db; max-height:250px; overflow-y:auto; overflow-x:hidden;"></div>
+        ` : ''}
         <div class="deadline">Kickoff: ${formatEgyptTime(match.kickoff_time)}</div>
       `;
           grid.appendChild(card);
@@ -1403,6 +1409,55 @@
     window.validateGoal = function (value) {
       return validateGoal(value);
     }
+
+    window.viewMatchPredictions = async function(matchId, isFinished) {
+      const container = document.getElementById('allPredictions_' + matchId);
+      if (container.style.display === 'block') {
+        container.style.display = 'none';
+        return;
+      }
+      container.style.display = 'block';
+      container.innerHTML = '<div style="text-align:center; color:#333;">Loading predictions...</div>';
+      
+      const { data: preds, error } = await _supabase.from('predictions')
+        .select('*, profiles!inner(username)')
+        .eq('match_id', matchId);
+        
+      if (error || !preds || preds.length === 0) {
+        container.innerHTML = '<div style="text-align:center; color:#666;">No predictions found for this match.</div>';
+        return;
+      }
+      
+      if (isFinished) {
+        // Sort by points descending (5, then 3, then 1, etc.)
+        preds.sort((a, b) => (b.points || 0) - (a.points || 0));
+      } else {
+        // Sort alphabetically
+        preds.sort((a, b) => a.profiles.username.localeCompare(b.profiles.username));
+      }
+      
+      let html = '<div style="display:flex; flex-direction:column; gap:8px;">';
+      preds.forEach(p => {
+        let badge = '';
+        let color = '#333';
+        if (isFinished) {
+          if (p.points === 5) { badge = '🎯 EXACT (5)'; color = '#2E7D32'; }
+          else if (p.points >= 3) { badge = '✅ CORRECT (3)'; color = '#1565C0'; }
+          else { badge = '❌ WRONG'; color = '#c0392b'; }
+        }
+        html += `
+          <div style="display:flex; justify-content:space-between; align-items:center; padding:8px; background:white; border-radius:6px; box-shadow:0 1px 3px rgba(0,0,0,0.1);">
+            <div style="font-weight:bold; color:#111; font-size:14px; text-align:left;">${p.profiles.username}</div>
+            <div style="display:flex; align-items:center; gap:10px;">
+              <span style="font-size:16px; font-weight:bold; color:${color};">${p.pred_score_a} - ${p.pred_score_b}</span>
+              ${badge ? `<span style="font-size:10px; font-weight:bold; color:white; background:${color}; padding:4px 6px; border-radius:4px; white-space:nowrap;">${badge}</span>` : ''}
+            </div>
+          </div>
+        `;
+      });
+      html += '</div>';
+      container.innerHTML = html;
+    };
 
     window.savePrediction = async function (matchId, isKnockout, btnElement) {
       const originalText = btnElement ? btnElement.innerText : 'SUBMIT PREDICTION';
