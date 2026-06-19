@@ -687,8 +687,8 @@
     }
 
     .podium-pts {
-      font-size: 14px;
-      opacity: 0.9;
+      font-size: 20px;
+      font-weight: 900;
     }
 
     .podium-stats {
@@ -713,6 +713,68 @@
       height: 220px;
       background: linear-gradient(135deg, #FFD700 0%, #FDB931 100%);
       z-index: 3;
+    }
+
+    .potd-card {
+      background: linear-gradient(135deg, #2E7D32 0%, #1a472a 100%);
+      color: white;
+      border-radius: 16px;
+      padding: 20px;
+      min-width: 260px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+      border: 2px solid #FFD700;
+    }
+    
+    .potd-title {
+      font-size: 14px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #FFD700;
+      margin-bottom: 15px;
+    }
+    
+    .potd-username {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    
+    .potd-match {
+      font-size: 14px;
+      opacity: 0.9;
+      margin-bottom: 10px;
+    }
+    
+    .potd-score {
+      font-size: 28px;
+      font-weight: 900;
+      background: rgba(0,0,0,0.2);
+      padding: 5px 15px;
+      border-radius: 12px;
+      display: inline-block;
+      margin: 0 auto;
+    }
+    
+    .potd-badge {
+      position: absolute;
+      top: -15px;
+      right: -15px;
+      background: #FFD700;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+      transform: rotate(15deg);
     }
 
     .podium-1 .podium-avatar {
@@ -914,7 +976,7 @@
       });
 
       let msg = "";
-      if (points >= 3) {
+      if (points >= 5) {
         msg = `🎯 SPOT ON! Exact prediction for ${teamA} vs ${teamB}!`;
         var duration = 3 * 1000;
         var end = Date.now() + duration;
@@ -1509,11 +1571,6 @@
           const rank = idx + 1;
           const uname = p.uname || p.username || 'User';
           const pts = p.pts || p.total_points || 0;
-          const wins = p.wins || 0;
-          const draws = p.draws || 0;
-          const losses = p.losses || 0;
-          const exact = p.exact || p.exact_scores || 0;
-          const bonus = p.bonus || p.bonus_points || 0;
           const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : '🥉';
 
           podiumHtml += `
@@ -1521,13 +1578,6 @@
               <div class="podium-avatar">${medal}</div>
               <div class="podium-name">${uname}</div>
               <div class="podium-pts">${pts} pts</div>
-              <div class="podium-stats">
-                <span class="podium-stat" title="Wins">W:${wins}</span>
-                <span class="podium-stat" title="Draws">D:${draws}</span>
-                <span class="podium-stat" title="Losses">L:${losses}</span>
-                <span class="podium-stat" title="Exact Scores" style="color:#FF6B35;">E:${exact}</span>
-                <span class="podium-stat" title="Bonus Points" style="color:#FFD700; background:rgba(0,0,0,0.5);">B:${bonus}</span>
-              </div>
             </div>
           `;
         } else {
@@ -1536,8 +1586,49 @@
       });
       podiumHtml += '</div>';
 
+      let potdHtml = '';
+      try {
+        let { data: potdData } = await _supabase.from('predictions')
+          .select('*, matches!inner(*), profiles!inner(username)')
+          .eq('is_manual_potd', true)
+          .limit(1);
+
+        if (!potdData || potdData.length === 0) {
+          const { data: autoData } = await _supabase.from('predictions')
+            .select('*, matches!inner(*), profiles!inner(username)')
+            .eq('points', 5)
+            .eq('matches.finished', true)
+            .order('updated_at', { ascending: false })
+            .limit(1);
+          potdData = autoData;
+        }
+
+        if (potdData && potdData.length > 0) {
+          const potd = potdData[0];
+          const match = potd.matches;
+          potdHtml = `
+            <div class="potd-card">
+              <div class="potd-badge">🔥</div>
+              <div class="potd-title">Prediction of the Day</div>
+              <div class="potd-username">${potd.profiles.username}</div>
+              <div class="potd-match">${match.team_a} vs ${match.team_b}</div>
+              <div class="potd-score">${potd.pred_score_a} - ${potd.pred_score_b}</div>
+            </div>
+          `;
+        }
+      } catch (e) {
+        console.error("Could not load POTD:", e);
+      }
+
+      let topSectionHtml = `
+        <div style="display:flex; flex-wrap:wrap; justify-content:center; align-items:center; gap:40px; margin-bottom:10px;">
+          ${podiumHtml}
+          ${potdHtml}
+        </div>
+      `;
+
       let listHtml = '';
-      if (rest.length > 0) {
+      if (data.length > 0) {
         listHtml = `
           <div class="leaderboard-container">
             <div class="leaderboard-header">
@@ -1548,14 +1639,14 @@
         `;
       }
 
-      container.innerHTML = podiumHtml + listHtml;
+      container.innerHTML = topSectionHtml + listHtml;
 
-      if (rest.length > 0) {
+      if (data.length > 0) {
         const itemsDiv = container.querySelector('#leaderboardItems');
-        rest.forEach((u, i) => {
+        data.forEach((u, i) => {
           const item = document.createElement('div');
           item.className = 'leaderboard-item';
-          let rankDisplay = i + 4;
+          let rankDisplay = i + 1;
           const username = u.uname || u.username || 'User';
           const points = u.pts || u.total_points || 0;
           const wins = u.wins || 0;
@@ -1608,6 +1699,8 @@
           <div class="match-title">${getTeamHtml(match.team_a)} VS ${getTeamHtml(match.team_b)} ${groupHtml}</div>
           <div class="result-display">RESULT: ${match.score_a} - ${match.score_b}${match.advancing_team ? ' | Advanced: ' + match.advancing_team : ''}</div>
           <button class="submit-btn reset-btn" onclick="resetMatch('${match.id}')">RESET RESULT</button>
+          <button class="submit-btn admin-btn" style="background:#FFD700; color:black; margin-top:10px;" onclick="selectPotdForMatch('${match.id}')">SELECT POTD</button>
+          <div id="potdSelection_${match.id}" style="display:none; margin-top:10px;"></div>
         `;
           } else {
             card.innerHTML = `
@@ -1625,6 +1718,59 @@
         }
       }
     }
+
+    window.selectPotdForMatch = async function(matchId) {
+      const container = document.getElementById('potdSelection_' + matchId);
+      if (container.style.display === 'block') {
+        container.style.display = 'none';
+        return;
+      }
+      container.style.display = 'block';
+      container.innerHTML = '<div style="text-align:center; padding:10px; color:black;">Loading exact predictions...</div>';
+      
+      const { data: exactPreds, error } = await _supabase.from('predictions')
+        .select('*, profiles!inner(username)')
+        .eq('match_id', matchId)
+        .eq('points', 5);
+        
+      if (error || !exactPreds || exactPreds.length === 0) {
+        container.innerHTML = '<div style="text-align:center; padding:10px; background:#f8d7da; color:#721c24; border-radius:8px;">No exact predictions for this match.</div>';
+        return;
+      }
+      
+      let html = `<div style="padding:10px; background:white; border-radius:8px; border:1px solid #e0e0e0; margin-top:10px; color:black;">`;
+      html += `<div style="font-weight:bold; margin-bottom:10px; text-align:center;">Select a user's prediction:</div>`;
+      exactPreds.forEach(p => {
+        html += `
+          <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 5px; border-bottom:1px solid #eee;">
+            <span style="font-weight:bold;">${p.profiles.username} <span style="opacity:0.7;font-weight:normal;">(${p.pred_score_a}-${p.pred_score_b})</span></span>
+            <button class="submit-btn admin-btn" style="width:auto; padding:5px 15px; margin:0;" onclick="setManualPotd('${p.id}', this)">Set POTD</button>
+          </div>
+        `;
+      });
+      html += `</div>`;
+      container.innerHTML = html;
+    };
+
+    window.setManualPotd = async function(predId, btnElement) {
+      const originalText = btnElement.innerText;
+      btnElement.innerText = 'Saving...';
+      btnElement.style.pointerEvents = 'none';
+
+      await _supabase.from('predictions').update({ is_manual_potd: false }).eq('is_manual_potd', true);
+      const { error } = await _supabase.from('predictions').update({ is_manual_potd: true }).eq('id', predId);
+      
+      if (error) {
+        showMsg('Error setting POTD: ' + error.message, true);
+        btnElement.innerText = originalText;
+        btnElement.style.pointerEvents = 'auto';
+      } else {
+        showMsg('Prediction of the Day updated successfully!');
+        btnElement.innerText = 'Saved!';
+        btnElement.style.background = '#4CAF50';
+        await loadLeaderboard();
+      }
+    };
 
     window.setResult = async function (matchId, isKnockout) {
       let a = parseInt(document.getElementById('adminA_' + matchId).value);
