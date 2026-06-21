@@ -13,44 +13,45 @@
       box-sizing: border-box;
     }
 
-    :root {
-      --primary: #FF6B35;
-      --bg-gradient: linear-gradient(135deg, #FF6B35 0%, #F7931E 50%, #FFD700 100%);
-      --card-bg: white;
-      --text-main: black;
+    :root, body.theme-mexico {
+      --primary: #3CAC3B;
+      --accent: #4FE04E;
+      --surface: #1A2B1B;
+      --bg: #0F1A10;
+      --muted-text: #A3B8A4;
+      --text-main: white;
       --btn-text: white;
     }
 
-    body.theme-orange {
-      --primary: #FF6B35;
-      --bg-gradient: linear-gradient(135deg, #FF6B35 0%, #F7931E 50%, #FFD700 100%);
-      --card-bg: white;
-      --text-main: black;
+    body.theme-usa {
+      --primary: #2A398D;
+      --accent: #4A60D4;
+      --surface: #151B36;
+      --bg: #0B0F24;
+      --muted-text: #9EAAEA;
+      --text-main: white;
       --btn-text: white;
     }
 
-    body.theme-green {
+    body.theme-canada {
+      --primary: #E61D25;
+      --accent: #FF3B43;
+      --surface: #331113;
+      --bg: #1A0809;
+      --muted-text: #EAA4A6;
+      --text-main: white;
+      --btn-text: white;
+    }
+
+    body.theme-classic-green {
       --primary: #2E7D32;
-      --bg-gradient: linear-gradient(135deg, #0a5c2e 0%, #0a3d1f 50%, #062a15 100%);
-      --card-bg: white;
-      --text-main: black;
-      --btn-text: white;
-    }
-
-    body.theme-night {
-      --primary: #FFD700;
-      --bg-gradient: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
-      --card-bg: rgba(30, 30, 50, 0.95);
-      --text-main: #FFD700;
-      --btn-text: #1a1a2e;
-    }
-
-    body.theme-classic {
-      --primary: #8B4513;
-      --bg-gradient: linear-gradient(135deg, #1a472a 0%, #0a2a1a 100%);
-      --card-bg: #f5f5dc;
-      --text-main: black;
-      --btn-text: white;
+      --accent: #4CAF50;
+      --surface: #ffffff;
+      --bg: linear-gradient(135deg, #0a5c2e 0%, #0a3d1f 50%, #062a15 100%);
+      --muted-text: #cccccc;
+      --text-main: #111111;
+      --btn-text: #ffffff;
+      --input-bg: #f5f5f5;
     }
 
     body {
@@ -58,19 +59,24 @@
       transition: all 0.3s ease;
       min-height: 100vh;
       padding: 20px;
-      background: var(--bg-gradient);
+      background: var(--bg);
+    }
+
+    body.login-mode {
+      background: url('login-bg.png') no-repeat center center fixed !important;
+      background-size: cover !important;
     }
 
     .toast-notification {
       visibility: hidden;
       min-width: 300px;
-      background-color: #2E7D32;
-      color: #fff;
+      background-color: var(--primary);
+      color: var(--btn-text);
       text-align: center;
       border-radius: 10px;
       padding: 20px;
       position: fixed;
-      z-index: 9999;
+      z-index: 99999;
       left: 50%;
       bottom: 30px;
       transform: translateX(-50%);
@@ -94,7 +100,7 @@
     #loginBox,
     .match-card,
     .leagues-bar {
-      background: var(--card-bg);
+      background: var(--surface);
       color: var(--text-main);
     }
 
@@ -139,8 +145,10 @@
       padding: 14px;
       margin: 12px 0;
       border-radius: 12px;
-      border: 2px solid #e0e0e0;
+      border: 2px solid var(--muted-text);
       font-size: 16px;
+      background: var(--input-bg, var(--bg));
+      color: var(--text-main);
     }
 
     #loginBox input:focus {
@@ -157,12 +165,13 @@
       font-weight: bold;
       font-size: 16px;
       transition: all 0.3s;
-      color: white;
-      background: #FF6B35;
+      color: var(--btn-text);
+      background: var(--primary);
     }
 
     #loginBox button:hover {
       transform: translateY(-2px);
+      background: var(--accent);
     }
 
     #mainPage {
@@ -210,20 +219,20 @@
       transform: scale(1.1);
     }
 
-    .theme-orange-btn {
-      background: #FF6B35;
+    .theme-mexico-btn {
+      background: #3CAC3B;
     }
 
-    .theme-green-btn {
+    .theme-usa-btn {
+      background: #2A398D;
+    }
+
+    .theme-canada-btn {
+      background: #E61D25;
+    }
+
+    .theme-classic-green-btn {
       background: #2E7D32;
-    }
-
-    .theme-night-btn {
-      background: #302b63;
-    }
-
-    .theme-classic-btn {
-      background: #8B4513;
     }
 
     .admin-badge {
@@ -232,8 +241,8 @@
       font-size: 12px;
       font-weight: bold;
       margin-left: 10px;
-      background: #FFD700;
-      color: #1a1a2e;
+      background: var(--primary);
+      color: var(--btn-text);
     }
 
     .logout-btn {
@@ -242,8 +251,12 @@
       border-radius: 10px;
       cursor: pointer;
       transition: all 0.3s;
-      background: #dc3545;
-      color: white;
+      background: var(--primary);
+      color: var(--btn-text);
+    }
+
+    .logout-btn:hover {
+      background: var(--accent);
     }
 
     .tabs {
@@ -260,8 +273,8 @@
       font-weight: bold;
       transition: all 0.3s;
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-      background: white;
-      color: black;
+      background: var(--surface);
+      color: var(--text-main);
     }
 
     .leagues-bar {
@@ -278,8 +291,10 @@
     .leagues-bar select {
       padding: 10px 15px;
       border-radius: 10px;
-      border: 2px solid #e0e0e0;
+      border: 2px solid var(--muted-text);
       font-size: 14px;
+      background: var(--input-bg, var(--bg));
+      color: var(--text-main);
     }
 
     .match-day-group {
@@ -311,7 +326,7 @@
       grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
       gap: 15px;
       padding: 15px;
-      background: rgba(0, 0, 0, 0.02);
+      background: rgba(0, 0, 0, 0.2);
     }
 
     .match-card {
@@ -332,7 +347,7 @@
       gap: 12px;
       padding-bottom: 15px;
       margin-bottom: 15px;
-      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+      border-bottom: 1px solid var(--muted-text);
     }
 
     .teams-container {
@@ -385,8 +400,8 @@
       border-radius: 20px;
       font-size: 11px;
       font-weight: bold;
-      background: #4CAF50;
-      color: white;
+      background: var(--primary);
+      color: var(--btn-text);
     }
 
     .result-display {
@@ -396,7 +411,8 @@
       font-size: 20px;
       font-weight: bold;
       border-radius: 10px;
-      background: #f5f5f5;
+      background: var(--input-bg, var(--bg));
+      color: var(--text-main);
     }
 
     .prediction-inputs {
@@ -410,9 +426,9 @@
       display: flex;
       align-items: center;
       gap: 5px;
-      background: white;
+      background: var(--surface);
       border-radius: 10px;
-      border: 2px solid #e0e0e0;
+      border: 2px solid var(--muted-text);
       padding: 5px;
       box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
     }
@@ -422,19 +438,20 @@
       height: 35px;
       border-radius: 8px;
       border: none;
-      background: #f0f0f0;
+      background: var(--input-bg, var(--bg));
       font-weight: bold;
       font-size: 20px;
       cursor: pointer;
       display: flex;
       justify-content: center;
       align-items: center;
-      color: #333;
+      color: var(--text-main);
       transition: background 0.2s;
     }
 
     .score-stepper button:hover {
-      background: #e0e0e0;
+      background: var(--accent);
+      color: var(--btn-text);
     }
 
     .score-stepper input {
@@ -445,7 +462,7 @@
       font-weight: bold;
       background: transparent;
       padding: 0;
-      color: #333;
+      color: var(--text-main);
     }
 
     .score-stepper input:focus {
@@ -506,7 +523,7 @@
       grid-template-columns: 45px 1fr 55px 40px 40px 40px 50px 50px;
       padding: 15px 15px;
       font-weight: bold;
-      color: white;
+      color: var(--btn-text);
       min-width: 500px;
       font-size: 13px;
       gap: 5px;
@@ -516,7 +533,7 @@
       display: grid;
       grid-template-columns: 45px 1fr 55px 40px 40px 40px 50px 50px;
       padding: 14px 15px;
-      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+      border-bottom: 1px solid var(--muted-text);
       min-width: 500px;
       font-size: 13px;
       gap: 5px;
@@ -525,7 +542,7 @@
     }
 
     .leaderboard-item:hover {
-      background: rgba(0, 0, 0, 0.03);
+      background: rgba(255, 255, 255, 0.05);
     }
 
     .rank-badge {
@@ -535,7 +552,8 @@
       width: 28px;
       height: 28px;
       border-radius: 50%;
-      background: rgba(0, 0, 0, 0.1);
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--text-main);
       font-weight: bold;
       font-size: 12px;
     }
@@ -571,21 +589,24 @@
     .filter-group input {
       padding: 10px 15px;
       border-radius: 10px;
-      border: 2px solid #e0e0e0;
+      border: 2px solid var(--muted-text);
+      background: var(--input-bg, var(--bg));
+      color: var(--text-main);
     }
 
     .sort-btn {
       padding: 8px 18px;
-      border: 2px solid #e0e0e0;
+      border: 2px solid var(--muted-text);
       border-radius: 8px;
       cursor: pointer;
-      background: white;
+      background: var(--input-bg, var(--bg));
+      color: var(--text-main);
     }
 
     .sort-btn.active {
-      background: #FF6B35;
-      color: white;
-      border-color: #FF6B35;
+      background: var(--primary);
+      color: var(--btn-text);
+      border-color: var(--primary);
     }
 
     .stats {
@@ -609,12 +630,14 @@
     .admin-result-inputs select {
       padding: 10px;
       border-radius: 8px;
-      border: 2px solid #e0e0e0;
+      border: 2px solid var(--muted-text);
+      background: var(--input-bg, var(--bg));
+      color: var(--text-main);
     }
 
     .reset-btn {
-      background: #dc3545;
-      color: white;
+      background: var(--primary);
+      color: var(--btn-text);
     }
 
     .filter-label {
@@ -716,8 +739,8 @@
     }
 
     .potd-card {
-      background: linear-gradient(135deg, #2E7D32 0%, #1a472a 100%);
-      color: white;
+      background: var(--primary);
+      color: var(--btn-text);
       border-radius: 16px;
       padding: 20px;
       min-width: 260px;
@@ -727,7 +750,7 @@
       flex-direction: column;
       justify-content: center;
       position: relative;
-      border: 2px solid #FFD700;
+      border: 2px solid var(--accent);
     }
     
     .potd-title {
@@ -735,7 +758,7 @@
       font-weight: 900;
       letter-spacing: 1px;
       text-transform: uppercase;
-      color: #FFD700;
+      color: var(--accent);
       margin-bottom: 15px;
     }
     
@@ -826,10 +849,115 @@
         height: 130px;
       }
     }
+
+    /* Keepy-Uppy Modal Styles */
+    #keepyUppyModal {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.85);
+      z-index: 10000;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(5px);
+    }
+    
+    #keepyUppyContainer {
+      background: #1a1a2e;
+      padding: 20px;
+      border-radius: 20px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+      border: 2px solid #FFD700;
+      text-align: center;
+      max-width: 95vw;
+    }
+
+    #keepyUppyCanvas {
+      background: url('ku-bg.png') center/cover;
+      border-radius: 10px;
+      cursor: crosshair;
+      touch-action: none; /* Prevent scrolling on touch */
+      max-width: 100%;
+    }
+
+    .ku-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      color: white;
+    }
+
+    .ku-title {
+      font-size: 24px;
+      font-weight: 900;
+      color: #FFD700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .ku-score {
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .ku-controls {
+      margin-top: 15px;
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    .ku-btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 10px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .ku-btn-close {
+      background: var(--primary);
+      color: var(--btn-text);
+    }
+
+    .ku-btn-lb {
+      background: var(--primary);
+      color: var(--btn-text);
+    }
+
+    .ku-btn:hover {
+      transform: translateY(-2px);
+      background: var(--accent);
+    }
+
+    /* Leaderboard inside modal */
+    #kuLeaderboard {
+      display: none;
+      margin-top: 15px;
+      background: rgba(255,255,255,0.1);
+      padding: 15px;
+      border-radius: 10px;
+      color: white;
+      text-align: left;
+    }
+
+    .ku-lb-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .ku-lb-item:last-child {
+      border-bottom: none;
+    }
   </style>
 </head>
 
-<body class="theme-orange">
+<body class="theme-mexico login-mode">
 
   <div id="loginBox">
     <h2>WORLD CUP 2026</h2>
@@ -846,10 +974,10 @@
         <img src="logo.png" alt="World Cup Logo" class="header-logo">
         <h2>WORLD CUP 2026 PREDICTOR</h2>
         <div class="theme-selector">
-          <div class="theme-btn theme-orange-btn" onclick="setTheme('orange')" title="World Cup Orange"></div>
-          <div class="theme-btn theme-green-btn" onclick="setTheme('green')" title="Stadium Green"></div>
-          <div class="theme-btn theme-night-btn" onclick="setTheme('night')" title="Night Match"></div>
-          <div class="theme-btn theme-classic-btn" onclick="setTheme('classic')" title="Classic Football"></div>
+          <div class="theme-btn theme-mexico-btn" onclick="setTheme('mexico')" title="El Tri (Mexico Green)"></div>
+          <div class="theme-btn theme-usa-btn" onclick="setTheme('usa')" title="The Stars & Stripes (US Blue)"></div>
+          <div class="theme-btn theme-canada-btn" onclick="setTheme('canada')" title="The Maple Leaf (Canada Red)"></div>
+          <div class="theme-btn theme-classic-green-btn" onclick="setTheme('classic-green')" title="Classic Stadium Green (Light Mode)"></div>
         </div>
       </div>
       <div>
@@ -862,6 +990,7 @@
     <div class="tabs">
       <button class="tab active" id="showPredictions">MATCH PREDICTIONS</button>
       <button class="tab" id="showLeaderboard">LEADERBOARD</button>
+      <button class="tab" id="showKeepyUppy" onclick="openKeepyUppy()" style="background:#4CAF50; color:white;">⚽ KEEPY-UPPY</button>
       <button class="tab" id="showAdmin" style="display:none;">ADMIN CONTROL</button>
     </div>
 
@@ -943,6 +1072,25 @@
   </div>
 
   <div id="toastNotification" class="toast-notification"></div>
+
+  <!-- Keepy-Uppy Modal -->
+  <div id="keepyUppyModal">
+    <div id="keepyUppyContainer">
+      <div class="ku-header">
+        <div class="ku-title">Keepy-Uppy</div>
+        <div class="ku-score">Score: <span id="kuScoreDisplay">0</span></div>
+      </div>
+      <canvas id="keepyUppyCanvas" width="300" height="400"></canvas>
+      <div class="ku-controls">
+        <button class="ku-btn ku-btn-close" onclick="closeKeepyUppy()">Close Game</button>
+        <button class="ku-btn ku-btn-lb" onclick="toggleKuLeaderboard()">🏆 Leaderboard</button>
+      </div>
+      <div id="kuLeaderboard">
+        <h3 style="color:#FFD700; margin-bottom:10px; text-align:center;">Top Jugglers</h3>
+        <div id="kuLeaderboardList">Loading...</div>
+      </div>
+    </div>
+  </div>
 
   <script>
     window.showToast = function (msg) {
@@ -1111,7 +1259,14 @@
     }
 
     function loadTheme() {
-      const savedTheme = localStorage.getItem('worldcup-theme');
+      let savedTheme = localStorage.getItem('worldcup-theme');
+      if (savedTheme === 'green') {
+        savedTheme = 'classic-green';
+        localStorage.setItem('worldcup-theme', 'classic-green');
+      } else if (savedTheme === 'orange' || savedTheme === 'night' || savedTheme === 'classic') {
+        savedTheme = 'mexico';
+        localStorage.setItem('worldcup-theme', 'mexico');
+      }
       if (savedTheme) {
         document.body.className = 'theme-' + savedTheme;
       }
@@ -1214,6 +1369,7 @@
       const { data, error } = await _supabase.auth.signInWithPassword({ email, password });
       if (error) return showMsg(error.message, true);
       user = data.user;
+      document.body.classList.remove('login-mode');
       document.getElementById('loginBox').style.display = 'none';
       document.getElementById('mainPage').style.display = 'block';
       document.getElementById('userEmail').innerHTML = user.email;
@@ -1253,6 +1409,7 @@
     async function logout() {
       await _supabase.auth.signOut();
       user = null;
+      document.body.classList.add('login-mode');
       document.getElementById('loginBox').style.display = 'block';
       document.getElementById('mainPage').style.display = 'none';
       document.getElementById('showPredictions').style.display = 'inline-block';
@@ -1951,6 +2108,7 @@
       const { data: { session } } = await _supabase.auth.getSession();
       if (session) {
         user = session.user;
+        document.body.classList.remove('login-mode');
         document.getElementById('loginBox').style.display = 'none';
         document.getElementById('mainPage').style.display = 'block';
         document.getElementById('userEmail').innerHTML = user.email;
@@ -1995,6 +2153,255 @@
         btn.style.display = 'none';
       }
     });
+
+    // --- Keepy-Uppy Game Logic ---
+    let kuCanvas, kuCtx;
+    let kuAnimId;
+    let kuBall = { x: 150, y: 50, radius: 25, velocity: 0, gravity: 0.5 };
+    let kuScore = 0;
+    let kuSpeedMultiplier = 1;
+    let kuGameState = 'ready'; // ready, playing, gameover
+    let ballImg = new Image();
+    ballImg.src = 'ball2026.png';
+
+    function openKeepyUppy() {
+      if (!user) return showToast('Please login to play Keepy-Uppy!');
+      document.getElementById('keepyUppyModal').style.display = 'flex';
+      kuCanvas = document.getElementById('keepyUppyCanvas');
+      kuCtx = kuCanvas.getContext('2d');
+      resetKuGame();
+      drawKuGame();
+      loadJugglingLeaderboard();
+      
+      kuCanvas.addEventListener('mousedown', kuInteract);
+      kuCanvas.addEventListener('touchstart', kuInteract, {passive: false});
+    }
+
+    function closeKeepyUppy() {
+      document.getElementById('keepyUppyModal').style.display = 'none';
+      cancelAnimationFrame(kuAnimId);
+      kuCanvas.removeEventListener('mousedown', kuInteract);
+      kuCanvas.removeEventListener('touchstart', kuInteract);
+    }
+
+    function toggleKuLeaderboard() {
+      const lb = document.getElementById('kuLeaderboard');
+      lb.style.display = lb.style.display === 'block' ? 'none' : 'block';
+      if (lb.style.display === 'block') {
+        loadJugglingLeaderboard();
+      }
+    }
+
+    function resetKuGame() {
+      kuBall.x = kuCanvas.width / 2;
+      kuBall.y = kuBall.radius * 2;
+      kuBall.velocity = 0;
+      kuBall.vx = 0;
+      kuBall.gravity = 0.08;
+      kuBall.rotation = 0;
+      kuScore = 0;
+      kuSpeedMultiplier = 1;
+      kuGameState = 'ready';
+      document.getElementById('kuScoreDisplay').innerText = kuScore;
+    }
+
+    function kuInteract(e) {
+      e.preventDefault();
+      if (kuGameState === 'gameover') {
+        resetKuGame();
+        kuGameState = 'playing';
+        kuGameLoop();
+        return;
+      }
+      if (kuGameState === 'ready') {
+        kuGameState = 'playing';
+        kuGameLoop();
+      }
+
+      const rect = kuCanvas.getBoundingClientRect();
+      const scaleX = kuCanvas.width / rect.width;
+      const scaleY = kuCanvas.height / rect.height;
+      let clientX = e.clientX;
+      let clientY = e.clientY;
+      if (e.touches && e.touches.length > 0) {
+        clientX = e.touches[0].clientX;
+        clientY = e.touches[0].clientY;
+      }
+      
+      const x = (clientX - rect.left) * scaleX;
+      const y = (clientY - rect.top) * scaleY;
+
+      const dist = Math.hypot(kuBall.x - x, kuBall.y - y);
+      if (dist < kuBall.radius + 15) {
+        kuBall.velocity = -5.5 * kuSpeedMultiplier;
+        kuScore++;
+        document.getElementById('kuScoreDisplay').innerText = kuScore;
+        kuSpeedMultiplier += 0.01;
+        kuBall.gravity = 0.08 * kuSpeedMultiplier;
+        kuBall.vx = (Math.random() - 0.5) * 6;
+      }
+    }
+
+    function kuGameLoop() {
+      if (kuGameState !== 'playing') return;
+      kuAnimId = requestAnimationFrame(kuGameLoop);
+
+      kuBall.velocity += kuBall.gravity;
+      kuBall.y += kuBall.velocity;
+      if (kuBall.vx) {
+        kuBall.x += kuBall.vx;
+        if (kuBall.x < kuBall.radius || kuBall.x > kuCanvas.width - kuBall.radius) {
+          kuBall.vx *= -1;
+          kuBall.x = Math.max(kuBall.radius, Math.min(kuCanvas.width - kuBall.radius, kuBall.x));
+        }
+      }
+
+      if (kuBall.y > kuCanvas.height + kuBall.radius) {
+        kuGameState = 'gameover';
+        saveJugglingScore(kuScore);
+      }
+
+      // Update rotation
+      kuBall.rotation = (kuBall.rotation || 0) + (kuBall.vx * 0.05) + 0.05;
+
+      drawKuGame();
+    }
+
+    function drawKuGame() {
+      kuCtx.clearRect(0, 0, kuCanvas.width, kuCanvas.height);
+      
+      // Draw Ball
+      if (ballImg.complete && ballImg.naturalWidth > 0) {
+        kuCtx.save();
+        kuCtx.translate(kuBall.x, kuBall.y);
+        kuCtx.rotate(kuBall.rotation || 0);
+        
+        let minSide = Math.min(ballImg.naturalWidth, ballImg.naturalHeight);
+        let sx = (ballImg.naturalWidth - minSide) / 2;
+        let sy = (ballImg.naturalHeight - minSide) / 2;
+        
+        kuCtx.drawImage(
+          ballImg, 
+          sx, sy, minSide, minSide, 
+          -kuBall.radius, -kuBall.radius, kuBall.radius * 2, kuBall.radius * 2
+        );
+        kuCtx.restore();
+      } else {
+        kuCtx.beginPath();
+        kuCtx.arc(kuBall.x, kuBall.y, kuBall.radius, 0, Math.PI * 2);
+        kuCtx.fillStyle = '#ffffff';
+        kuCtx.fill();
+        kuCtx.lineWidth = 2;
+        kuCtx.strokeStyle = '#000000';
+        kuCtx.stroke();
+        
+        kuCtx.beginPath();
+        kuCtx.arc(kuBall.x, kuBall.y, kuBall.radius * 0.4, 0, Math.PI * 2);
+        kuCtx.fillStyle = '#000000';
+        kuCtx.fill();
+      }
+
+      if (kuGameState === 'ready') {
+        kuCtx.fillStyle = 'rgba(0,0,0,0.5)';
+        kuCtx.fillRect(0, 0, kuCanvas.width, kuCanvas.height);
+        kuCtx.fillStyle = 'white';
+        kuCtx.font = '20px sans-serif';
+        kuCtx.textAlign = 'center';
+        kuCtx.fillText('Tap ball to start!', kuCanvas.width/2, kuCanvas.height/2);
+      } else if (kuGameState === 'gameover') {
+        kuCtx.fillStyle = 'rgba(0,0,0,0.7)';
+        kuCtx.fillRect(0, 0, kuCanvas.width, kuCanvas.height);
+        kuCtx.fillStyle = 'white';
+        kuCtx.font = '30px sans-serif';
+        kuCtx.textAlign = 'center';
+        kuCtx.fillText('GAME OVER', kuCanvas.width/2, kuCanvas.height/2 - 20);
+        kuCtx.font = '20px sans-serif';
+        kuCtx.fillText('Score: ' + kuScore, kuCanvas.width/2, kuCanvas.height/2 + 20);
+        kuCtx.fillText('Tap to restart', kuCanvas.width/2, kuCanvas.height/2 + 60);
+      }
+    }
+
+    async function saveJugglingScore(score) {
+      if (score <= 0) return;
+      
+      try {
+        const { data: existing, error: fetchErr } = await _supabase
+          .from('juggling_scores')
+          .select('id, score')
+          .eq('user_id', user.id)
+          .order('score', { ascending: false })
+          .limit(1);
+
+        if (fetchErr) {
+          console.error("Fetch error:", fetchErr);
+          return;
+        }
+
+        if (existing && existing.length > 0) {
+          const topScore = existing[0];
+          if (score > topScore.score) {
+            const { data: updated, error: updateErr } = await _supabase
+              .from('juggling_scores')
+              .update({ score: score })
+              .eq('id', topScore.id)
+              .select();
+              
+            if (updateErr || !updated || updated.length === 0) {
+              console.error("Update blocked or failed:", updateErr);
+              alert("Error: Supabase blocked the score update! Please make sure you have an UPDATE policy on the juggling_scores table.");
+            } else {
+              showToast(`New High Score: ${score}!`);
+              if (typeof window.confetti === 'function') {
+                window.confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 }, zIndex: 999999 });
+              }
+            }
+          }
+        } else {
+          const { error: insertErr } = await _supabase
+            .from('juggling_scores')
+            .insert({ user_id: user.id, score: score });
+            
+          if (insertErr) {
+            console.error("Insert error:", insertErr);
+          } else {
+            showToast(`Score saved: ${score}!`);
+            if (typeof window.confetti === 'function') {
+                window.confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 }, zIndex: 999999 });
+            }
+          }
+        }
+      } catch (err) {
+        console.error("Critical save error:", err);
+      }
+      loadJugglingLeaderboard();
+    }
+
+    async function loadJugglingLeaderboard() {
+      const container = document.getElementById('kuLeaderboardList');
+      container.innerHTML = 'Loading...';
+      const { data: scores, error } = await _supabase
+        .from('juggling_scores')
+        .select('score, profiles!inner(username)')
+        .order('score', { ascending: false })
+        .limit(3);
+
+      if (error || !scores || scores.length === 0) {
+        container.innerHTML = '<div style="text-align:center; opacity:0.7;">No scores yet. Be the first!</div>';
+        return;
+      }
+
+      let html = '';
+      const medals = ['🥇', '🥈', '🥉'];
+      scores.forEach((s, idx) => {
+        html += `
+          <div class="ku-lb-item">
+            <span>${medals[idx] || ''} ${s.profiles.username}</span>
+            <span style="font-weight:bold; color:#FFD700;">${s.score}</span>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+    }
   </script>
 </body>
 
