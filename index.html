@@ -13,7 +13,19 @@
       box-sizing: border-box;
     }
 
-    :root, body.theme-mexico {
+    /* MEXICO THEMES */
+    :root, body.theme-mexico.light-mode {
+      --primary: #3CAC3B;
+      --accent: #4FE04E;
+      --surface: #ffffff;
+      --bg: linear-gradient(135deg, #115918 0%, #0b3d0f 100%);
+      --muted-text: #7b8e7c;
+      --text-main: #111111;
+      --btn-text: #ffffff;
+      --input-bg: #f5f5f5;
+    }
+
+    body.theme-mexico.dark-mode {
       --primary: #3CAC3B;
       --accent: #4FE04E;
       --surface: #1A2B1B;
@@ -21,9 +33,22 @@
       --muted-text: #A3B8A4;
       --text-main: white;
       --btn-text: white;
+      --input-bg: #1A2B1B;
     }
 
-    body.theme-usa {
+    /* USA THEMES */
+    body.theme-usa.light-mode {
+      --primary: #2A398D;
+      --accent: #4A60D4;
+      --surface: #ffffff;
+      --bg: linear-gradient(135deg, #0f206c 0%, #08113b 100%);
+      --muted-text: #8e95c1;
+      --text-main: #111111;
+      --btn-text: #ffffff;
+      --input-bg: #f5f5f5;
+    }
+
+    body.theme-usa.dark-mode {
       --primary: #2A398D;
       --accent: #4A60D4;
       --surface: #151B36;
@@ -31,9 +56,22 @@
       --muted-text: #9EAAEA;
       --text-main: white;
       --btn-text: white;
+      --input-bg: #151B36;
     }
 
-    body.theme-canada {
+    /* CANADA THEMES */
+    body.theme-canada.light-mode {
+      --primary: #E61D25;
+      --accent: #FF3B43;
+      --surface: #ffffff;
+      --bg: linear-gradient(135deg, #8b1015 0%, #4a080b 100%);
+      --muted-text: #c18e8f;
+      --text-main: #111111;
+      --btn-text: #ffffff;
+      --input-bg: #f5f5f5;
+    }
+
+    body.theme-canada.dark-mode {
       --primary: #E61D25;
       --accent: #FF3B43;
       --surface: #331113;
@@ -41,17 +79,7 @@
       --muted-text: #EAA4A6;
       --text-main: white;
       --btn-text: white;
-    }
-
-    body.theme-classic-green {
-      --primary: #2E7D32;
-      --accent: #4CAF50;
-      --surface: #ffffff;
-      --bg: linear-gradient(135deg, #0a5c2e 0%, #0a3d1f 50%, #062a15 100%);
-      --muted-text: #cccccc;
-      --text-main: #111111;
-      --btn-text: #ffffff;
-      --input-bg: #f5f5f5;
+      --input-bg: #331113;
     }
 
     body {
@@ -231,8 +259,17 @@
       background: #E61D25;
     }
 
-    .theme-classic-green-btn {
-      background: #2E7D32;
+    .mode-toggle {
+      background: none;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      margin-left: 10px;
+      transition: transform 0.2s;
+    }
+    
+    .mode-toggle:hover {
+      transform: scale(1.1);
     }
 
     .admin-badge {
@@ -957,7 +994,7 @@
   </style>
 </head>
 
-<body class="theme-mexico login-mode">
+<body class="theme-mexico dark-mode login-mode">
 
   <div id="loginBox">
     <h2>WORLD CUP 2026</h2>
@@ -977,7 +1014,7 @@
           <div class="theme-btn theme-mexico-btn" onclick="setTheme('mexico')" title="El Tri (Mexico Green)"></div>
           <div class="theme-btn theme-usa-btn" onclick="setTheme('usa')" title="The Stars & Stripes (US Blue)"></div>
           <div class="theme-btn theme-canada-btn" onclick="setTheme('canada')" title="The Maple Leaf (Canada Red)"></div>
-          <div class="theme-btn theme-classic-green-btn" onclick="setTheme('classic-green')" title="Classic Stadium Green (Light Mode)"></div>
+          <button id="modeToggleBtn" class="mode-toggle" onclick="toggleMode()" title="Toggle Light/Dark Mode">☀️</button>
         </div>
       </div>
       <div>
@@ -1254,22 +1291,46 @@
     }
 
     function setTheme(theme) {
-      document.body.className = 'theme-' + theme;
+      document.body.classList.remove('theme-mexico', 'theme-usa', 'theme-canada');
+      document.body.classList.add('theme-' + theme);
       localStorage.setItem('worldcup-theme', theme);
+    }
+
+    function toggleMode() {
+      let currentMode = localStorage.getItem('worldcup-mode') || 'dark';
+      let newMode = currentMode === 'dark' ? 'light' : 'dark';
+      localStorage.setItem('worldcup-mode', newMode);
+      
+      document.body.classList.remove('light-mode', 'dark-mode');
+      document.body.classList.add(newMode + '-mode');
+      
+      document.getElementById('modeToggleBtn').innerText = newMode === 'dark' ? '☀️' : '🌙';
     }
 
     function loadTheme() {
       let savedTheme = localStorage.getItem('worldcup-theme');
-      if (savedTheme === 'green') {
-        savedTheme = 'classic-green';
-        localStorage.setItem('worldcup-theme', 'classic-green');
+      let savedMode = localStorage.getItem('worldcup-mode');
+
+      if (savedTheme === 'green' || savedTheme === 'classic-green') {
+        savedTheme = 'mexico';
+        savedMode = 'light';
+        localStorage.setItem('worldcup-theme', 'mexico');
+        localStorage.setItem('worldcup-mode', 'light');
       } else if (savedTheme === 'orange' || savedTheme === 'night' || savedTheme === 'classic') {
         savedTheme = 'mexico';
         localStorage.setItem('worldcup-theme', 'mexico');
       }
-      if (savedTheme) {
-        document.body.className = 'theme-' + savedTheme;
-      }
+
+      if (!savedTheme) savedTheme = 'mexico';
+      if (!savedMode) savedMode = 'dark';
+
+      document.body.classList.remove('theme-mexico', 'theme-usa', 'theme-canada');
+      document.body.classList.add('theme-' + savedTheme);
+      
+      document.body.classList.remove('light-mode', 'dark-mode');
+      document.body.classList.add(savedMode + '-mode');
+
+      document.getElementById('modeToggleBtn').innerText = savedMode === 'dark' ? '☀️' : '🌙';
     }
 
     function getGroupLetter(teamA, teamB) {
@@ -2161,6 +2222,7 @@
     let kuScore = 0;
     let kuSpeedMultiplier = 1;
     let kuGameState = 'ready'; // ready, playing, gameover
+    let kuLastTime = 0;
     let ballImg = new Image();
     ballImg.src = 'ball2026.png';
 
@@ -2202,6 +2264,7 @@
       kuScore = 0;
       kuSpeedMultiplier = 1;
       kuGameState = 'ready';
+      kuLastTime = 0;
       document.getElementById('kuScoreDisplay').innerText = kuScore;
     }
 
@@ -2210,12 +2273,14 @@
       if (kuGameState === 'gameover') {
         resetKuGame();
         kuGameState = 'playing';
-        kuGameLoop();
+        kuLastTime = performance.now();
+        kuGameLoop(performance.now());
         return;
       }
       if (kuGameState === 'ready') {
         kuGameState = 'playing';
-        kuGameLoop();
+        kuLastTime = performance.now();
+        kuGameLoop(performance.now());
       }
 
       const rect = kuCanvas.getBoundingClientRect();
@@ -2242,14 +2307,25 @@
       }
     }
 
-    function kuGameLoop() {
+    function kuGameLoop(timestamp) {
       if (kuGameState !== 'playing') return;
       kuAnimId = requestAnimationFrame(kuGameLoop);
 
-      kuBall.velocity += kuBall.gravity;
-      kuBall.y += kuBall.velocity;
+      if (!kuLastTime) kuLastTime = timestamp;
+      let dt = timestamp - kuLastTime;
+      kuLastTime = timestamp;
+      
+      // Cap delta time to 50ms so switching tabs doesn't glitch the ball
+      if (dt > 50) dt = 16.6;
+
+      // Normalize speed based on a high refresh rate (e.g. 144Hz = ~7ms per frame)
+      // This ensures 60Hz mobile screens don't run in slow motion!
+      let timeScale = dt / 7.0;
+
+      kuBall.velocity += kuBall.gravity * timeScale;
+      kuBall.y += kuBall.velocity * timeScale;
       if (kuBall.vx) {
-        kuBall.x += kuBall.vx;
+        kuBall.x += kuBall.vx * timeScale;
         if (kuBall.x < kuBall.radius || kuBall.x > kuCanvas.width - kuBall.radius) {
           kuBall.vx *= -1;
           kuBall.x = Math.max(kuBall.radius, Math.min(kuCanvas.width - kuBall.radius, kuBall.x));
@@ -2262,7 +2338,7 @@
       }
 
       // Update rotation
-      kuBall.rotation = (kuBall.rotation || 0) + (kuBall.vx * 0.05) + 0.05;
+      kuBall.rotation = (kuBall.rotation || 0) + (kuBall.vx * 0.05 * timeScale) + (0.05 * timeScale);
 
       drawKuGame();
     }
