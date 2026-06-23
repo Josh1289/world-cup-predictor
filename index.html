@@ -966,7 +966,7 @@
     }
 
     .ku-title {
-      font-size: 24px;
+      font-size: clamp(20px, 4vw, 28px);
       font-weight: 900;
       color: #FFD700;
       text-transform: uppercase;
@@ -974,22 +974,24 @@
     }
 
     .ku-score {
-      font-size: 20px;
+      font-size: clamp(16px, 3.5vw, 22px);
       font-weight: bold;
     }
 
     .ku-controls {
       display: flex;
+      flex-wrap: wrap;
       gap: 10px;
       justify-content: center;
       flex-shrink: 0;
     }
 
     .ku-btn {
-      padding: 10px 20px;
+      padding: clamp(8px, 2vw, 12px) clamp(15px, 4vw, 25px);
       border: none;
       border-radius: 10px;
       font-weight: bold;
+      font-size: clamp(14px, 3.5vw, 18px);
       cursor: pointer;
       transition: all 0.2s;
     }
@@ -1018,13 +1020,26 @@
       border-radius: 10px;
       color: white;
       text-align: left;
+      max-height: 40vh;
+      overflow-y: auto;
+    }
+
+    #kuLeaderboard h3 {
+      font-size: clamp(18px, 4.5vw, 24px);
     }
 
     .ku-lb-item {
       display: flex;
       justify-content: space-between;
-      padding: 8px 0;
+      align-items: center;
+      padding: 10px 0;
       border-bottom: 1px solid rgba(255,255,255,0.1);
+      font-size: clamp(14px, 3.5vw, 18px);
+      gap: 15px;
+    }
+
+    .ku-lb-item span {
+      word-break: break-all;
     }
 
     .ku-lb-item:last-child {
