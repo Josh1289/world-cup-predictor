@@ -2388,18 +2388,18 @@
         ${!deadlinePassed && !match.finished ? `
           <div class="prediction-inputs">
             <div class="score-stepper">
-              <button onclick="document.getElementById('scoreA_${match.id}').stepDown();">-</button>
-              <input type="number" id="scoreA_${match.id}" min="0" max="10" placeholder="0" value="${userPred && userPred.pred_score_a !== null ? userPred.pred_score_a : 0}" onchange="this.value = validateGoal(this.value)">
-              <button onclick="document.getElementById('scoreA_${match.id}').stepUp();">+</button>
+              <button onclick="document.getElementById('scoreA_${match.id}').stepDown(); updateListAdvanceVisibility('${match.id}');">-</button>
+              <input type="number" id="scoreA_${match.id}" min="0" max="10" placeholder="0" value="${userPred && userPred.pred_score_a !== null ? userPred.pred_score_a : 0}" oninput="this.value = validateGoal(this.value); updateListAdvanceVisibility('${match.id}');" onchange="this.value = validateGoal(this.value); updateListAdvanceVisibility('${match.id}');">
+              <button onclick="document.getElementById('scoreA_${match.id}').stepUp(); updateListAdvanceVisibility('${match.id}');">+</button>
             </div>
             <span style="font-weight:bold; display:flex; align-items:center;">-</span>
             <div class="score-stepper">
-              <button onclick="document.getElementById('scoreB_${match.id}').stepDown();">-</button>
-              <input type="number" id="scoreB_${match.id}" min="0" max="10" placeholder="0" value="${userPred && userPred.pred_score_b !== null ? userPred.pred_score_b : 0}" onchange="this.value = validateGoal(this.value)">
-              <button onclick="document.getElementById('scoreB_${match.id}').stepUp();">+</button>
+              <button onclick="document.getElementById('scoreB_${match.id}').stepDown(); updateListAdvanceVisibility('${match.id}');">-</button>
+              <input type="number" id="scoreB_${match.id}" min="0" max="10" placeholder="0" value="${userPred && userPred.pred_score_b !== null ? userPred.pred_score_b : 0}" oninput="this.value = validateGoal(this.value); updateListAdvanceVisibility('${match.id}');" onchange="this.value = validateGoal(this.value); updateListAdvanceVisibility('${match.id}');">
+              <button onclick="document.getElementById('scoreB_${match.id}').stepUp(); updateListAdvanceVisibility('${match.id}');">+</button>
             </div>
           </div>
-          ${match.is_knockout ? `<select id="advance_${match.id}" style="width:100%; margin:10px 0; padding:10px; border:2px solid #e0e0e0; border-radius:8px;"><option value="">Who advances? (if penalties)</option><option value="${match.team_a}" ${userPred && userPred.pred_advancing_team === match.team_a ? 'selected' : ''}>${match.team_a}</option><option value="${match.team_b}" ${userPred && userPred.pred_advancing_team === match.team_b ? 'selected' : ''}>${match.team_b}</option></select>` : ''}
+          ${match.is_knockout ? `<select id="advance_${match.id}" style="width:100%; margin:10px 0; padding:10px; border:2px solid #e0e0e0; border-radius:8px; display:${(!userPred || userPred.pred_score_a === userPred.pred_score_b) ? 'block' : 'none'};"><option value="">Who advances? (if penalties)</option><option value="${match.team_a}" ${userPred && userPred.pred_advancing_team === match.team_a ? 'selected' : ''}>${match.team_a}</option><option value="${match.team_b}" ${userPred && userPred.pred_advancing_team === match.team_b ? 'selected' : ''}>${match.team_b}</option></select>` : ''}
           <button class="submit-btn ${userPred ? 'update-mode' : ''}" id="btn_${match.id}" onclick="savePrediction('${match.id}', ${match.is_knockout}, this)">
             ${userPred ? 'UPDATE PREDICTION' : 'SUBMIT PREDICTION'}
           </button>
@@ -2428,6 +2428,15 @@
         }
       }
     }
+
+    window.updateListAdvanceVisibility = function(matchId) {
+      const a = parseInt(document.getElementById('scoreA_' + matchId).value) || 0;
+      const b = parseInt(document.getElementById('scoreB_' + matchId).value) || 0;
+      const select = document.getElementById('advance_' + matchId);
+      if (select) {
+        select.style.display = (a === b) ? 'block' : 'none';
+      }
+    };
 
     window.validateGoal = function (value) {
       return validateGoal(value);
@@ -2497,8 +2506,17 @@
       scoreB = Math.max(0, Math.min(10, scoreB));
       let advancingTeam = null;
       if (isKnockout) {
-        const advSelect = document.getElementById(`advance_${matchId}`);
-        if (advSelect) advancingTeam = advSelect.value;
+        const matchObj = allMatches.find(m => m.id === matchId);
+        if (scoreA > scoreB && matchObj) advancingTeam = matchObj.team_a;
+        else if (scoreB > scoreA && matchObj) advancingTeam = matchObj.team_b;
+        else {
+          const advSelect = document.getElementById(`advance_${matchId}`);
+          if (advSelect) advancingTeam = advSelect.value;
+          if (!advancingTeam) {
+            if (btnElement) { btnElement.innerText = originalText; btnElement.style.pointerEvents = 'auto'; }
+            return showMsg('Please select who advances on penalties!', true);
+          }
+        }
       }
       const predictionData = {
         user_id: user.id,
@@ -2890,13 +2908,55 @@
         alert('Error: ' + error.message);
         return;
       }
+      
+      if (advance) {
+        await autoAdvanceWinner(matchId, advance);
+      }
 
       showMsg('Result set! Points calculated!');
       await loadAdminMatches();
       await loadLeaderboard();
     };
 
+    window.rollbackMatchPoints = async function(matchId) {
+      const { data: preds } = await _supabase.from('predictions').select('*').eq('match_id', matchId);
+      if (!preds || preds.length === 0) return;
+
+      for (const p of preds) {
+        if (p.points !== null) {
+          let isExact = p.points === 5 ? 1 : 0;
+          let isWin = (p.points >= 3) ? 1 : 0;
+          let isLoss = (p.points === 0) ? 1 : 0;
+          
+          const { data: profile } = await _supabase.from('profiles').select('id, pts, w, d, l, exact, bonus').eq('id', p.user_id).maybeSingle();
+          if (profile) {
+            await _supabase.from('profiles').update({
+              pts: Math.max(0, (profile.pts || 0) - p.points),
+              w: Math.max(0, (profile.w || 0) - isWin),
+              l: Math.max(0, (profile.l || 0) - isLoss),
+              exact: Math.max(0, (profile.exact || 0) - isExact)
+            }).eq('id', p.user_id);
+          }
+          
+          // Also try to update global_leaderboard if it's a separate table
+          const { data: gl } = await _supabase.from('global_leaderboard').select('pts, w, d, l, exact').eq('user_id', p.user_id).maybeSingle();
+          if (gl) {
+             await _supabase.from('global_leaderboard').update({
+                pts: Math.max(0, (gl.pts || 0) - p.points),
+                w: Math.max(0, (gl.w || 0) - isWin),
+                l: Math.max(0, (gl.l || 0) - isLoss),
+                exact: Math.max(0, (gl.exact || 0) - isExact)
+             }).eq('user_id', p.user_id);
+          }
+          
+          await _supabase.from('predictions').update({ points: null }).eq('id', p.id);
+        }
+      }
+    };
+
     window.resetMatch = async function (matchId) {
+      await rollbackMatchPoints(matchId);
+
       const { error } = await _supabase
         .from('matches')
         .update({
@@ -3237,16 +3297,45 @@
       }
     }
 
+    window.autoAdvanceWinner = async function(matchId, winnerTeam) {
+      const { data: koMatches } = await _supabase.from('matches').select('*').eq('is_knockout', true).order('kickoff_time', { ascending: true });
+      if (!koMatches) return;
+      
+      const currentMatchIdx = koMatches.findIndex(m => m.id === matchId);
+      if (currentMatchIdx === -1) return;
+      const currentMatch = koMatches[currentMatchIdx];
+      
+      // Only auto-advance R32 matches for now (index 0-15)
+      if (currentMatchIdx >= 16) return;
+      if (!currentMatch.bracket_order) return;
+      
+      const targetOrder = Math.ceil(currentMatch.bracket_order / 2);
+      const isTeamA = (currentMatch.bracket_order % 2 !== 0);
+      
+      const r16Matches = koMatches.slice(16, 24);
+      let targetMatch = r16Matches.find(m => m.bracket_order === targetOrder);
+      if (!targetMatch) {
+         targetMatch = r16Matches[targetOrder - 1]; 
+      }
+      
+      if (targetMatch) {
+        const updateData = {};
+        if (isTeamA) updateData.team_a = winnerTeam;
+        else updateData.team_b = winnerTeam;
+        await _supabase.from('matches').update(updateData).eq('id', targetMatch.id);
+      }
+    };
+
     async function loadKnockoutBracket() {
       const container = document.getElementById('knockoutPanel');
       container.innerHTML = '<div style="text-align:center; padding:50px; font-size:18px; color:var(--text-main);">Loading bracket...</div>';
 
-      const { data, error } = await _supabase.from('matches')
+      const { data: rawData, error } = await _supabase.from('matches')
         .select('*')
         .eq('is_knockout', true)
-        .order('kickoff_time');
+        .order('kickoff_time', { ascending: true });
 
-      if (error || !data || data.length === 0) {
+      if (error || !rawData || rawData.length === 0) {
         container.innerHTML = '<div style="text-align:center; padding:50px; color:var(--muted-text);">No knockout matches found.</div>';
         return;
       }
@@ -3254,7 +3343,7 @@
       bracketPredMap = {};
       bracketMatchesMap = {};
       if (user) {
-        const matchIds = data.map(m => m.id);
+        const matchIds = rawData.map(m => m.id);
         const { data: preds } = await _supabase.from('predictions')
           .select('*')
           .eq('user_id', user.id)
@@ -3262,8 +3351,17 @@
         if (preds) preds.forEach(p => { bracketPredMap[p.match_id] = p; });
       }
 
+      const r32 = rawData.slice(0, 16);
+      const r16 = rawData.slice(16, 24);
+      const rest = rawData.slice(24);
+      
+      r32.sort((a, b) => (a.bracket_order || 0) - (b.bracket_order || 0));
+      r16.sort((a, b) => (a.bracket_order || 0) - (b.bracket_order || 0));
+      
+      const sortedData = [...r32, ...r16, ...rest];
+
       const rounds = { R32: [], R16: [], QF: [], SF: [], '3rd': [], Final: [] };
-      data.forEach((m, idx) => {
+      sortedData.forEach((m, idx) => {
         const copy = Object.assign({}, m);
         let stage = copy.stage;
         if (!stage) {
@@ -3434,18 +3532,18 @@
         bodyHtml += `
           <div class="prediction-inputs">
             <div class="score-stepper">
-              <button onclick="document.getElementById('bScoreA').stepDown();">-</button>
-              <input type="number" id="bScoreA" min="0" max="10" value="${pred && pred.pred_score_a !== null ? pred.pred_score_a : 0}" onchange="this.value = validateGoal(this.value)">
-              <button onclick="document.getElementById('bScoreA').stepUp();">+</button>
+              <button onclick="document.getElementById('bScoreA').stepDown(); updateAdvanceVisibility();">-</button>
+              <input type="number" id="bScoreA" min="0" max="10" value="${pred && pred.pred_score_a !== null ? pred.pred_score_a : 0}" oninput="this.value = validateGoal(this.value); updateAdvanceVisibility();" onchange="this.value = validateGoal(this.value); updateAdvanceVisibility();">
+              <button onclick="document.getElementById('bScoreA').stepUp(); updateAdvanceVisibility();">+</button>
             </div>
             <span style="font-weight:bold; display:flex; align-items:center;">-</span>
             <div class="score-stepper">
-              <button onclick="document.getElementById('bScoreB').stepDown();">-</button>
-              <input type="number" id="bScoreB" min="0" max="10" value="${pred && pred.pred_score_b !== null ? pred.pred_score_b : 0}" onchange="this.value = validateGoal(this.value)">
-              <button onclick="document.getElementById('bScoreB').stepUp();">+</button>
+              <button onclick="document.getElementById('bScoreB').stepDown(); updateAdvanceVisibility();">-</button>
+              <input type="number" id="bScoreB" min="0" max="10" value="${pred && pred.pred_score_b !== null ? pred.pred_score_b : 0}" oninput="this.value = validateGoal(this.value); updateAdvanceVisibility();" onchange="this.value = validateGoal(this.value); updateAdvanceVisibility();">
+              <button onclick="document.getElementById('bScoreB').stepUp(); updateAdvanceVisibility();">+</button>
             </div>
           </div>
-          <select id="bAdvanceSelect">
+          <select id="bAdvanceSelect" style="display: ${(!pred || pred.pred_score_a === pred.pred_score_b) ? 'block' : 'none'};">
             <option value="">Who advances? (if penalties)</option>
             <option value="${match.team_a}" ${pred && pred.pred_advancing_team === match.team_a ? 'selected' : ''}>${match.team_a}</option>
             <option value="${match.team_b}" ${pred && pred.pred_advancing_team === match.team_b ? 'selected' : ''}>${match.team_b}</option>
@@ -3488,6 +3586,15 @@
       modal.classList.add('active');
     };
 
+    window.updateAdvanceVisibility = function() {
+      const a = parseInt(document.getElementById('bScoreA').value) || 0;
+      const b = parseInt(document.getElementById('bScoreB').value) || 0;
+      const select = document.getElementById('bAdvanceSelect');
+      if (select) {
+        select.style.display = (a === b) ? 'block' : 'none';
+      }
+    };
+
     window.closeBracketModal = function () {
       document.getElementById('bracketPredictionModal').classList.remove('active');
     };
@@ -3501,6 +3608,9 @@
     });
 
     window.saveBracketPrediction = async function (matchId) {
+      const match = bracketMatchesMap[matchId];
+      if (!match) return;
+
       const btn = document.getElementById('bSubmitBtn');
       const originalText = btn ? btn.innerText : 'SUBMIT PREDICTION';
       if (btn) { btn.innerText = 'SAVING...'; btn.style.pointerEvents = 'none'; }
@@ -3512,16 +3622,25 @@
       scoreA = Math.max(0, Math.min(10, scoreA));
       scoreB = Math.max(0, Math.min(10, scoreB));
 
-      const advSelect = document.getElementById('bAdvanceSelect');
-      const advancingTeam = advSelect ? advSelect.value : null;
+      let advancingTeam = null;
+      if (scoreA > scoreB) advancingTeam = match.team_a;
+      else if (scoreB > scoreA) advancingTeam = match.team_b;
+      else {
+        const advSelect = document.getElementById('bAdvanceSelect');
+        advancingTeam = advSelect ? advSelect.value : null;
+        if (!advancingTeam) {
+          if (btn) { btn.innerText = originalText; btn.style.pointerEvents = 'auto'; }
+          return showToast('Please select who advances on penalties!');
+        }
+      }
 
       const predData = {
         user_id: user.id,
         match_id: matchId,
         pred_score_a: scoreA,
-        pred_score_b: scoreB
+        pred_score_b: scoreB,
+        pred_advancing_team: advancingTeam
       };
-      if (advancingTeam) predData.pred_advancing_team = advancingTeam;
 
       const { data: existing } = await _supabase.from('predictions')
         .select('id').eq('user_id', user.id).eq('match_id', matchId).maybeSingle();
@@ -3573,6 +3692,10 @@
       const { error } = await _supabase.from('matches').update(updateData).eq('id', matchId);
       if (error) return alert('Error: ' + error.message);
 
+      if (advance) {
+        await autoAdvanceWinner(matchId, advance);
+      }
+
       showToast('Official result set!');
       closeBracketModal();
       await loadKnockoutBracket();
@@ -3581,6 +3704,7 @@
     };
 
     window.resetBracketMatch = async function (matchId) {
+      await rollbackMatchPoints(matchId);
       const { error } = await _supabase.from('matches')
         .update({ score_a: null, score_b: null, finished: false, advancing_team: null })
         .eq('id', matchId);
