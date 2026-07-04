@@ -2438,6 +2438,19 @@
       }
     };
 
+    window.updateAdminAdvanceVisibility = function(matchId) {
+      const a = parseInt(document.getElementById('adminA_' + matchId).value);
+      const b = parseInt(document.getElementById('adminB_' + matchId).value);
+      const select = document.getElementById('adminAdv_' + matchId);
+      if (select) {
+        if (!isNaN(a) && !isNaN(b) && a === b) {
+          select.style.display = 'block';
+        } else {
+          select.style.display = 'none';
+        }
+      }
+    };
+
     window.validateGoal = function (value) {
       return validateGoal(value);
     }
@@ -2805,11 +2818,11 @@
             card.innerHTML = `
           <div class="match-title">${getTeamHtml(match.team_a)} VS ${getTeamHtml(match.team_b)} ${groupHtml}</div>
           <div class="admin-result-inputs">
-            <input type="number" id="adminA_${match.id}" min="0" max="10" placeholder="${match.team_a} score">
+            <input type="number" id="adminA_${match.id}" min="0" max="10" placeholder="${match.team_a} score" oninput="updateAdminAdvanceVisibility('${match.id}')" onchange="updateAdminAdvanceVisibility('${match.id}')">
             <span>-</span>
-            <input type="number" id="adminB_${match.id}" min="0" max="10" placeholder="${match.team_b} score">
+            <input type="number" id="adminB_${match.id}" min="0" max="10" placeholder="${match.team_b} score" oninput="updateAdminAdvanceVisibility('${match.id}')" onchange="updateAdminAdvanceVisibility('${match.id}')">
           </div>
-          ${match.is_knockout ? `<select id="adminAdv_${match.id}" style="width:100%; margin:10px 0; padding:10px; border:2px solid #e0e0e0; border-radius:8px;"><option value="">Who advanced?</option><option value="${match.team_a}">${match.team_a}</option><option value="${match.team_b}">${match.team_b}</option></select>` : ''}
+          ${match.is_knockout ? `<select id="adminAdv_${match.id}" style="width:100%; margin:10px 0; padding:10px; border:2px solid #e0e0e0; border-radius:8px; display:none;"><option value="">Who advanced?</option><option value="${match.team_a}">${match.team_a}</option><option value="${match.team_b}">${match.team_b}</option></select>` : ''}
           <button class="submit-btn admin-btn" onclick="setResult('${match.id}', ${match.is_knockout})">SET RESULT AND CALCULATE</button>
         `;
           }
@@ -2881,12 +2894,19 @@
 
       let advance = null;
       if (isKnockout) {
-        const advSelect = document.getElementById('adminAdv_' + matchId);
-        if (advSelect) {
-          advance = advSelect.value;
-          if (!advance) {
-            alert('Please select which team advanced');
-            return;
+        const matchObj = allMatches.find(m => m.id === matchId);
+        if (a > b && matchObj) {
+          advance = matchObj.team_a;
+        } else if (b > a && matchObj) {
+          advance = matchObj.team_b;
+        } else {
+          const advSelect = document.getElementById('adminAdv_' + matchId);
+          if (advSelect) {
+            advance = advSelect.value;
+            if (!advance) {
+              alert('Please select which team advanced');
+              return;
+            }
           }
         }
       }
@@ -2924,9 +2944,9 @@
 
       for (const p of preds) {
         if (p.points !== null) {
-          let isExact = p.points === 5 ? 1 : 0;
+          let isExact = (p.points >= 5) ? 1 : 0;
           let isWin = (p.points >= 3) ? 1 : 0;
-          let isLoss = (p.points === 0) ? 1 : 0;
+          let isLoss = (p.points <= 2) ? 1 : 0;
           
           const { data: profile } = await _supabase.from('profiles').select('id, pts, w, d, l, exact, bonus').eq('id', p.user_id).maybeSingle();
           if (profile) {
